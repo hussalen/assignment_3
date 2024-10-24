@@ -75,6 +75,7 @@ StyleCopReport.xml
 *.ilk
 *.meta
 *.obj
+obj/
 *.iobj
 *.pch
 *.pdb
@@ -405,5 +406,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-
+.idea
+.DS_Store
+.idea/
 
