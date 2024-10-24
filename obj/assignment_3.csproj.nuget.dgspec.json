@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/hussam/Desktop/H's Uni Stuff/3rd Year Babyyyy/Semester 5/BYT - Systems Design/assignment_3/assignment_3.csproj": {}
+    "/Users/madzia/assignment_3/assignment_3.csproj": {}
   },
   "projects": {
-    "/home/hussam/Desktop/H's Uni Stuff/3rd Year Babyyyy/Semester 5/BYT - Systems Design/assignment_3/assignment_3.csproj": {
+    "/Users/madzia/assignment_3/assignment_3.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/hussam/Desktop/H's Uni Stuff/3rd Year Babyyyy/Semester 5/BYT - Systems Design/assignment_3/assignment_3.csproj",
+        "projectUniqueName": "/Users/madzia/assignment_3/assignment_3.csproj",
         "projectName": "assignment_3",
-        "projectPath": "/home/hussam/Desktop/H's Uni Stuff/3rd Year Babyyyy/Semester 5/BYT - Systems Design/assignment_3/assignment_3.csproj",
-        "packagesPath": "/home/hussam/.nuget/packages/",
-        "outputPath": "/home/hussam/Desktop/H's Uni Stuff/3rd Year Babyyyy/Semester 5/BYT - Systems Design/assignment_3/obj/",
+        "projectPath": "/Users/madzia/assignment_3/assignment_3.csproj",
+        "packagesPath": "/Users/madzia/.nuget/packages/",
+        "outputPath": "/Users/madzia/assignment_3/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/hussam/.nuget/NuGet/NuGet.Config"
+          "/Users/madzia/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -58,7 +58,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.204/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/Users/madzia/.dotnet/sdk/8.0.401/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
