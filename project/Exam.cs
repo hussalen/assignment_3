@@ -6,7 +6,7 @@ public class Exam
     public DateTime ExamDate { get; set; }
     public Subject Subject { get; set; }
 
-    public void ScheduleExam(DateTime? date)
+    public void ScheduleExam(DateTime date)
     {
         this.ExamDate = date;
     }
