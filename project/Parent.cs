@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Net.Mail;
+using System.Text.RegularExpressions;
 
 namespace assignment_3
 {
@@ -20,18 +21,17 @@ namespace assignment_3
         public Parent(string name, string email)
         {
             ParentID = Interlocked.Increment(ref nextId);
-            this.name = name;
-            IsValidEmail(email);
-            this.email = new MailAddress(email);
+            this.name = ValidName(name);
+            this.email = ValidEmail(email);
         }
 
         public void ViewStudentAttendance() { }
 
-        private void IsValidEmail(string email)
+        private MailAddress ValidEmail(string email)
         {
             try
             {
-                new MailAddress(email);
+                return new MailAddress(email);
             }
             catch (Exception e)
             {
@@ -39,15 +39,13 @@ namespace assignment_3
                     $"So-called 'email address' ({email}) is not valid. Error: {e.Message}"
                 );
             }
-
-            return;
         }
 
         private string ValidName(string name)
         {
             if (name.Length > 50)
                 throw new ValidationException(
-                    $"Make sure the number of characters for the name does not exceed {NAME_LENGTH}"
+                    $"Make sure the number of characters for the name does not exceed {NAME_LENGTH} characters"
                 );
             return name;
         }
