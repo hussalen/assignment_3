@@ -2,29 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using assignment_3;
 
-namespace project
+namespace assignment_3
 {
     public class Coding : Assignment
     {
-        public int AssignmentID => throw new NotImplementedException();
+        int Assignment.AssignmentID => throw new NotImplementedException();
 
-        public string topic
-        {
-            get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
-        }
-        public DateTime dueDate
-        {
-            get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
-        }
-        public DateTime? submissionDate
-        {
-            get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
-        }
+        public string topic { get; set; }
+        public DateTime dueDate { get; set; }
+        public DateTime? submissionDate { get; set; }
 
         public string language;
         public string repositoryUrl;

@@ -410,3 +410,5 @@ FodyWeavers.xsd
 .DS_Store
 .idea/
 
+# Visual Studio
+*.sln

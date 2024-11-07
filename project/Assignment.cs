@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using assignment_3;
 
-namespace project
+namespace assignment_3
 {
     public interface Assignment
     {
