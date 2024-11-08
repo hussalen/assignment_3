@@ -17,8 +17,7 @@ public static class ClassExtents
     private static List<Timeslot> _schedule_List = new();
     private static List<Student> _students_List = new();
     private static List<Subject> _subjects_List = new();
-    private static List<TimeTable> _timeTables_List = new();
-	private static List<Timeslot> _timeslots_List = new(); 
+    private static List<TimeTable> _timeTables_List = new(); 
 
     // Classroom
     public static List<Classroom> GetClassroomExtent() => new List<Classroom>(_classrooms_List);
