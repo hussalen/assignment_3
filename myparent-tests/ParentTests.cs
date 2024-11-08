@@ -11,5 +11,20 @@ namespace myparent_tests
         {
             Assert.Throws<ValidationException>(() => new Parent("Viridium", "vivi.viiviv.com"));
         }
+
+        [Test]
+        public void NameTooLong()
+        {
+            Assert.Throws<ValidationException>(
+                () =>
+                    new Parent(
+                        "ViridiumViridiumViridiumViridiumViridiumViridiumViridiumViridium",
+                        "vivi@viiviv.com"
+                    )
+            );
+        }
+
+        [Test]
+        public void NameIsNotLatinAdjacent() { }
     }
 }
