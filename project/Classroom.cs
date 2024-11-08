@@ -2,7 +2,6 @@ namespace assignment_3;
 
 public class Classroom
 {
-    private static List<Classroom> _classrooms = new List<Classroom>();
 
     private int _roomId;
     private int _capacity;
@@ -34,18 +33,7 @@ public class Classroom
     {
         RoomId = roomId;  // invoke the setter with validation
         Capacity = capacity; 
-        AddClassroom(this);  //instance add
-        
     }
 
-    public static List<Classroom> GetClassrooms()
-    {
-        return _classrooms;
-    }
-    private static void AddClassroom(Classroom classroom)
-    {
-        if (classroom == null) 
-            throw new ArgumentException("Classroom cannot be null");
-        _classrooms.Add(classroom);
-    }
+
 }

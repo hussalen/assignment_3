@@ -2,7 +2,6 @@ namespace assignment_3;
 
 public class Exam
 {
-    private static List<Exam> exams = new List<Exam>();
         
     // Encapsulation
     public int ExamId { get; private set; }
@@ -15,7 +14,6 @@ public class Exam
         ExamId = examId;
         ExamDate = examDate;
 
-        exams.Add(this);
     }
     public void ScheduleExam(DateTime date)
     {

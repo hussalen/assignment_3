@@ -1,10 +1,10 @@
 namespace assignment_3;
 
 public class Subject
-{ private static List<Subject> subjects = new List<Subject>();
-    private string SubjectId;
-    private string SubjectName;
-    private int GradingScale;
+{
+    public string SubjectId { get; private set; }
+    public string SubjectName { get; private set; }
+    public int GradingScale { get; private set; }
 
     public Subject(string SubjectId, string SubjectName, int GradingScale)
     {
@@ -15,7 +15,6 @@ public class Subject
         this.SubjectId = SubjectId;
         this.SubjectName = SubjectName;
         this.GradingScale = GradingScale;
-        subjects.Add(this);
     }
 
     public void UpdateSubjectName(string newSubjectName)
