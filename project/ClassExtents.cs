@@ -14,7 +14,7 @@ public static class ClassExtents
     private static List<IndividualProject> _individualProjects_List = new();
     private static List<Parent> _parents_List = new();
     private static List<Report> _reports_List = new();
-    private static List<Timeslot> _schedule_List = new();
+    private static List<Timeslot> _timeslots_List = new();
     private static List<Student> _students_List = new();
     private static List<Subject> _subjects_List = new();
     private static List<TimeTable> _timeTables_List = new(); 
