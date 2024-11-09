@@ -81,5 +81,33 @@ namespace assignment_3.Tests
             var exam = new Exam();
             Assert.Throws<FormatException>(() => exam.ScheduleExam(null));
         }
+        // Report class tests
+        [Test]
+        public void Report_Creation_ShouldInitializeCorrectly()
+        {
+            // Act
+            var report = new Report();
+
+            // Assert
+            Assert.IsNotNull(report);
+            Assert.AreEqual(1, report.ReportId);
+            Assert.IsNull(report.content);
+        }
+
+        [Test]
+        public void Report_Content_SetAndGet_ShouldWorkCorrectly()
+        {
+            // Arrange
+            var report = new Report();
+            JsonArray content = new JsonArray();
+            content.Add("Test content");
+
+            // Act
+            report.content = content;
+
+            // Assert
+            Assert.IsNotNull(report.content);
+            Assert.AreEqual("Test content", report.content[0].ToString());
+        }
     }
 }
