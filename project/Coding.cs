@@ -16,6 +16,10 @@ namespace assignment_3
         public string language;
         public string repositoryUrl;
 
-        public Coding() { }
+        public Coding(string language, string repositoryUrl)
+        {
+            this.language = language;
+            this.repositoryUrl = repositoryUrl;
+        }
     }
 }
