@@ -1,6 +1,6 @@
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using NUnit.Framework;
 
 namespace assignment_3.Tests
 {
@@ -66,8 +66,8 @@ namespace assignment_3.Tests
         [Test]
         public void TimeTable_Creation_ShouldInitializeWithUniqueID()
         {
-            var mondayTimeTable = new TimeTable("Monday");
-            var tuesdayTimeTable = new TimeTable("Tuesday");
+            var mondayTimeTable = new TimeTable(Day.MONDAY);
+            var tuesdayTimeTable = new TimeTable(Day.TUESDAY);
             Assert.AreNotEqual(mondayTimeTable.TimeTableId, tuesdayTimeTable.TimeTableId);
             Assert.IsTrue(mondayTimeTable.TimeTableId > 0);
             Assert.IsTrue(tuesdayTimeTable.TimeTableId > mondayTimeTable.TimeTableId);
@@ -76,15 +76,14 @@ namespace assignment_3.Tests
         [Test]
         public void TimeTable_Creation_ShouldSetDayOfWeekCorrectly()
         {
-            string dayOfWeek = "Wednesday";
-            var timeTable = new TimeTable(dayOfWeek);
-            Assert.AreEqual(dayOfWeek, timeTable.dayOfWeek);
+            var timeTable = new TimeTable(Day.WEDNESDAY);
+            Assert.AreEqual(Day.WEDNESDAY, timeTable.DayOfWeek);
         }
 
         [Test]
         public void UpdateTimeTable_ShouldNotThrowError()
         {
-            var timeTable = new TimeTable("Friday");
+            var timeTable = new TimeTable(Day.FRIDAY);
             Assert.DoesNotThrow(() => timeTable.UpdateTimeTable());
         }
 
@@ -94,7 +93,7 @@ namespace assignment_3.Tests
             List<TimeTable> timeTables = new List<TimeTable>();
             for (int i = 0; i < 5; i++)
             {
-                timeTables.Add(new TimeTable($"Day {i + 1}"));
+                timeTables.Add(new TimeTable((Day)i));
             }
 
             var timeTableIds = new HashSet<int>();
@@ -104,6 +103,7 @@ namespace assignment_3.Tests
             }
         }
     }
+
     [TestFixture]
     public class SubjectTests
     {
@@ -133,8 +133,10 @@ namespace assignment_3.Tests
             int gradingScale = 3;
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => new Subject(subjectId, subjectName, gradingScale), 
-                "Subject ID cannot be empty");
+            Assert.Throws<ArgumentException>(
+                () => new Subject(subjectId, subjectName, gradingScale),
+                "Subject ID cannot be empty"
+            );
         }
 
         [Test]
@@ -146,8 +148,10 @@ namespace assignment_3.Tests
             int gradingScale = 3;
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => new Subject(subjectId, subjectName, gradingScale), 
-                "Subject ID cannot be empty");
+            Assert.Throws<ArgumentException>(
+                () => new Subject(subjectId, subjectName, gradingScale),
+                "Subject ID cannot be empty"
+            );
         }
 
         [Test]
@@ -159,8 +163,10 @@ namespace assignment_3.Tests
             int gradingScale = 3;
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => new Subject(subjectId, subjectName, gradingScale), 
-                "Subject name cannot be empty");
+            Assert.Throws<ArgumentException>(
+                () => new Subject(subjectId, subjectName, gradingScale),
+                "Subject name cannot be empty"
+            );
         }
 
         [Test]
@@ -172,8 +178,10 @@ namespace assignment_3.Tests
             int gradingScale = 3;
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => new Subject(subjectId, subjectName, gradingScale), 
-                "Subject name cannot be empty");
+            Assert.Throws<ArgumentException>(
+                () => new Subject(subjectId, subjectName, gradingScale),
+                "Subject name cannot be empty"
+            );
         }
 
         [Test]
@@ -185,8 +193,10 @@ namespace assignment_3.Tests
             int invalidGradingScale = 6;
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => new Subject(subjectId, subjectName, invalidGradingScale), 
-                "Grading scale must be between 1 and 5");
+            Assert.Throws<ArgumentException>(
+                () => new Subject(subjectId, subjectName, invalidGradingScale),
+                "Grading scale must be between 1 and 5"
+            );
         }
 
         [Test]
@@ -211,8 +221,10 @@ namespace assignment_3.Tests
             string newSubjectName = "";
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => subject.UpdateSubjectName(newSubjectName), 
-                "Subject name cannot be empty");
+            Assert.Throws<ArgumentException>(
+                () => subject.UpdateSubjectName(newSubjectName),
+                "Subject name cannot be empty"
+            );
         }
 
         [Test]
@@ -223,11 +235,14 @@ namespace assignment_3.Tests
             string newSubjectName = null;
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => subject.UpdateSubjectName(newSubjectName), 
-                "Subject name cannot be empty");
+            Assert.Throws<ArgumentException>(
+                () => subject.UpdateSubjectName(newSubjectName),
+                "Subject name cannot be empty"
+            );
         }
     }
-      [TestFixture]
+
+    [TestFixture]
     public class ClassroomTests
     {
         [Test]
@@ -253,8 +268,10 @@ namespace assignment_3.Tests
             int capacity = 30;
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => new Classroom(invalidRoomId, capacity), 
-                "Room id cannot be less than 0");
+            Assert.Throws<ArgumentException>(
+                () => new Classroom(invalidRoomId, capacity),
+                "Room id cannot be less than 0"
+            );
         }
 
         [Test]
@@ -265,8 +282,10 @@ namespace assignment_3.Tests
             int invalidCapacity = -10;
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => new Classroom(roomId, invalidCapacity), 
-                "Capacity cannot be negative.");
+            Assert.Throws<ArgumentException>(
+                () => new Classroom(roomId, invalidCapacity),
+                "Capacity cannot be negative."
+            );
         }
 
         [Test]
@@ -317,8 +336,10 @@ namespace assignment_3.Tests
             int invalidCapacity = -5;
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => classroom.Capacity = invalidCapacity, 
-                "Capacity cannot be negative.");
+            Assert.Throws<ArgumentException>(
+                () => classroom.Capacity = invalidCapacity,
+                "Capacity cannot be negative."
+            );
         }
     }
 }
