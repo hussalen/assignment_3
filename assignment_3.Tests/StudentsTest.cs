@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using assignment_3;
 using NUnit.Framework;
 
-namespace people_tests
+namespace assignment_3.Tests
 {
     [TestFixture]
     public class StudentTests

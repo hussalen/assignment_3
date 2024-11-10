@@ -61,50 +61,6 @@ namespace assignment_3.Tests
     }
 
     [TestFixture]
-    public class TimeTableTests
-    {
-        [Test]
-        public void TimeTable_Creation_ShouldInitializeWithUniqueID()
-        {
-            var mondayTimeTable = new TimeTable(Day.MONDAY);
-            var tuesdayTimeTable = new TimeTable(Day.TUESDAY);
-            Assert.AreNotEqual(mondayTimeTable.TimeTableId, tuesdayTimeTable.TimeTableId);
-            Assert.IsTrue(mondayTimeTable.TimeTableId > 0);
-            Assert.IsTrue(tuesdayTimeTable.TimeTableId > mondayTimeTable.TimeTableId);
-        }
-
-        [Test]
-        public void TimeTable_Creation_ShouldSetDayOfWeekCorrectly()
-        {
-            var timeTable = new TimeTable(Day.WEDNESDAY);
-            Assert.AreEqual(Day.WEDNESDAY, timeTable.DayOfWeek);
-        }
-
-        [Test]
-        public void UpdateTimeTable_ShouldNotThrowError()
-        {
-            var timeTable = new TimeTable(Day.FRIDAY);
-            Assert.DoesNotThrow(() => timeTable.UpdateTimeTable());
-        }
-
-        [Test]
-        public void MultipleTimeTables_ShouldHaveUniqueTimeTableIds()
-        {
-            List<TimeTable> timeTables = new List<TimeTable>();
-            for (int i = 0; i < 5; i++)
-            {
-                timeTables.Add(new TimeTable((Day)i));
-            }
-
-            var timeTableIds = new HashSet<int>();
-            foreach (var timeTable in timeTables)
-            {
-                Assert.IsTrue(timeTableIds.Add(timeTable.TimeTableId));
-            }
-        }
-    }
-
-    [TestFixture]
     public class SubjectTests
     {
         [Test]

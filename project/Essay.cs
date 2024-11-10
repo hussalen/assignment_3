@@ -9,7 +9,7 @@ namespace assignment_3
     public class Essay : Assignment
     {
         public int AssignmentID => throw new NotImplementedException();
-        public string? topic { get; set; }
+        public string topic { get; set; }
         public DateTime dueDate { get; set; }
         public DateTime? submissionDate { get; set; }
 
