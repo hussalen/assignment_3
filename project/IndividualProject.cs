@@ -7,13 +7,26 @@ namespace assignment_3
 {
     public class IndividualProject : Assignment
     {
+
+        public int AssignmentID { get; private set; }
+        public static int nextId = 1;
+
         int Assignment.AssignmentID => throw new NotImplementedException();
 
         public string topic { get; set; }
         public DateTime dueDate { get; set; }
         public DateTime? submissionDate { get; set; }
 
-        public string description;
+        public IndividualProject(string topic, DateTime dueDate)
+        {
+            AssignmentID = nextId++;
+            this.topic = topic;
+            this.dueDate = dueDate;
+            submissionDate = null;
+        }
+    }
+}        public string description;
         public List<string> notes;
     }
 }
+
