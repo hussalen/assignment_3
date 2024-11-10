@@ -2,12 +2,23 @@ namespace assignment_3;
 
 public class Exam
 {
-    public int ExamId { get; set; }
-    public DateTime ExamDate { get; set; }
-    public Subject Subject { get; set; }
+        
+    // Encapsulation
+    public int ExamId { get; private set; }
+    public DateTime ExamDate { get; private set; }
 
+    public Exam(int examId, DateTime examDate)
+    {
+        if (examId <= 0) throw new ArgumentException("Exam ID must be a positive integer.");
+        if (examDate < DateTime.Now) throw new ArgumentException("Exam date cannot be in the past.");
+        ExamId = examId;
+        ExamDate = examDate;
+
+    }
     public void ScheduleExam(DateTime date)
     {
-        this.ExamDate = date;
+        if (date < DateTime.Now)
+            throw new ArgumentException("Exam date cannot be in the past.");
+        ExamDate = date;
     }
 }

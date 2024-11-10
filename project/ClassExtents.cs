@@ -14,10 +14,10 @@ public static class ClassExtents
     private static List<IndividualProject> _individualProjects_List = new();
     private static List<Parent> _parents_List = new();
     private static List<Report> _reports_List = new();
-    private static List<Schedule> _schedule_List = new();
+    private static List<Timeslot> _timeslots_List = new();
     private static List<Student> _students_List = new();
     private static List<Subject> _subjects_List = new();
-    private static List<TimeTable> _timeTables_List = new();
+    private static List<TimeTable> _timeTables_List = new(); 
 
     // Classroom
     public static List<Classroom> GetClassroomExtent() => new List<Classroom>(_classrooms_List);
@@ -186,21 +186,6 @@ public static class ClassExtents
         }
     }
 
-    // Schedule
-    public static List<Schedule> GetScheduleExtent() => new List<Schedule>(_schedule_List);
-
-    public static void AddSchedule(Schedule schedule)
-    {
-        if (schedule != null)
-        {
-            _schedule_List.Add(schedule);
-        }
-        else
-        {
-            throw new ArgumentException("Schedule cannot be null.");
-        }
-    }
-
     // Student
     public static List<Student> GetStudentExtent() => new List<Student>(_students_List);
 
@@ -243,6 +228,19 @@ public static class ClassExtents
         else
         {
             throw new ArgumentException("TimeTable cannot be null.");
+        }
+    }
+	//Timeslot
+	public static List<Timeslot> GetTimeslotExtent() => new List<Timeslot>(_timeslots_List);
+	public static void AddTimeslot(Timeslot timeslot)
+    {
+        if (timeslot != null)
+        {
+            _timeslots_List.Add(timeslot);
+        }
+        else
+        {
+            throw new ArgumentException("Timeslot cannot be null.");
         }
     }
 }

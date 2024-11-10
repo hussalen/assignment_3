@@ -6,7 +6,7 @@ namespace assignment_3
 {
     public class Parent
     {
-        private int NAME_LENGTH = 50;
+        private const int MAX_NAME_LENGTH = 50;
         public int ParentID { get; private set; }
         private string name;
         public string Name
@@ -43,9 +43,9 @@ namespace assignment_3
 
         private string ValidName(string name)
         {
-            if (name.Length > 50)
-                throw new ValidationException(
-                    $"Make sure the number of characters for the name does not exceed {NAME_LENGTH} characters"
+            if (name.Length is 0 or > MAX_NAME_LENGTH)
+                throw new ArgumentOutOfRangeException(
+                    $"Name invalid, make sure it's non-empty and the number of characters does not exceed {MAX_NAME_LENGTH} characters"
                 );
             return name;
         }

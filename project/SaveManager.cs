@@ -17,14 +17,14 @@ namespace assignment_3
                 PropertyNameCaseInsensitive = true
             };
 
-        public static void SaveToJson<T>(T obj, string path)
+        public static void SaveToJson<T>(T obj, string name, string path)
         {
             if (obj is null)
                 throw new NullReferenceException($"Object can't be saved! It is null.");
             try
             {
                 string jsonString = JsonSerializer.Serialize(obj, _options);
-                using StreamWriter writer = new(obj.GetType() + path + ".json");
+                using StreamWriter writer = new(name + ".json");
                 writer.Write(jsonString);
             }
             catch (Exception e)

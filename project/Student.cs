@@ -18,17 +18,16 @@ namespace assignment_3
     {
         public int StudentID { get; private set; }
         public ClassLevel ClassLevel { get; set; }
-
-        private float _gpa;
         static int nextId;
 
-        public Student(ClassLevel classLevel, float gpa, float gPA)
+        public Student(ClassLevel classLevel, float GPA)
         {
             StudentID = Interlocked.Increment(ref nextId);
             ClassLevel = classLevel;
-            _gpa = gpa;
-            GPA = gPA;
+            this.GPA = GPA;
         }
+
+        private float _gpa;
 
         public float GPA
         {
@@ -38,7 +37,13 @@ namespace assignment_3
 
         private float GpaValidation(float gpa)
         {
-            if (gpa is > 3.0f and < 5.0f)
+            if (Math.Round(gpa * 100) != gpa * 100)
+            {
+                throw new ArgumentException(
+                    $"Invalid GPA value '{gpa}', GPA can only have up to 2 decimal points."
+                );
+            }
+            if (gpa is >= 3.0f and <= 5.0f)
                 return gpa;
             throw new ValidationException();
         }
