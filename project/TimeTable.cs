@@ -8,7 +8,7 @@ namespace assignment_3
     public class TimeTable
     {
         public int TimeTableId { get; private set; }
-        private string dayOfWeek { get; }
+        public string dayOfWeek { get; }
         static int nextId;
 
         public TimeTable(string dayOfWeek)
