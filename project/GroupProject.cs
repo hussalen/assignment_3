@@ -7,7 +7,6 @@ namespace assignment_3
 {
     public class GroupProject : Assignment
     {
-
         public int AssignmentID { get; private set; }
         public static int nextId = 1;
 
@@ -20,8 +19,13 @@ namespace assignment_3
         public string documentation;
         public Student[] roles;
 
-
-        public GroupProject(string topic, DateTime dueDate, int noOfPeople, string documentation, Student[] roles)
+        public GroupProject(
+            string topic,
+            DateTime dueDate,
+            int noOfPeople,
+            string documentation,
+            Student[] roles
+        )
         {
             AssignmentID = nextId++;
             this.topic = topic;
@@ -30,12 +34,6 @@ namespace assignment_3
             this.documentation = documentation;
             this.roles = roles;
             submissionDate = null;
-
-        public GroupProject(int noOfPeople, string documentation)
-        {
-            this.noOfPeople = noOfPeople;
-            this.documentation = documentation;
         }
     }
-
 }

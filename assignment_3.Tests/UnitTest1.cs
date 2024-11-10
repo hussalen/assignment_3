@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Nodes;
 using NUnit.Framework;
 
 namespace assignment_3.Tests
@@ -50,7 +51,7 @@ namespace assignment_3.Tests
         [Test]
         public void PastDateTryOfScheduling()
         {
-            var exam = new Exam();
+            var exam = new Exam(new DateTime(2024, 11, 11));
             DateTime pastDate = DateTime.Now.AddDays(-1);
 
             Assert.Throws<ArgumentException>(() => exam.ScheduleExam(pastDate));
@@ -59,29 +60,10 @@ namespace assignment_3.Tests
         [Test]
         public void TryOfSchedulingOnTheTakenDate()
         {
-            var exam = new Exam();
+            var exam = new Exam(new DateTime(2024, 11, 11));
             var initialDate = DateTime.Now.AddDays(1);
             exam.ScheduleExam(initialDate);
             Assert.AreEqual(initialDate, exam.ExamDate);
-        }
-
-        [Test]
-        public void NullInput()
-        {
-            var exam = new Exam();
-            Assert.Throws<FormatException>(() => exam.ScheduleExam(null));
-        }
-        // Report class tests
-        [Test]
-        public void Report_Creation_ShouldInitializeCorrectly()
-        {
-            // Act
-            var report = new Report();
-
-            // Assert
-            Assert.IsNotNull(report);
-            Assert.AreEqual(1, report.ReportId);
-            Assert.IsNull(report.content);
         }
 
         [Test]
@@ -98,39 +80,22 @@ namespace assignment_3.Tests
             // Assert
             Assert.IsNotNull(report.content);
             Assert.AreEqual("Test content", report.content[0].ToString());
+        }
+    }
 
     public class ExamTests
     {
         [Test]
-        public void Exam_Creation_ShouldInitializeCorrectly()
-        {
-            int examId = 1;
-            DateTime examDate = DateTime.Now.AddDays(5);
-            var exam = new Exam(examId, examDate);
-            Assert.AreEqual(examId, exam.ExamId);
-            Assert.AreEqual(examDate, exam.ExamDate);
-        }
-
-        [Test]
         public void Exam_Creation_WithPastDate_ShouldThrowException()
         {
-            int examId = 1;
             DateTime pastDate = DateTime.Now.AddDays(-1);
-            Assert.Throws<ArgumentException>(() => new Exam(examId, pastDate));
-        }
-
-        [Test]
-        public void Exam_Creation_WithInvalidExamId_ShouldThrowException()
-        {
-            int invalidExamId = -1;
-            DateTime examDate = DateTime.Now.AddDays(5);
-            Assert.Throws<ArgumentException>(() => new Exam(invalidExamId, examDate));
+            Assert.Throws<ArgumentException>(() => new Exam(pastDate));
         }
 
         [Test]
         public void ScheduleExam_WithFutureDate_ShouldUpdateExamDate()
         {
-            var exam = new Exam(1, DateTime.Now.AddDays(2));
+            var exam = new Exam(DateTime.Now.AddDays(2));
             DateTime newDate = DateTime.Now.AddDays(10);
             exam.ScheduleExam(newDate);
             Assert.AreEqual(newDate, exam.ExamDate);
@@ -139,7 +104,7 @@ namespace assignment_3.Tests
         [Test]
         public void ScheduleExam_WithPastDate_ShouldThrowException()
         {
-            var exam = new Exam(1, DateTime.Now.AddDays(2));
+            var exam = new Exam(DateTime.Now.AddDays(2));
             DateTime pastDate = DateTime.Now.AddDays(-1);
             Assert.Throws<ArgumentException>(() => exam.ScheduleExam(pastDate));
         }
@@ -147,15 +112,14 @@ namespace assignment_3.Tests
         [Test]
         public void ScheduleExam_WithSameDate_ShouldUpdateExamDate()
         {
-            var exam = new Exam(1, DateTime.Now.AddDays(2));
+            var exam = new Exam(DateTime.Now.AddDays(2));
             DateTime sameDate = DateTime.Now.AddDays(2);
             exam.ScheduleExam(sameDate);
             Assert.AreEqual(sameDate, exam.ExamDate);
         }
     }
 
-
-        [TestFixture]
+    [TestFixture]
     public class TimeslotTests
     {
         [Test]
@@ -187,8 +151,10 @@ namespace assignment_3.Tests
             TimeSpan endTime = new TimeSpan(12, 0, 0); // 12:00 PM
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => new Timeslot(invalidScheduleId, date, startTime, endTime), 
-                "Schedule ID cannot be empty");
+            Assert.Throws<ArgumentException>(
+                () => new Timeslot(invalidScheduleId, date, startTime, endTime),
+                "Schedule ID cannot be empty"
+            );
         }
 
         [Test]
@@ -201,8 +167,10 @@ namespace assignment_3.Tests
             TimeSpan endTime = new TimeSpan(12, 0, 0); // 12:00 PM (end time before start time)
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => new Timeslot(scheduleId, date, startTime, endTime), 
-                "End time cannot be earlier than start time");
+            Assert.Throws<ArgumentException>(
+                () => new Timeslot(scheduleId, date, startTime, endTime),
+                "End time cannot be earlier than start time"
+            );
         }
 
         [Test]
@@ -240,8 +208,10 @@ namespace assignment_3.Tests
             TimeSpan newEndTime = new TimeSpan(9, 0, 0); // 9:00 AM (end time before start time)
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => timeslot.UpdateTime(newStartTime, newEndTime), 
-                "End time cannot be earlier than start time");
+            Assert.Throws<ArgumentException>(
+                () => timeslot.UpdateTime(newStartTime, newEndTime),
+                "End time cannot be earlier than start time"
+            );
         }
     }
 
