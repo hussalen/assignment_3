@@ -65,17 +65,6 @@ namespace assignment_3.Tests
             Assert.AreEqual(initialDate, exam.ExamDate);
         }
 
-        /* to be fixed
-
-        [Test]
-        public void CorrectFormat()
-        {
-            var exam = new Exam();
-            exam.ScheduleExam("2024-10-24");
-            Assert.AreEqual(new DateTime(2024, 10, 24), exam.ExamDate);
-        }
-        */
-
         [Test]
         public void NullInput()
         {
