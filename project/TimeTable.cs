@@ -17,6 +17,9 @@ namespace assignment_3
     public class TimeTable
     {
         public int TimeTableId { get; private set; }
+
+        public string dayOfWeek { get; }
+
         static int nextId;
         private Day DayOfWeek { get; set; }
 
