@@ -5,6 +5,100 @@ using NUnit.Framework;
 namespace assignment_3.Tests
 {
     [TestFixture]
+    public class AssignmentTests
+    {
+        [Test]
+        public void IndividualProject_Creation_ShouldInitializeCorrectly()
+        {
+            // Arrange
+            string topic = "Math Project";
+            DateTime dueDate = new DateTime(2024, 12, 25);
+
+            // Act
+            var individualProject = new IndividualProject(topic, dueDate);
+
+            // Assert
+            Assert.AreEqual(1, individualProject.AssignmentID);
+            Assert.AreEqual(topic, individualProject.topic);
+            Assert.AreEqual(dueDate, individualProject.dueDate);
+            Assert.IsNull(individualProject.submissionDate);
+        }
+
+        [Test]
+        public void GroupProject_Creation_ShouldInitializeCorrectly()
+        {
+            // Arrange
+            string topic = "Science Project";
+            DateTime dueDate = new DateTime(2024, 11, 15);
+            int noOfPeople = 3;
+            string documentation = "Group project documentation";
+            Student[] roles = new Student[3];
+
+            // Act
+            var groupProject = new GroupProject(topic, dueDate, noOfPeople, documentation, roles);
+
+            // Assert
+            Assert.AreEqual(1, groupProject.AssignmentID);
+            Assert.AreEqual(topic, groupProject.topic);
+            Assert.AreEqual(dueDate, groupProject.dueDate);
+            Assert.AreEqual(noOfPeople, groupProject.noOfPeople);
+            Assert.AreEqual(documentation, groupProject.documentation);
+            Assert.AreEqual(roles, groupProject.roles);
+            Assert.IsNull(groupProject.submissionDate);
+        }
+
+        [Test]
+        public void PastDateTryOfScheduling()
+        {
+            var exam = new Exam();
+            DateTime pastDate = DateTime.Now.AddDays(-1);
+
+            Assert.Throws<ArgumentException>(() => exam.ScheduleExam(pastDate));
+        }
+
+        [Test]
+        public void TryOfSchedulingOnTheTakenDate()
+        {
+            var exam = new Exam();
+            var initialDate = DateTime.Now.AddDays(1);
+            exam.ScheduleExam(initialDate);
+            Assert.AreEqual(initialDate, exam.ExamDate);
+        }
+
+        [Test]
+        public void NullInput()
+        {
+            var exam = new Exam();
+            Assert.Throws<FormatException>(() => exam.ScheduleExam(null));
+        }
+        // Report class tests
+        [Test]
+        public void Report_Creation_ShouldInitializeCorrectly()
+        {
+            // Act
+            var report = new Report();
+
+            // Assert
+            Assert.IsNotNull(report);
+            Assert.AreEqual(1, report.ReportId);
+            Assert.IsNull(report.content);
+        }
+
+        [Test]
+        public void Report_Content_SetAndGet_ShouldWorkCorrectly()
+        {
+            // Arrange
+            var report = new Report();
+            JsonArray content = new JsonArray();
+            content.Add("Test content");
+
+            // Act
+            report.content = content;
+
+            // Assert
+            Assert.IsNotNull(report.content);
+            Assert.AreEqual("Test content", report.content[0].ToString());
+
     public class ExamTests
     {
         [Test]
@@ -57,6 +151,97 @@ namespace assignment_3.Tests
             DateTime sameDate = DateTime.Now.AddDays(2);
             exam.ScheduleExam(sameDate);
             Assert.AreEqual(sameDate, exam.ExamDate);
+        }
+    }
+
+
+        [TestFixture]
+    public class TimeslotTests
+    {
+        [Test]
+        public void Timeslot_Creation_ShouldInitializeCorrectly()
+        {
+            // Arrange
+            int scheduleId = 1;
+            DateTime date = DateTime.Now.AddDays(1);
+            TimeSpan startTime = new TimeSpan(10, 0, 0); // 10:00 AM
+            TimeSpan endTime = new TimeSpan(12, 0, 0); // 12:00 PM
+
+            // Act
+            var timeslot = new Timeslot(scheduleId, date, startTime, endTime);
+
+            // Assert
+            Assert.AreEqual(scheduleId, timeslot.ScheduleId);
+            Assert.AreEqual(date, timeslot.Date);
+            Assert.AreEqual(startTime, timeslot.StartTime);
+            Assert.AreEqual(endTime, timeslot.EndTime);
+        }
+
+        [Test]
+        public void Timeslot_Creation_WithInvalidScheduleId_ShouldThrowException()
+        {
+            // Arrange
+            int invalidScheduleId = -1;
+            DateTime date = DateTime.Now.AddDays(1);
+            TimeSpan startTime = new TimeSpan(10, 0, 0); // 10:00 AM
+            TimeSpan endTime = new TimeSpan(12, 0, 0); // 12:00 PM
+
+            // Act & Assert
+            Assert.Throws<ArgumentException>(() => new Timeslot(invalidScheduleId, date, startTime, endTime), 
+                "Schedule ID cannot be empty");
+        }
+
+        [Test]
+        public void Timeslot_Creation_WithEndTimeBeforeStartTime_ShouldThrowException()
+        {
+            // Arrange
+            int scheduleId = 1;
+            DateTime date = DateTime.Now.AddDays(1);
+            TimeSpan startTime = new TimeSpan(14, 0, 0); // 2:00 PM
+            TimeSpan endTime = new TimeSpan(12, 0, 0); // 12:00 PM (end time before start time)
+
+            // Act & Assert
+            Assert.Throws<ArgumentException>(() => new Timeslot(scheduleId, date, startTime, endTime), 
+                "End time cannot be earlier than start time");
+        }
+
+        [Test]
+        public void Timeslot_UpdateTime_ShouldUpdateStartTimeAndEndTimeCorrectly()
+        {
+            // Arrange
+            int scheduleId = 1;
+            DateTime date = DateTime.Now.AddDays(1);
+            TimeSpan startTime = new TimeSpan(10, 0, 0); // 10:00 AM
+            TimeSpan endTime = new TimeSpan(12, 0, 0); // 12:00 PM
+            var timeslot = new Timeslot(scheduleId, date, startTime, endTime);
+
+            TimeSpan newStartTime = new TimeSpan(11, 0, 0); // 11:00 AM
+            TimeSpan newEndTime = new TimeSpan(13, 0, 0); // 1:00 PM
+
+            // Act
+            timeslot.UpdateTime(newStartTime, newEndTime);
+
+            // Assert
+            Assert.AreEqual(newStartTime, timeslot.StartTime);
+            Assert.AreEqual(newEndTime, timeslot.EndTime);
+        }
+
+        [Test]
+        public void Timeslot_UpdateTime_WithInvalidEndTime_ShouldThrowException()
+        {
+            // Arrange
+            int scheduleId = 1;
+            DateTime date = DateTime.Now.AddDays(1);
+            TimeSpan startTime = new TimeSpan(10, 0, 0); // 10:00 AM
+            TimeSpan endTime = new TimeSpan(12, 0, 0); // 12:00 PM
+            var timeslot = new Timeslot(scheduleId, date, startTime, endTime);
+
+            TimeSpan newStartTime = new TimeSpan(11, 0, 0); // 11:00 AM
+            TimeSpan newEndTime = new TimeSpan(9, 0, 0); // 9:00 AM (end time before start time)
+
+            // Act & Assert
+            Assert.Throws<ArgumentException>(() => timeslot.UpdateTime(newStartTime, newEndTime), 
+                "End time cannot be earlier than start time");
         }
     }
 
