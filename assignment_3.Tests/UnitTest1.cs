@@ -154,48 +154,93 @@ namespace assignment_3.Tests
         }
     }
 
-    [TestFixture]
-    public class TimeTableTests
+        [TestFixture]
+    public class TimeslotTests
     {
         [Test]
-        public void TimeTable_Creation_ShouldInitializeWithUniqueID()
+        public void Timeslot_Creation_ShouldInitializeCorrectly()
         {
-            var mondayTimeTable = new TimeTable("Monday");
-            var tuesdayTimeTable = new TimeTable("Tuesday");
-            Assert.AreNotEqual(mondayTimeTable.TimeTableId, tuesdayTimeTable.TimeTableId);
-            Assert.IsTrue(mondayTimeTable.TimeTableId > 0);
-            Assert.IsTrue(tuesdayTimeTable.TimeTableId > mondayTimeTable.TimeTableId);
+            // Arrange
+            int scheduleId = 1;
+            DateTime date = DateTime.Now.AddDays(1);
+            TimeSpan startTime = new TimeSpan(10, 0, 0); // 10:00 AM
+            TimeSpan endTime = new TimeSpan(12, 0, 0); // 12:00 PM
+
+            // Act
+            var timeslot = new Timeslot(scheduleId, date, startTime, endTime);
+
+            // Assert
+            Assert.AreEqual(scheduleId, timeslot.ScheduleId);
+            Assert.AreEqual(date, timeslot.Date);
+            Assert.AreEqual(startTime, timeslot.StartTime);
+            Assert.AreEqual(endTime, timeslot.EndTime);
         }
 
         [Test]
-        public void TimeTable_Creation_ShouldSetDayOfWeekCorrectly()
+        public void Timeslot_Creation_WithInvalidScheduleId_ShouldThrowException()
         {
-            string dayOfWeek = "Wednesday";
-            var timeTable = new TimeTable(dayOfWeek);
-            Assert.AreEqual(dayOfWeek, timeTable.dayOfWeek);
+            // Arrange
+            int invalidScheduleId = -1;
+            DateTime date = DateTime.Now.AddDays(1);
+            TimeSpan startTime = new TimeSpan(10, 0, 0); // 10:00 AM
+            TimeSpan endTime = new TimeSpan(12, 0, 0); // 12:00 PM
+
+            // Act & Assert
+            Assert.Throws<ArgumentException>(() => new Timeslot(invalidScheduleId, date, startTime, endTime), 
+                "Schedule ID cannot be empty");
         }
 
         [Test]
-        public void UpdateTimeTable_ShouldNotThrowError()
+        public void Timeslot_Creation_WithEndTimeBeforeStartTime_ShouldThrowException()
         {
-            var timeTable = new TimeTable("Friday");
-            Assert.DoesNotThrow(() => timeTable.UpdateTimeTable());
+            // Arrange
+            int scheduleId = 1;
+            DateTime date = DateTime.Now.AddDays(1);
+            TimeSpan startTime = new TimeSpan(14, 0, 0); // 2:00 PM
+            TimeSpan endTime = new TimeSpan(12, 0, 0); // 12:00 PM (end time before start time)
+
+            // Act & Assert
+            Assert.Throws<ArgumentException>(() => new Timeslot(scheduleId, date, startTime, endTime), 
+                "End time cannot be earlier than start time");
         }
 
         [Test]
-        public void MultipleTimeTables_ShouldHaveUniqueTimeTableIds()
+        public void Timeslot_UpdateTime_ShouldUpdateStartTimeAndEndTimeCorrectly()
         {
-            List<TimeTable> timeTables = new List<TimeTable>();
-            for (int i = 0; i < 5; i++)
-            {
-                timeTables.Add(new TimeTable($"Day {i + 1}"));
-            }
+            // Arrange
+            int scheduleId = 1;
+            DateTime date = DateTime.Now.AddDays(1);
+            TimeSpan startTime = new TimeSpan(10, 0, 0); // 10:00 AM
+            TimeSpan endTime = new TimeSpan(12, 0, 0); // 12:00 PM
+            var timeslot = new Timeslot(scheduleId, date, startTime, endTime);
 
-            var timeTableIds = new HashSet<int>();
-            foreach (var timeTable in timeTables)
-            {
-                Assert.IsTrue(timeTableIds.Add(timeTable.TimeTableId));
-            }
+            TimeSpan newStartTime = new TimeSpan(11, 0, 0); // 11:00 AM
+            TimeSpan newEndTime = new TimeSpan(13, 0, 0); // 1:00 PM
+
+            // Act
+            timeslot.UpdateTime(newStartTime, newEndTime);
+
+            // Assert
+            Assert.AreEqual(newStartTime, timeslot.StartTime);
+            Assert.AreEqual(newEndTime, timeslot.EndTime);
+        }
+
+        [Test]
+        public void Timeslot_UpdateTime_WithInvalidEndTime_ShouldThrowException()
+        {
+            // Arrange
+            int scheduleId = 1;
+            DateTime date = DateTime.Now.AddDays(1);
+            TimeSpan startTime = new TimeSpan(10, 0, 0); // 10:00 AM
+            TimeSpan endTime = new TimeSpan(12, 0, 0); // 12:00 PM
+            var timeslot = new Timeslot(scheduleId, date, startTime, endTime);
+
+            TimeSpan newStartTime = new TimeSpan(11, 0, 0); // 11:00 AM
+            TimeSpan newEndTime = new TimeSpan(9, 0, 0); // 9:00 AM (end time before start time)
+
+            // Act & Assert
+            Assert.Throws<ArgumentException>(() => timeslot.UpdateTime(newStartTime, newEndTime), 
+                "End time cannot be earlier than start time");
         }
     }
     [TestFixture]
