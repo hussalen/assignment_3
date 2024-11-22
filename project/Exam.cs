@@ -20,5 +20,19 @@ public class Exam
         if (date < DateTime.Now)
             throw new ArgumentException("Exam date cannot be in the past.");
         ExamDate = date;
+        addExam(this);
+    }
+
+    private static List<Exam> _exam_List = new();
+
+    public static List<Exam> GetExamExtent() => new List<Exam>(_exam_List);
+
+    private static void addExam(Exam exam)
+    {
+        if (exam is null)
+        {
+            throw new ArgumentException($"{nameof(exam)} cannot be null.");
+        }
+        _exam_List.Add(exam);
     }
 }

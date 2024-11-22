@@ -10,15 +10,18 @@ namespace assignment_3
     public class Grade
     {
         public int GradeId { get; private set; }
+
+        private uint _gradeValue;
         public uint GradeValue
         {
-            get => GradeValue;
+            get => _gradeValue;
             init
             {
                 if (value is > 5)
                 {
                     throw new ArgumentOutOfRangeException($"Invalid grade value: {value}");
                 }
+                _gradeValue = value;
             }
         }
 
@@ -28,10 +31,24 @@ namespace assignment_3
         {
             GradeId = Interlocked.Increment(ref nextId);
             this.GradeValue = GradeValue;
+            addGrade(this);
         }
 
         public void GenerateBasicGrades() { }
 
         public void UpdateGrade() { }
+
+        private static List<Grade> _grade_List = new();
+
+        private static void addGrade(Grade grade)
+        {
+            if (grade is null)
+            {
+                throw new ArgumentException($"{nameof(grade)} cannot be null.");
+            }
+            _grade_List.Add(grade);
+        }
+
+        public static List<Grade> GetGradeExtent() => new List<Grade>(_grade_List);
     }
 }

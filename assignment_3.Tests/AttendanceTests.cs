@@ -28,7 +28,7 @@ namespace assignment_3.Tests
         {
             var attendance = new Attendance();
             Assert.That(
-                attendance.isPresent,
+                attendance.IsPresent,
                 Is.False,
                 "New attendance should be marked as absent by default."
             );

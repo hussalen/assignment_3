@@ -12,18 +12,33 @@ namespace assignment_3
 
         int Assignment.AssignmentID => throw new NotImplementedException();
 
-        public string topic { get; set; }
-        public DateTime dueDate { get; set; }
-        public DateTime? submissionDate { get; set; }
+        public string Topic { get; set; }
+        public DateTime DueDate { get; set; }
+        public DateTime? SubmissionDate { get; set; }
         public string description;
         public List<string> notes;
 
         public IndividualProject(string topic, DateTime dueDate)
         {
             AssignmentID = nextId++;
-            this.topic = topic;
-            this.dueDate = dueDate;
-            submissionDate = null;
+            this.Topic = topic;
+            this.DueDate = dueDate;
+            SubmissionDate = null;
+            addIndividualProject(this);
         }
+
+        private static List<IndividualProject> _individualProject_List = new();
+
+        private static void addIndividualProject(IndividualProject individualProject)
+        {
+            if (individualProject is null)
+            {
+                throw new ArgumentException($"{nameof(individualProject)} cannot be null.");
+            }
+            _individualProject_List.Add(individualProject);
+        }
+
+        public static List<IndividualProject> GetIndividualProjectExtent() =>
+            new List<IndividualProject>(_individualProject_List);
     }
 }

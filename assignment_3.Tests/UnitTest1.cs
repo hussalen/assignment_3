@@ -20,9 +20,9 @@ namespace assignment_3.Tests
 
             // Assert
             Assert.AreEqual(1, individualProject.AssignmentID);
-            Assert.AreEqual(topic, individualProject.topic);
-            Assert.AreEqual(dueDate, individualProject.dueDate);
-            Assert.IsNull(individualProject.submissionDate);
+            Assert.AreEqual(topic, individualProject.Topic);
+            Assert.AreEqual(dueDate, individualProject.DueDate);
+            Assert.IsNull(individualProject.SubmissionDate);
         }
 
         [Test]
@@ -40,12 +40,12 @@ namespace assignment_3.Tests
 
             // Assert
             Assert.AreEqual(1, groupProject.AssignmentID);
-            Assert.AreEqual(topic, groupProject.topic);
-            Assert.AreEqual(dueDate, groupProject.dueDate);
+            Assert.AreEqual(topic, groupProject.Topic);
+            Assert.AreEqual(dueDate, groupProject.DueDate);
             Assert.AreEqual(noOfPeople, groupProject.noOfPeople);
             Assert.AreEqual(documentation, groupProject.documentation);
             Assert.AreEqual(roles, groupProject.roles);
-            Assert.IsNull(groupProject.submissionDate);
+            Assert.IsNull(groupProject.SubmissionDate);
         }
 
         [Test]
@@ -75,11 +75,11 @@ namespace assignment_3.Tests
             content.Add("Test content");
 
             // Act
-            report.content = content;
+            report.Content = content;
 
             // Assert
-            Assert.IsNotNull(report.content);
-            Assert.AreEqual("Test content", report.content[0].ToString());
+            Assert.IsNotNull(report.Content);
+            Assert.AreEqual("Test content", report.Content[0].ToString());
         }
     }
 
