@@ -35,6 +35,7 @@ namespace assignment_3
             this.roles = roles;
             SubmissionDate = null;
             addGroupProject(this);
+            SaveManager.SaveToJson(_groupProject_List, nameof(_groupProject_List));
         }
 
         private static List<GroupProject> _groupProject_List = new();

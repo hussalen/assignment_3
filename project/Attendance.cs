@@ -17,6 +17,7 @@ namespace assignment_3
             AttendanceID = Interlocked.Increment(ref nextId);
             this.IsPresent = isPresent;
             addAttendance(this);
+            SaveManager.SaveToJson(_attendance_List, nameof(_attendance_List));
         }
 
         public static List<Attendance> GetAttendanceExtent() =>

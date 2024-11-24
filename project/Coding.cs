@@ -21,6 +21,7 @@ namespace assignment_3
             this.language = language;
             this.repositoryUrl = repositoryUrl;
             addCoding(this);
+            SaveManager.SaveToJson(_coding_List, nameof(_coding_List));
         }
 
         private static List<Coding> _coding_List = new();

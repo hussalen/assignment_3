@@ -24,6 +24,7 @@ namespace assignment_3
             this.Name = ValidName(name);
             this.Email = ValidEmail(email);
             addParent(this);
+            SaveManager.SaveToJson(_parent_List, nameof(_parent_List));
         }
 
         private static List<Parent> _parent_List = new();

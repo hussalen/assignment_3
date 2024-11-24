@@ -17,6 +17,7 @@ namespace assignment_3
         {
             ReportId = Interlocked.Increment(ref nextId);
             addReport(this);
+            SaveManager.SaveToJson(_report_List, nameof(_report_List));
         }
 
         public void GenerateReport() { }

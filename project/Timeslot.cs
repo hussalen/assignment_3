@@ -18,6 +18,7 @@ public class Timeslot
         this.EndTime = EndTime;
 
         addTimeslot(this);
+        SaveManager.SaveToJson(_timeslot_List, nameof(_timeslot_List));
     }
 
     private static List<Timeslot> _timeslot_List = new();

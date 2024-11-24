@@ -49,6 +49,7 @@ namespace assignment_3
             this.MinWordCount = minWordCount;
             this.MaxWordCount = maxWordCount;
             addEssay(this);
+            SaveManager.SaveToJson(_essay_List, nameof(_essay_List));
         }
 
         private uint ValidateEssayWordCount(uint minWC, uint maxWC, uint returnValue)

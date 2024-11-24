@@ -26,6 +26,7 @@ namespace assignment_3
             ClassLevel = classLevel;
             this.GPA = GPA;
             addStudent(this);
+            SaveManager.SaveToJson(_student_List, nameof(_student_List));
         }
 
         private static List<Student> _student_List = new();

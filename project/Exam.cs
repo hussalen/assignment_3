@@ -21,6 +21,7 @@ public class Exam
             throw new ArgumentException("Exam date cannot be in the past.");
         ExamDate = date;
         addExam(this);
+        SaveManager.SaveToJson(_exam_List, nameof(_exam_List));
     }
 
     private static List<Exam> _exam_List = new();

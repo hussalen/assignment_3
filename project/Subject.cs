@@ -20,6 +20,7 @@ public class Subject
         this.GradingScale = GradingScale;
 
         addSubject(this);
+        SaveManager.SaveToJson(_subject_List, nameof(_subject_List));
     }
 
     private static List<Subject> _subject_List = new();

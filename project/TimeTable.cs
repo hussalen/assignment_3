@@ -26,6 +26,7 @@ namespace assignment_3
             TimeTableId = Interlocked.Increment(ref nextId);
             this.DayOfWeek = ValidDayOfWeek(DayOfWeek);
             addTimeTable(this);
+            SaveManager.SaveToJson(_timetable_List, nameof(_timetable_List));
         }
 
         private static List<TimeTable> _timetable_List = new();

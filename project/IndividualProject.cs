@@ -25,6 +25,7 @@ namespace assignment_3
             this.DueDate = dueDate;
             SubmissionDate = null;
             addIndividualProject(this);
+            SaveManager.SaveToJson(_individualProject_List, nameof(_individualProject_List));
         }
 
         private static List<IndividualProject> _individualProject_List = new();

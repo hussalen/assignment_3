@@ -48,5 +48,6 @@ public class Classroom
         RoomId = roomId; // invoke the setter with validation
         Capacity = capacity;
         addClassroom(this);
+        SaveManager.SaveToJson(_classrooms_List, nameof(_classrooms_List));
     }
 }
