@@ -10,8 +10,9 @@ namespace assignment_3
     {
         public int AssignmentID { get; }
         public static int nextId;
-        public string topic { get; set; }
-        public DateTime dueDate { get; set; }
-        public DateTime? submissionDate { get; set; }
+        public string Topic { get; set; }
+
+        public DateTime DueDate { get; set; }
+        public DateTime? SubmissionDate { get; set; }
     }
 }

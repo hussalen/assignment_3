@@ -8,22 +8,36 @@ namespace assignment_3
     {
         private const int MAX_NAME_LENGTH = 50;
         public int ParentID { get; private set; }
-        private string name;
+        private string _name;
         public string Name
         {
-            get { return name; }
-            set { name = ValidName(value); }
+            get { return _name; }
+            set { _name = ValidName(value); }
         }
-        public MailAddress email { get; set; }
+        public MailAddress Email { get; set; }
 
         static int nextId;
 
         public Parent(string name, string email)
         {
             ParentID = Interlocked.Increment(ref nextId);
-            this.name = ValidName(name);
-            this.email = ValidEmail(email);
+            this.Name = ValidName(name);
+            this.Email = ValidEmail(email);
+            addParent(this);
         }
+
+        private static List<Parent> _parent_List = new();
+
+        private static void addParent(Parent parent)
+        {
+            if (parent is null)
+            {
+                throw new ArgumentException($"{nameof(parent)} cannot be null.");
+            }
+            _parent_List.Add(parent);
+        }
+
+        public static List<Parent> GetParentExtent() => new List<Parent>(_parent_List);
 
         public void ViewStudentAttendance() { }
 

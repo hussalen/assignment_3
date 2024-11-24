@@ -11,9 +11,9 @@ namespace assignment_3
         public static int nextId = 1;
 
         int Assignment.AssignmentID => throw new NotImplementedException();
-        public string topic { get; set; }
-        public DateTime dueDate { get; set; }
-        public DateTime? submissionDate { get; set; }
+        public string Topic { get; set; }
+        public DateTime DueDate { get; set; }
+        public DateTime? SubmissionDate { get; set; }
 
         public int noOfPeople;
         public string documentation;
@@ -28,12 +28,27 @@ namespace assignment_3
         )
         {
             AssignmentID = nextId++;
-            this.topic = topic;
-            this.dueDate = dueDate;
+            this.Topic = topic;
+            this.DueDate = dueDate;
             this.noOfPeople = noOfPeople;
             this.documentation = documentation;
             this.roles = roles;
-            submissionDate = null;
+            SubmissionDate = null;
+            addGroupProject(this);
         }
+
+        private static List<GroupProject> _groupProject_List = new();
+
+        private static void addGroupProject(GroupProject groupProject)
+        {
+            if (groupProject is null)
+            {
+                throw new ArgumentException($"{nameof(groupProject)} cannot be null.");
+            }
+            _groupProject_List.Add(groupProject);
+        }
+
+        public static List<GroupProject> GetGroupProjectExtent() =>
+            new List<GroupProject>(_groupProject_List);
     }
 }

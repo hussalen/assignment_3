@@ -9,34 +9,46 @@ namespace assignment_3
     public class Essay : Assignment
     {
         public int AssignmentID => throw new NotImplementedException();
-        public string topic { get; set; }
-        public DateTime dueDate { get; set; }
-        public DateTime? submissionDate { get; set; }
+        public string Topic { get; set; }
+        public DateTime DueDate { get; set; }
+        public DateTime? SubmissionDate { get; set; }
 
         public int wordCount { get; private set; }
-        public uint minWordCount
+
+        private uint _minWordCount;
+        public uint MinWordCount
         {
-            get => minWordCount;
-            init
-            {
-                minWordCount = ValidateEssayWordCount(value, maxWordCount, value);
-                ;
-            }
+            get => _minWordCount;
+            init { _minWordCount = ValidateEssayWordCount(value, MaxWordCount, value); }
         }
-        public uint maxWordCount
+        private uint _maxWordCount;
+        public uint MaxWordCount
         {
-            get => maxWordCount;
-            private set
+            get => _maxWordCount;
+            private set { _maxWordCount = ValidateEssayWordCount(MinWordCount, value, value); }
+        }
+
+        private static List<Essay> _essay_List = new();
+
+        public static List<Essay> GetEssayExtent() => new List<Essay>(_essay_List);
+
+        private static void addEssay(Essay essay)
+        {
+            if (essay != null)
             {
-                maxWordCount = ValidateEssayWordCount(minWordCount, value, value);
-                ;
+                _essay_List.Add(essay);
+            }
+            else
+            {
+                throw new ArgumentException($"{nameof(essay)} cannot be null.");
             }
         }
 
         public Essay(uint minWordCount, uint maxWordCount)
         {
-            this.minWordCount = minWordCount;
-            this.maxWordCount = maxWordCount;
+            this.MinWordCount = minWordCount;
+            this.MaxWordCount = maxWordCount;
+            addEssay(this);
         }
 
         private uint ValidateEssayWordCount(uint minWC, uint maxWC, uint returnValue)

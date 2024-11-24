@@ -25,7 +25,21 @@ namespace assignment_3
             StudentID = Interlocked.Increment(ref nextId);
             ClassLevel = classLevel;
             this.GPA = GPA;
+            addStudent(this);
         }
+
+        private static List<Student> _student_List = new();
+
+        private static void addStudent(Student student)
+        {
+            if (student is null)
+            {
+                throw new ArgumentException($"{nameof(student)} cannot be null.");
+            }
+            _student_List.Add(student);
+        }
+
+        public static List<Student> GetStudentExtent() => new List<Student>(_student_List);
 
         private float _gpa;
 

@@ -25,7 +25,21 @@ namespace assignment_3
         {
             TimeTableId = Interlocked.Increment(ref nextId);
             this.DayOfWeek = ValidDayOfWeek(DayOfWeek);
+            addTimeTable(this);
         }
+
+        private static List<TimeTable> _timetable_List = new();
+
+        private static void addTimeTable(TimeTable timetable)
+        {
+            if (timetable is null)
+            {
+                throw new ArgumentException($"{nameof(timetable)} cannot be null.");
+            }
+            _timetable_List.Add(timetable);
+        }
+
+        public static List<TimeTable> GetTimeTableExtent() => new List<TimeTable>(_timetable_List);
 
         public Day ValidDayOfWeek(Day dayOfWeek)
         {
