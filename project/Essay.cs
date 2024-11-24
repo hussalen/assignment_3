@@ -9,54 +9,93 @@ namespace assignment_3
     public class Essay : Assignment
     {
         public int AssignmentID => throw new NotImplementedException();
-        public string Topic { get; set; }
-        public DateTime DueDate { get; set; }
+
+        private string _topic;
+        public string Topic
+        {
+            get => _topic;
+            set =>
+                _topic =
+                    !string.IsNullOrWhiteSpace(value) && value.Length is >= 3 and <= 100
+                        ? value
+                        : throw new ArgumentException(
+                            "Topic must be between 3 and 100 characters and cannot be empty."
+                        );
+        }
+
+        private DateTime _dueDate;
+        public DateTime DueDate
+        {
+            get => _dueDate;
+            set =>
+                _dueDate =
+                    value >= DateTime.Now
+                        ? value
+                        : throw new ArgumentException("DueDate must be in the future.");
+        }
+
         public DateTime? SubmissionDate { get; set; }
 
-        public int wordCount { get; private set; }
+        public int WordCount { get; private set; }
 
         private uint _minWordCount;
         public uint MinWordCount
         {
             get => _minWordCount;
-            init { _minWordCount = ValidateEssayWordCount(value, MaxWordCount, value); }
+            init => _minWordCount = ValidateEssayWordCount(value, _maxWordCount);
         }
+
         private uint _maxWordCount;
         public uint MaxWordCount
         {
             get => _maxWordCount;
-            private set { _maxWordCount = ValidateEssayWordCount(MinWordCount, value, value); }
+            init => _maxWordCount = ValidateEssayWordCount(_minWordCount, value);
         }
 
-        private static List<Essay> _essay_List = new();
+        private static readonly List<Essay> _essayList = new();
 
-        public static List<Essay> GetEssayExtent() => new List<Essay>(_essay_List);
-
-        private static void addEssay(Essay essay)
+        public Essay(string topic, DateTime dueDate, uint minWordCount, uint maxWordCount)
         {
-            if (essay != null)
-            {
-                _essay_List.Add(essay);
-            }
-            else
+            Topic = topic; // Validate Topic
+            DueDate = dueDate; // Validate DueDate
+            MinWordCount = minWordCount; // Validate and set MinWordCount
+            MaxWordCount = maxWordCount; // Validate and set MaxWordCount
+            AddEssay(this);
+        }
+
+        private static void AddEssay(Essay essay)
+        {
+            if (essay == null)
             {
                 throw new ArgumentException($"{nameof(essay)} cannot be null.");
             }
+            _essayList.Add(essay);
         }
 
-        public Essay(uint minWordCount, uint maxWordCount)
+        public static List<Essay> GetEssayExtent() => new(_essayList);
+
+        private static uint ValidateEssayWordCount(uint minWordCount, uint maxWordCount)
         {
-            this.MinWordCount = minWordCount;
-            this.MaxWordCount = maxWordCount;
-            addEssay(this);
-            SaveManager.SaveToJson(_essay_List, nameof(_essay_List));
+            if (minWordCount > maxWordCount)
+            {
+                throw new ValidationException(
+                    "Minimum word count cannot be greater than the maximum word count."
+                );
+            }
+            return maxWordCount;
         }
 
-        private uint ValidateEssayWordCount(uint minWC, uint maxWC, uint returnValue)
+        public void SubmitEssay(int wordCount)
         {
-            if (minWC > maxWC)
-                throw new ValidationException("Minimum word count is greater than max word count.");
-            return returnValue;
+            if (wordCount < MinWordCount || wordCount > MaxWordCount)
+            {
+                throw new ValidationException(
+                    $"Word count must be between {MinWordCount} and {MaxWordCount}."
+                );
+            }
+            WordCount = wordCount;
+            SubmissionDate = DateTime.Now;
+            Console.WriteLine($"Essay submitted successfully with {wordCount} words.");
         }
     }
 }

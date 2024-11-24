@@ -12,34 +12,67 @@ namespace assignment_3
 
         int Assignment.AssignmentID => throw new NotImplementedException();
 
-        public string Topic { get; set; }
-        public DateTime DueDate { get; set; }
-        public DateTime? SubmissionDate { get; set; }
+        private string _topic;
+        public string Topic
+        {
+            get => _topic;
+            set =>
+                _topic =
+                    !string.IsNullOrWhiteSpace(value) && value.Length is >= 3 and <= 100
+                        ? value
+                        : throw new ArgumentException(
+                            "Topic must be between 3 and 100 characters and cannot be empty."
+                        );
+        }
+
+        private DateTime _dueDate;
+        public DateTime DueDate
+        {
+            get => _dueDate;
+            set =>
+                _dueDate =
+                    value >= DateTime.Now
+                        ? value
+                        : throw new ArgumentException("DueDate must be in the future.");
+        }
+
+        private DateTime? _submissionDate;
+        public DateTime? SubmissionDate
+        {
+            get => _submissionDate;
+            set =>
+                _submissionDate =
+                    value == null || value <= DueDate
+                        ? value
+                        : throw new ArgumentException(
+                            "SubmissionDate cannot be after the DueDate."
+                        );
+        }
+
         public string description;
         public List<string> notes;
 
         public IndividualProject(string topic, DateTime dueDate)
         {
             AssignmentID = nextId++;
-            this.Topic = topic;
-            this.DueDate = dueDate;
+            Topic = topic;
+            DueDate = dueDate;
             SubmissionDate = null;
-            addIndividualProject(this);
+            AddIndividualProject(this);
             SaveManager.SaveToJson(_individualProject_List, nameof(_individualProject_List));
         }
 
-        private static List<IndividualProject> _individualProject_List = new();
+        private static readonly List<IndividualProject> _individualProject_List = new();
 
-        private static void addIndividualProject(IndividualProject individualProject)
+        private static void AddIndividualProject(IndividualProject individualProject)
         {
             if (individualProject is null)
-            {
                 throw new ArgumentException($"{nameof(individualProject)} cannot be null.");
-            }
+
             _individualProject_List.Add(individualProject);
         }
 
         public static List<IndividualProject> GetIndividualProjectExtent() =>
-            new List<IndividualProject>(_individualProject_List);
+            new(_individualProject_List);
     }
 }

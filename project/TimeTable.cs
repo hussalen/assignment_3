@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace assignment_3
 {
@@ -18,37 +18,58 @@ namespace assignment_3
     {
         public int TimeTableId { get; private set; }
 
-        static int nextId;
-        public Day DayOfWeek { get; private set; }
+        private static int nextId;
 
-        public TimeTable(Day DayOfWeek)
+        private Day _dayOfWeek;
+        public Day DayOfWeek
+        {
+            get => _dayOfWeek;
+            private set => _dayOfWeek = ValidateDayOfWeek(value);
+        }
+
+        private static readonly List<TimeTable> _timetableList = new();
+
+        public TimeTable(Day dayOfWeek)
         {
             TimeTableId = Interlocked.Increment(ref nextId);
-            this.DayOfWeek = ValidDayOfWeek(DayOfWeek);
-            addTimeTable(this);
-            SaveManager.SaveToJson(_timetable_List, nameof(_timetable_List));
+            DayOfWeek = dayOfWeek; // Validates via setter
+            AddTimeTable(this);
+            SaveManager.SaveToJson(_timetableList, nameof(_timetableList));
         }
 
-        private static List<TimeTable> _timetable_List = new();
-
-        private static void addTimeTable(TimeTable timetable)
+        private static void AddTimeTable(TimeTable timetable)
         {
             if (timetable is null)
-            {
                 throw new ArgumentException($"{nameof(timetable)} cannot be null.");
-            }
-            _timetable_List.Add(timetable);
+
+            if (_timetableList.Any(t => t.DayOfWeek == timetable.DayOfWeek))
+                throw new ArgumentException(
+                    $"A timetable for {timetable.DayOfWeek} already exists."
+                );
+
+            _timetableList.Add(timetable);
         }
 
-        public static List<TimeTable> GetTimeTableExtent() => new List<TimeTable>(_timetable_List);
+        public static List<TimeTable> GetTimeTableExtent() => new(_timetableList);
 
-        public Day ValidDayOfWeek(Day dayOfWeek)
+        private Day ValidateDayOfWeek(Day dayOfWeek)
         {
             if (!Enum.IsDefined(typeof(Day), dayOfWeek))
-                throw new ArgumentOutOfRangeException($"Day {dayOfWeek} is invalid");
+                throw new ArgumentOutOfRangeException($"Day {dayOfWeek} is invalid.");
             return dayOfWeek;
         }
 
-        public void UpdateTimeTable() { }
+        public void UpdateTimeTable(Day newDayOfWeek)
+        {
+            if (!Enum.IsDefined(typeof(Day), newDayOfWeek))
+                throw new ArgumentOutOfRangeException($"Day {newDayOfWeek} is invalid.");
+
+            if (
+                _timetableList.Any(t => t.TimeTableId != TimeTableId && t.DayOfWeek == newDayOfWeek)
+            )
+                throw new ArgumentException($"A timetable for {newDayOfWeek} already exists.");
+
+            DayOfWeek = newDayOfWeek; // Validates via setter
+        }
     }
 }

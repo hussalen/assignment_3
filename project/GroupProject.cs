@@ -8,16 +8,64 @@ namespace assignment_3
     public class GroupProject : Assignment
     {
         public int AssignmentID { get; private set; }
-        public static int nextId = 1;
+        private static int nextId = 1;
 
         int Assignment.AssignmentID => throw new NotImplementedException();
-        public string Topic { get; set; }
-        public DateTime DueDate { get; set; }
+
+        private string _topic;
+        public string Topic
+        {
+            get => _topic;
+            set =>
+                _topic =
+                    !string.IsNullOrWhiteSpace(value) && value.Length is >= 3 and <= 100
+                        ? value
+                        : throw new ArgumentException(
+                            "Topic must be between 3 and 100 characters and cannot be empty."
+                        );
+        }
+
+        private DateTime _dueDate;
+        public DateTime DueDate
+        {
+            get => _dueDate;
+            set =>
+                _dueDate =
+                    value >= DateTime.Now
+                        ? value
+                        : throw new ArgumentException("DueDate must be in the future.");
+        }
+
         public DateTime? SubmissionDate { get; set; }
 
-        public int noOfPeople;
-        public string documentation;
-        public Student[] roles;
+        private int _noOfPeople;
+        public int NoOfPeople
+        {
+            get => _noOfPeople;
+            set =>
+                _noOfPeople =
+                    value > 0
+                        ? value
+                        : throw new ArgumentException("NoOfPeople must be greater than zero.");
+        }
+
+        public string Documentation { get; set; } = string.Empty;
+
+        private Student[] _roles;
+        public Student[] Roles
+        {
+            get => _roles;
+            set =>
+                _roles =
+                    value != null && value.Length == NoOfPeople
+                        ? value
+                        : throw new ArgumentException(
+                            $"Roles array must have exactly {NoOfPeople} entries."
+                        );
+        }
+
+        // Static list to track all GroupProjects
+        private static readonly List<GroupProject> _groupProjectList = new();
 
         public GroupProject(
             string topic,
@@ -28,28 +76,26 @@ namespace assignment_3
         )
         {
             AssignmentID = nextId++;
-            this.Topic = topic;
-            this.DueDate = dueDate;
-            this.noOfPeople = noOfPeople;
-            this.documentation = documentation;
-            this.roles = roles;
-            SubmissionDate = null;
-            addGroupProject(this);
-            SaveManager.SaveToJson(_groupProject_List, nameof(_groupProject_List));
+            Topic = topic; // Validate Topic
+            DueDate = dueDate; // Validate DueDate
+            NoOfPeople = noOfPeople; // Validate NoOfPeople
+            Documentation =
+                documentation ?? throw new ArgumentException("Documentation cannot be null.");
+            Roles = roles; // Validate Roles
+            SubmissionDate = null; // Optional field
+            AddGroupProject(this);
+            SaveManager.SaveToJson(_groupProjectList, nameof(_groupProjectList));
         }
 
-        private static List<GroupProject> _groupProject_List = new();
-
-        private static void addGroupProject(GroupProject groupProject)
+        private static void AddGroupProject(GroupProject groupProject)
         {
-            if (groupProject is null)
+            if (groupProject == null)
             {
                 throw new ArgumentException($"{nameof(groupProject)} cannot be null.");
             }
-            _groupProject_List.Add(groupProject);
+            _groupProjectList.Add(groupProject);
         }
 
-        public static List<GroupProject> GetGroupProjectExtent() =>
-            new List<GroupProject>(_groupProject_List);
+        public static List<GroupProject> GetGroupProjectExtent() => new(_groupProjectList);
     }
 }

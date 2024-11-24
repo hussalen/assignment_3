@@ -2,38 +2,49 @@ namespace assignment_3;
 
 public class Exam
 {
-    // Encapsulation
     public int ExamId { get; private set; }
-    static int nextId;
-    public DateTime ExamDate { get; private set; }
+    private static int nextId;
+
+    private DateTime _examDate;
+    public DateTime ExamDate
+    {
+        get => _examDate;
+        private set
+        {
+            if (value < DateTime.Now)
+                throw new ArgumentException("Exam date cannot be in the past.");
+            _examDate = value;
+        }
+    }
+
+    private static readonly List<Exam> _examList = new();
 
     public Exam(DateTime examDate)
     {
-        if (examDate < DateTime.Now)
-            throw new ArgumentException("Exam date cannot be in the past.");
         ExamId = Interlocked.Increment(ref nextId);
-        ExamDate = examDate;
+        ExamDate = examDate; // Validates via setter
+        AddExam(this);
+        SaveManager.SaveToJson(_examList, nameof(_examList));
     }
 
-    public void ScheduleExam(DateTime date)
+    public void ScheduleExam(DateTime newDate)
     {
-        if (date < DateTime.Now)
+        if (newDate < DateTime.Now)
             throw new ArgumentException("Exam date cannot be in the past.");
-        ExamDate = date;
-        addExam(this);
-        SaveManager.SaveToJson(_exam_List, nameof(_exam_List));
+
+        ExamDate = newDate; // Validates via setter
     }
 
-    private static List<Exam> _exam_List = new();
-
-    public static List<Exam> GetExamExtent() => new List<Exam>(_exam_List);
-
-    private static void addExam(Exam exam)
+    private static void AddExam(Exam exam)
     {
-        if (exam is null)
-        {
+        if (exam == null)
             throw new ArgumentException($"{nameof(exam)} cannot be null.");
-        }
-        _exam_List.Add(exam);
+
+        if (_examList.Any(e => e.ExamId == exam.ExamId))
+            throw new ArgumentException($"An exam with ID {exam.ExamId} already exists.");
+
+        _examList.Add(exam);
     }
+
+    public static List<Exam> GetExamExtent() => new(_examList);
 }

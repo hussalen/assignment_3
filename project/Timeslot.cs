@@ -3,40 +3,90 @@ namespace assignment_3;
 public class Timeslot
 {
     public int ScheduleId { get; private set; }
-    public DateTime Date { get; set; }
-    public TimeSpan StartTime { get; set; }
-    public TimeSpan EndTime { get; set; }
 
-    public Timeslot(int ScheduleId, DateTime Date, TimeSpan StartTime, TimeSpan EndTime)
+    private DateTime _date;
+    public DateTime Date
     {
-        if (ScheduleId <= 0)
-            throw new ArgumentException("Schedule ID cannot be empty");
-
-        this.ScheduleId = ScheduleId;
-        this.Date = Date;
-        this.StartTime = StartTime;
-        this.EndTime = EndTime;
-
-        addTimeslot(this);
-        SaveManager.SaveToJson(_timeslot_List, nameof(_timeslot_List));
+        get => _date;
+        set
+        {
+            if (value < DateTime.Today)
+                throw new ArgumentException("Date cannot be in the past.");
+            _date = value;
+        }
     }
 
-    private static List<Timeslot> _timeslot_List = new();
+    private TimeSpan _startTime;
+    public TimeSpan StartTime
+    {
+        get => _startTime;
+        set
+        {
+            if (value < TimeSpan.Zero || value > TimeSpan.FromHours(24))
+                throw new ArgumentException("Start time must be a valid time of the day.");
+            if (_endTime != default && value >= _endTime)
+                throw new ArgumentException("Start time must be earlier than the end time.");
+            _startTime = value;
+        }
+    }
 
-    private static void addTimeslot(Timeslot timeslot)
+    private TimeSpan _endTime;
+    public TimeSpan EndTime
+    {
+        get => _endTime;
+        set
+        {
+            if (value <= _startTime)
+                throw new ArgumentException("End time must be later than the start time.");
+            if (value > TimeSpan.FromHours(24))
+                throw new ArgumentException("End time must be within a valid time of the day.");
+            _endTime = value;
+        }
+    }
+
+    public Timeslot(int scheduleId, DateTime date, TimeSpan startTime, TimeSpan endTime)
+    {
+        if (scheduleId <= 0)
+            throw new ArgumentException("Schedule ID must be a positive number.");
+
+        ScheduleId = scheduleId;
+        Date = date; // Validates via setter
+        StartTime = startTime; // Validates via setter
+        EndTime = endTime; // Validates via setter
+
+        AddTimeslot(this);
+        SaveManager.SaveToJson(_timeslotList, nameof(_timeslotList));
+    }
+
+    private static readonly List<Timeslot> _timeslotList = new();
+
+    private static void AddTimeslot(Timeslot timeslot)
     {
         if (timeslot is null)
         {
             throw new ArgumentException($"{nameof(timeslot)} cannot be null.");
         }
-        _timeslot_List.Add(timeslot);
+
+        if (_timeslotList.Any(t => t.ScheduleId == timeslot.ScheduleId))
+        {
+            throw new ArgumentException(
+                $"A timeslot with Schedule ID {timeslot.ScheduleId} already exists."
+            );
+        }
+
+        _timeslotList.Add(timeslot);
     }
 
-    public static List<Timeslot> GetTimeslotExtent() => new List<Timeslot>(_timeslot_List);
+    public static List<Timeslot> GetTimeslotExtent() => new(_timeslotList);
 
     public void UpdateTime(TimeSpan newStartTime, TimeSpan newEndTime)
     {
-        this.StartTime = newStartTime;
-        this.EndTime = newEndTime;
+        if (newStartTime >= newEndTime)
+            throw new ArgumentException("New start time must be earlier than the new end time.");
+        if (newStartTime < TimeSpan.Zero || newEndTime > TimeSpan.FromHours(24))
+            throw new ArgumentException("Time must be within a valid range (00:00 to 24:00).");
+
+        StartTime = newStartTime; // Validates via setter
+        EndTime = newEndTime; // Validates via setter
     }
 }

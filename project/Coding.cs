@@ -9,32 +9,74 @@ namespace assignment_3
     {
         int Assignment.AssignmentID => throw new NotImplementedException();
 
-        public string Topic { get; set; }
-        public DateTime DueDate { get; set; }
-        public DateTime? SubmissionDate { get; set; }
-
-        public string language;
-        public string repositoryUrl;
-
-        public Coding(string language, string repositoryUrl)
+        private string _topic;
+        public string Topic
         {
-            this.language = language;
-            this.repositoryUrl = repositoryUrl;
-            addCoding(this);
-            SaveManager.SaveToJson(_coding_List, nameof(_coding_List));
+            get => _topic;
+            set =>
+                _topic =
+                    !string.IsNullOrWhiteSpace(value) && value.Length is >= 3 and <= 100
+                        ? value
+                        : throw new ArgumentException(
+                            "Topic must be between 3 and 100 characters and cannot be empty."
+                        );
         }
 
-        private static List<Coding> _coding_List = new();
+        private DateTime _dueDate;
+        public DateTime DueDate
+        {
+            get => _dueDate;
+            set =>
+                _dueDate =
+                    value >= DateTime.Now
+                        ? value
+                        : throw new ArgumentException("DueDate must be in the future.");
+        }
 
-        public static List<Coding> GetCodingExtent() => new List<Coding>(_coding_List);
+        public DateTime? SubmissionDate { get; set; }
 
-        private static void addCoding(Coding coding)
+        private string _language;
+        public string Language
+        {
+            get => _language;
+            set =>
+                _language = !string.IsNullOrWhiteSpace(value)
+                    ? value
+                    : throw new ArgumentException("Language cannot be null or empty.");
+        }
+
+        private string _repositoryUrl;
+        public string RepositoryUrl
+        {
+            get => _repositoryUrl;
+            set =>
+                _repositoryUrl = Uri.IsWellFormedUriString(value, UriKind.Absolute)
+                    ? value
+                    : throw new ArgumentException("RepositoryUrl must be a valid URL.");
+        }
+
+        private static readonly List<Coding> _codingList = new();
+
+        public Coding(string topic, DateTime dueDate, string language, string repositoryUrl)
+        {
+            Topic = topic; // Validate Topic
+            DueDate = dueDate; // Validate DueDate
+            Language = language; // Validate Language
+            RepositoryUrl = repositoryUrl; // Validate RepositoryUrl
+            SubmissionDate = null; // Optional
+            AddCoding(this);
+            SaveManager.SaveToJson(_codingList, nameof(_codingList));
+        }
+
+        private static void AddCoding(Coding coding)
         {
             if (coding is null)
             {
                 throw new ArgumentException($"{nameof(coding)} cannot be null.");
             }
-            _coding_List.Add(coding);
+            _codingList.Add(coding);
         }
+
+        public static List<Coding> GetCodingExtent() => new(_codingList);
     }
 }

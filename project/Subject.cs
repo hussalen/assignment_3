@@ -3,43 +3,65 @@ namespace assignment_3;
 public class Subject
 {
     public string SubjectId { get; private set; }
-    public string SubjectName { get; private set; }
-    public int GradingScale { get; private set; }
-
-    public Subject(string SubjectId, string SubjectName, int GradingScale)
+    private string _subjectName;
+    public string SubjectName
     {
-        if (string.IsNullOrEmpty(SubjectId))
-            throw new ArgumentException("Subject ID cannot be empty");
-        if (string.IsNullOrEmpty(SubjectName))
-            throw new ArgumentException("Subject name cannot be empty");
-        if (GradingScale < 1 || GradingScale > 5)
-            throw new ArgumentException("Grading scale must be between 1 and 5");
-
-        this.SubjectId = SubjectId;
-        this.SubjectName = SubjectName;
-        this.GradingScale = GradingScale;
-
-        addSubject(this);
-        SaveManager.SaveToJson(_subject_List, nameof(_subject_List));
+        get => _subjectName;
+        private set
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ArgumentException("Subject name cannot be null or empty.");
+            _subjectName = value;
+        }
     }
 
-    private static List<Subject> _subject_List = new();
+    private int _gradingScale;
+    public int GradingScale
+    {
+        get => _gradingScale;
+        private set
+        {
+            if (value < 1 || value > 5)
+                throw new ArgumentException("Grading scale must be between 1 and 5.");
+            _gradingScale = value;
+        }
+    }
 
-    private static void addSubject(Subject subject)
+    public Subject(string subjectId, string subjectName, int gradingScale)
+    {
+        if (string.IsNullOrWhiteSpace(subjectId))
+            throw new ArgumentException("Subject ID cannot be null or empty.");
+
+        SubjectId = subjectId;
+        SubjectName = subjectName; // Validates through setter
+        GradingScale = gradingScale; // Validates through setter
+        AddSubject(this);
+        SaveManager.SaveToJson(_subjectList, nameof(_subjectList));
+    }
+
+    private static readonly List<Subject> _subjectList = new();
+
+    private static void AddSubject(Subject subject)
     {
         if (subject is null)
         {
             throw new ArgumentException($"{nameof(subject)} cannot be null.");
         }
-        _subject_List.Add(subject);
+
+        if (_subjectList.Any(s => s.SubjectId == subject.SubjectId))
+        {
+            throw new ArgumentException($"A subject with ID {subject.SubjectId} already exists.");
+        }
+
+        _subjectList.Add(subject);
     }
 
-    public static List<Subject> GetSubjectExtent() => new List<Subject>(_subject_List);
+    public static List<Subject> GetSubjectExtent() => new List<Subject>(_subjectList);
 
     public void UpdateSubjectName(string newSubjectName)
     {
-        if (string.IsNullOrEmpty(newSubjectName))
-            throw new ArgumentException("Subject name cannot be empty");
+        if (string.IsNullOrWhiteSpace(newSubjectName))
+            throw new ArgumentException("Subject name cannot be null or empty.");
         SubjectName = newSubjectName;
     }
 }
