@@ -8,32 +8,45 @@ namespace assignment_3
     public class Attendance
     {
         public int AttendanceID { get; private set; }
-        public bool IsPresent { get; set; }
 
-        static int nextId;
-
-        public Attendance(bool isPresent = false)
+        private bool _isPresent;
+        public bool IsPresent
         {
-            AttendanceID = Interlocked.Increment(ref nextId);
-            this.IsPresent = isPresent;
-            addAttendance(this);
+            get => _isPresent;
+            private set => _isPresent = value; // Restrict direct external modification
         }
 
-        public static List<Attendance> GetAttendanceExtent() =>
-            new List<Attendance>(_attendance_List);
+        private static int nextId;
+        private static readonly List<Attendance> _attendanceList = new();
 
-        private static List<Attendance> _attendance_List = new();
-
-        private static void addAttendance(Attendance attendance)
+        public Attendance()
         {
-            if (attendance is null)
+            AttendanceID = Interlocked.Increment(ref nextId);
+            IsPresent = false; // Default to not present
+            AddAttendance(this);
+        }
+
+        private static void AddAttendance(Attendance attendance)
+        {
+            if (attendance == null)
             {
                 throw new ArgumentException($"{nameof(attendance)} cannot be null.");
             }
-            _attendance_List.Add(attendance);
+            _attendanceList.Add(attendance);
         }
 
-        public void MarkAttendance() { // If student is present, then mark attendance
+        public static List<Attendance> GetAttendanceExtent() => new(_attendanceList);
+
+        public void MarkAttendance(bool isPresent)
+        {
+            if (isPresent != true)
+            {
+                Console.WriteLine($"Attendance not marked for ID {AttendanceID} because the student is absent.");
+                return;
+            }
+
+            IsPresent = true;
+            Console.WriteLine($"Attendance marked as present for ID {AttendanceID}.");
         }
     }
 }

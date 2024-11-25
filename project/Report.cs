@@ -9,29 +9,50 @@ namespace assignment_3
     public class Report
     {
         public int ReportId { get; private set; }
-        public JsonArray? Content { get; set; }
+        private static int nextId;
 
-        static int nextId;
+        private JsonArray? _content;
+        public JsonArray? Content
+        {
+            get => _content;
+            set
+            {
+                if (value is not null && value.Count == 0)
+                {
+                    throw new ArgumentException("Content cannot be an empty JsonArray.");
+                }
+                _content = value;
+            }
+        }
+
+        // Static collection to keep track of all reports
+        private static readonly List<Report> _reportList = new();
 
         public Report()
         {
             ReportId = Interlocked.Increment(ref nextId);
-            addReport(this);
+            AddReport(this);
         }
 
-        public void GenerateReport() { }
+        public void GenerateReport()
+        {
+            if (Content is null)
+            {
+                throw new InvalidOperationException("Cannot generate a report without content.");
+            }
+            // Example logic for generating a report 
+            Console.WriteLine($"Report {ReportId} generated with content: {Content}");
+        }
 
-        private static List<Report> _report_List = new();
-
-        private static void addReport(Report report)
+        private static void AddReport(Report report)
         {
             if (report is null)
             {
                 throw new ArgumentException($"{nameof(report)} cannot be null.");
             }
-            _report_List.Add(report);
+            _reportList.Add(report);
         }
 
-        public static List<Report> GetReportExtent() => new List<Report>(_report_List);
+        public static List<Report> GetReportExtent() => new(_reportList);
     }
 }
