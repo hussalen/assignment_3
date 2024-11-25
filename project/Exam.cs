@@ -25,13 +25,13 @@ public class Exam
         ExamDate = examDate;
         AddExam(this);
         SaveManager.SaveToJson(_examList, nameof(_examList));
+
     }
 
     public void ScheduleExam(DateTime newDate)
     {
         if (newDate < DateTime.Now)
             throw new ArgumentException("Exam date cannot be in the past.");
-
         ExamDate = newDate;
     }
 

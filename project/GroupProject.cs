@@ -23,6 +23,7 @@ namespace assignment_3
                         : throw new ArgumentException(
                             "Topic must be between 3 and 100 characters and cannot be empty."
                         );
+
         }
 
         private DateTime _dueDate;
@@ -42,11 +43,9 @@ namespace assignment_3
         public int NoOfPeople
         {
             get => _noOfPeople;
-            set =>
-                _noOfPeople =
-                    value > 0
-                        ? value
-                        : throw new ArgumentException("NoOfPeople must be greater than zero.");
+            set => _noOfPeople = value > 0
+                ? value
+                : throw new ArgumentException("NoOfPeople must be greater than zero.");
         }
 
         public string Documentation { get; set; } = string.Empty;
@@ -55,33 +54,22 @@ namespace assignment_3
         public Student[] Roles
         {
             get => _roles;
-            set =>
-                _roles =
-                    value != null && value.Length == NoOfPeople
-                        ? value
-                        : throw new ArgumentException(
-                            $"Roles array must have exactly {NoOfPeople} entries."
-                        );
+            set => _roles = value != null && value.Length == NoOfPeople
+                ? value
+                : throw new ArgumentException($"Roles array must have exactly {NoOfPeople} entries.");
         }
 
         private static readonly List<GroupProject> _groupProjectList = new();
 
-        public GroupProject(
-            string topic,
-            DateTime dueDate,
-            int noOfPeople,
-            string documentation,
-            Student[] roles
-        )
+        public GroupProject(string topic, DateTime dueDate, int noOfPeople, string documentation, Student[] roles)
         {
             AssignmentID = nextId++;
-            Topic = topic; // Validate Topic
-            DueDate = dueDate; // Validate DueDate
-            NoOfPeople = noOfPeople; // Validate NoOfPeople
-            Documentation =
-                documentation ?? throw new ArgumentException("Documentation cannot be null.");
-            Roles = roles; // Validate Roles
-            SubmissionDate = null; // Optional field
+            Topic = topic;
+            DueDate = dueDate;
+            NoOfPeople = noOfPeople;
+            Documentation = documentation ?? throw new ArgumentException("Documentation cannot be null.");
+            Roles = roles;
+            SubmissionDate = null;
             AddGroupProject(this);
             SaveManager.SaveToJson(_groupProjectList, nameof(_groupProjectList));
         }

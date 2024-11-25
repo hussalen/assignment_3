@@ -11,9 +11,10 @@ namespace assignment_3
 
         private bool _isPresent;
         public bool IsPresent
+
         {
             get => _isPresent;
-            private set => _isPresent = value; // Restrict direct external modification
+            private set => _isPresent = value;
         }
 
         private static int nextId;
@@ -24,14 +25,8 @@ namespace assignment_3
             AttendanceID = Interlocked.Increment(ref nextId);
             IsPresent = false;
             AddAttendance(this);
-
-            AttendanceID = Interlocked.Increment(ref nextId);
-            this.IsPresent = false;
-            AddAttendance(this);
-            SaveManager.SaveToJson(_attendance_List, nameof(_attendance_List));
+            SaveManager.SaveToJson(_attendanceList, nameof(_attendanceList));
         }
-
-        private static List<Attendance> _attendance_List = new();
 
         private static void AddAttendance(Attendance attendance)
         {

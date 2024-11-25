@@ -40,7 +40,6 @@ namespace assignment_3
             {
                 throw new InvalidOperationException("Cannot generate a report without content.");
             }
-            // Example logic for generating a report
             Console.WriteLine($"Report {ReportId} generated with content: {Content}");
         }
 

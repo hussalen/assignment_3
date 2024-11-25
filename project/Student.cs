@@ -117,9 +117,7 @@ namespace assignment_3
             }
 
             assignments.Add(assignment);
-            Console.WriteLine(
-                $"Assignment submitted successfully for Student ID {StudentID}: {assignment}"
-            );
+            Console.WriteLine($"Assignment submitted successfully for Student ID {StudentID}: {assignment}");
         }
 
         public static void AddClassToSchedule(int studentId, string course)

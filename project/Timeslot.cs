@@ -53,7 +53,6 @@ public class Timeslot
         Date = date;
         StartTime = startTime;
         EndTime = endTime;
-
         AddTimeslot(this);
         SaveManager.SaveToJson(_timeslotList, nameof(_timeslotList));
     }
