@@ -45,7 +45,7 @@ public class Classroom
 
     public Classroom(int roomId, int capacity)
     {
-        RoomId = roomId; // invoke the setter with validation
+        RoomId = roomId;
         Capacity = capacity;
         addClassroom(this);
         SaveManager.SaveToJson(_classrooms_List, nameof(_classrooms_List));
