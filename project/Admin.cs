@@ -26,7 +26,7 @@ namespace assignment_3
                 throw new ArgumentException("Admin name cannot be null or empty.");
 
             AdminID = nextId++;
-            Name = name; // Validates via setter
+            Name = name; 
         }
 
         public void CreateSchedule(DateTime date, TimeSpan startTime, TimeSpan endTime)

@@ -33,8 +33,8 @@ public class Subject
             throw new ArgumentException("Subject ID cannot be null or empty.");
 
         SubjectId = subjectId;
-        SubjectName = subjectName; // Validates through setter
-        GradingScale = gradingScale; // Validates through setter
+        SubjectName = subjectName; 
+        GradingScale = gradingScale; 
         AddSubject(this);
     }
 

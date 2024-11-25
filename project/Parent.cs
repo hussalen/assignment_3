@@ -32,7 +32,7 @@ namespace assignment_3
         public Parent(string name, string email)
         {
             ParentID = Interlocked.Increment(ref nextId);
-            Name = name; // Validates via setter
+            Name = name; 
             Email = ValidateEmail(email);
             AddParent(this);
         }
@@ -75,7 +75,7 @@ namespace assignment_3
         public void ViewStudentAttendance()
         {
             Console.WriteLine($"Parent {Name} with Email {Email.Address} is viewing student attendance.");
-            // Logic for viewing student attendance goes here
+            
         }
     }
 }

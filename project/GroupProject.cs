@@ -52,18 +52,18 @@ namespace assignment_3
                 : throw new ArgumentException($"Roles array must have exactly {NoOfPeople} entries.");
         }
 
-        // Static list to track all GroupProjects
+        
         private static readonly List<GroupProject> _groupProjectList = new();
 
         public GroupProject(string topic, DateTime dueDate, int noOfPeople, string documentation, Student[] roles)
         {
             AssignmentID = nextId++;
-            Topic = topic; // Validate Topic
-            DueDate = dueDate; // Validate DueDate
-            NoOfPeople = noOfPeople; // Validate NoOfPeople
+            Topic = topic; 
+            DueDate = dueDate; 
+            NoOfPeople = noOfPeople; 
             Documentation = documentation ?? throw new ArgumentException("Documentation cannot be null.");
-            Roles = roles; // Validate Roles
-            SubmissionDate = null; // Optional field
+            Roles = roles; 
+            SubmissionDate = null; 
             AddGroupProject(this);
         }
 

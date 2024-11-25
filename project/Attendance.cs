@@ -13,7 +13,7 @@ namespace assignment_3
         public bool IsPresent
         {
             get => _isPresent;
-            private set => _isPresent = value; // Restrict direct external modification
+            private set => _isPresent = value; 
         }
 
         private static int nextId;
@@ -22,7 +22,7 @@ namespace assignment_3
         public Attendance()
         {
             AttendanceID = Interlocked.Increment(ref nextId);
-            IsPresent = false; // Default to not present
+            IsPresent = false; 
             AddAttendance(this);
         }
 
