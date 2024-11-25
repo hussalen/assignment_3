@@ -32,7 +32,7 @@ namespace assignment_3
         public Parent(string name, string email)
         {
             ParentID = Interlocked.Increment(ref nextId);
-            Name = name; // Validates via setter
+            Name = name;
             Email = ValidateEmail(email);
             AddParent(this);
             SaveManager.SaveToJson(_parentList, nameof(_parentList));

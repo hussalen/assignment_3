@@ -50,9 +50,9 @@ public class Timeslot
             throw new ArgumentException("Schedule ID must be a positive number.");
 
         ScheduleId = scheduleId;
-        Date = date; // Validates via setter
-        StartTime = startTime; // Validates via setter
-        EndTime = endTime; // Validates via setter
+        Date = date;
+        StartTime = startTime;
+        EndTime = endTime;
 
         AddTimeslot(this);
         SaveManager.SaveToJson(_timeslotList, nameof(_timeslotList));
@@ -86,7 +86,7 @@ public class Timeslot
         if (newStartTime < TimeSpan.Zero || newEndTime > TimeSpan.FromHours(24))
             throw new ArgumentException("Time must be within a valid range (00:00 to 24:00).");
 
-        StartTime = newStartTime; // Validates via setter
-        EndTime = newEndTime; // Validates via setter
+        StartTime = newStartTime;
+        EndTime = newEndTime;
     }
 }

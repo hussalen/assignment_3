@@ -32,7 +32,7 @@ namespace assignment_3
         public TimeTable(Day dayOfWeek)
         {
             TimeTableId = Interlocked.Increment(ref nextId);
-            DayOfWeek = dayOfWeek; // Validates via setter
+            DayOfWeek = dayOfWeek;
             AddTimeTable(this);
             SaveManager.SaveToJson(_timetableList, nameof(_timetableList));
         }
@@ -69,7 +69,7 @@ namespace assignment_3
             )
                 throw new ArgumentException($"A timetable for {newDayOfWeek} already exists.");
 
-            DayOfWeek = newDayOfWeek; // Validates via setter
+            DayOfWeek = newDayOfWeek;
         }
     }
 }

@@ -64,7 +64,6 @@ namespace assignment_3
                         );
         }
 
-        // Static list to track all GroupProjects
         private static readonly List<GroupProject> _groupProjectList = new();
 
         public GroupProject(

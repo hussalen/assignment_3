@@ -34,8 +34,8 @@ namespace assignment_3
 
         private static int nextId;
 
-        private static readonly Dictionary<int, List<string>> classSchedules = new(); // Stores student schedules
-        private static readonly List<string> assignments = new(); // Stores submitted assignments
+        private static readonly Dictionary<int, List<string>> classSchedules = new();
+        private static readonly List<string> assignments = new();
 
         public Student(ClassLevel classLevel, float gpa)
         {

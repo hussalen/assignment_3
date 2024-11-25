@@ -59,11 +59,11 @@ namespace assignment_3
 
         public Coding(string topic, DateTime dueDate, string language, string repositoryUrl)
         {
-            Topic = topic; // Validate Topic
-            DueDate = dueDate; // Validate DueDate
-            Language = language; // Validate Language
-            RepositoryUrl = repositoryUrl; // Validate RepositoryUrl
-            SubmissionDate = null; // Optional
+            Topic = topic;
+            DueDate = dueDate;
+            Language = language;
+            RepositoryUrl = repositoryUrl;
+            SubmissionDate = null;
             AddCoding(this);
             SaveManager.SaveToJson(_codingList, nameof(_codingList));
         }

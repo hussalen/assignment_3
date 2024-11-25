@@ -25,7 +25,6 @@ namespace assignment_3
             }
         }
 
-        // Static collection to keep track of all reports
         private static readonly List<Report> _reportList = new();
 
         public Report()
