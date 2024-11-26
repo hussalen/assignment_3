@@ -42,9 +42,9 @@ namespace assignment_3.Tests
             Assert.AreEqual(1, groupProject.AssignmentID);
             Assert.AreEqual(topic, groupProject.Topic);
             Assert.AreEqual(dueDate, groupProject.DueDate);
-            Assert.AreEqual(noOfPeople, groupProject.noOfPeople);
-            Assert.AreEqual(documentation, groupProject.documentation);
-            Assert.AreEqual(roles, groupProject.roles);
+            Assert.AreEqual(noOfPeople, groupProject.NoOfPeople);
+            Assert.AreEqual(documentation, groupProject.Documentation);
+            Assert.AreEqual(roles, groupProject.Roles);
             Assert.IsNull(groupProject.SubmissionDate);
         }
 
@@ -70,7 +70,7 @@ namespace assignment_3.Tests
         public void Report_Content_SetAndGet_ShouldWorkCorrectly()
         {
             // Arrange
-            var report = new Report();
+            var report = new Report([]);
             JsonArray content = new JsonArray();
             content.Add("Test content");
 

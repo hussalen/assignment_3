@@ -5,12 +5,10 @@ using System.Threading.Tasks;
 
 namespace assignment_3
 {
-    public class IndividualProject : Assignment
+    public class IndividualProject : IAssignment
     {
         public int AssignmentID { get; private set; }
         public static int nextId = 1;
-
-        int Assignment.AssignmentID => throw new NotImplementedException();
 
         private string _topic;
         public string Topic
@@ -54,7 +52,7 @@ namespace assignment_3
 
         public IndividualProject(string topic, DateTime dueDate)
         {
-            AssignmentID = nextId++;
+            AssignmentID = Interlocked.Increment(ref nextId);
             Topic = topic;
             DueDate = dueDate;
             SubmissionDate = null;

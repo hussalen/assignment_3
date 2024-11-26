@@ -5,12 +5,10 @@ using System.Threading.Tasks;
 
 namespace assignment_3
 {
-    public class GroupProject : Assignment
+    public class GroupProject : IAssignment
     {
         public int AssignmentID { get; private set; }
         private static int nextId = 1;
-
-        int Assignment.AssignmentID => throw new NotImplementedException();
 
         private string _topic;
         public string Topic
@@ -23,7 +21,6 @@ namespace assignment_3
                         : throw new ArgumentException(
                             "Topic must be between 3 and 100 characters and cannot be empty."
                         );
-
         }
 
         private DateTime _dueDate;
@@ -43,9 +40,11 @@ namespace assignment_3
         public int NoOfPeople
         {
             get => _noOfPeople;
-            set => _noOfPeople = value > 0
-                ? value
-                : throw new ArgumentException("NoOfPeople must be greater than zero.");
+            set =>
+                _noOfPeople =
+                    value > 0
+                        ? value
+                        : throw new ArgumentException("NoOfPeople must be greater than zero.");
         }
 
         public string Documentation { get; set; } = string.Empty;
@@ -54,20 +53,31 @@ namespace assignment_3
         public Student[] Roles
         {
             get => _roles;
-            set => _roles = value != null && value.Length == NoOfPeople
-                ? value
-                : throw new ArgumentException($"Roles array must have exactly {NoOfPeople} entries.");
+            set =>
+                _roles =
+                    value != null && value.Length == NoOfPeople
+                        ? value
+                        : throw new ArgumentException(
+                            $"Roles array must have exactly {NoOfPeople} entries."
+                        );
         }
 
         private static readonly List<GroupProject> _groupProjectList = new();
 
-        public GroupProject(string topic, DateTime dueDate, int noOfPeople, string documentation, Student[] roles)
+        public GroupProject(
+            string topic,
+            DateTime dueDate,
+            int noOfPeople,
+            string documentation,
+            Student[] roles
+        )
         {
-            AssignmentID = nextId++;
+            AssignmentID = Interlocked.Increment(ref nextId);
             Topic = topic;
             DueDate = dueDate;
             NoOfPeople = noOfPeople;
-            Documentation = documentation ?? throw new ArgumentException("Documentation cannot be null.");
+            Documentation =
+                documentation ?? throw new ArgumentException("Documentation cannot be null.");
             Roles = roles;
             SubmissionDate = null;
             AddGroupProject(this);

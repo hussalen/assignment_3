@@ -3,7 +3,7 @@ namespace assignment_3;
 public class Exam
 {
     public int ExamId { get; private set; }
-    private static int nextId;
+    private static int nextId = 1;
 
     private DateTime _examDate;
     public DateTime ExamDate
@@ -25,7 +25,6 @@ public class Exam
         ExamDate = examDate;
         AddExam(this);
         SaveManager.SaveToJson(_examList, nameof(_examList));
-
     }
 
     public void ScheduleExam(DateTime newDate)

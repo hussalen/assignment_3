@@ -1,6 +1,6 @@
 ﻿using assignment_3;
 
-Parent parent = new Parent("Viridium", "v@email.com");
-Parent parent2 = new Parent("Viridium2", "v@email.com");
-Parent parent3 = new Parent("Viridium3", "v@email.com");
-Parent parent4 = new Parent("Viridium4", "v@email.com");
+Student student = new Student(ClassLevel.Freshman, 3.5f);
+Student student2 = new Student(ClassLevel.Freshman, 3.6f);
+Student student3 = new Student(ClassLevel.Freshman, 3.7f);
+Student student4 = new Student(ClassLevel.Freshman, 3.8f);

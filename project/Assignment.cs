@@ -6,7 +6,7 @@ using assignment_3;
 
 namespace assignment_3
 {
-    public interface Assignment
+    public interface IAssignment
     {
         public int AssignmentID { get; }
         public static int nextId;
