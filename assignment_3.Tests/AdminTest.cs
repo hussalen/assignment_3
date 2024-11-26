@@ -1,6 +1,7 @@
-using NUnit.Framework;
 using System;
+using System.Text.Json.Nodes;
 using assignment_3;
+using NUnit.Framework;
 
 namespace assignment_3.Tests
 {
@@ -29,7 +30,7 @@ namespace assignment_3.Tests
             var admin = new Admin("Jane Doe");
 
             // Act
-            var report = admin.GenerateReport();
+            var report = admin.GenerateReport("test", []);
 
             // Assert
             Assert.IsNotNull(report);

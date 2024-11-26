@@ -5,7 +5,7 @@ namespace assignment_3.Tests
     public class SaveManagerTests
     {
         const string _testFileName = "object_file";
-        readonly Parent parent = new("Viridium", "v@email.com");
+        readonly Student student = new(ClassLevel.Freshman, 3.5f);
 
         [TearDown]
         public void TearDown()
@@ -17,28 +17,28 @@ namespace assignment_3.Tests
         [Test]
         public void SaveToJson_FileCreated()
         {
-            SaveManager.SaveToJson(parent, _testFileName);
+            SaveManager.SaveToJson(student, _testFileName);
 
             Assert.IsTrue(File.Exists(_testFileName + ".json"));
 
             using StreamReader reader = new(_testFileName + ".json");
             string jsonString = reader.ReadToEnd();
 
-            Assert.That(jsonString, Does.Contain("Viridium"));
+            Assert.That(jsonString, Does.Contain("class_level"));
         }
 
         [Test]
         public void SaveToJson_CannotPassNullOrEmptyString_Name()
         {
-            Assert.Throws<ArgumentNullException>(() => SaveManager.SaveToJson(parent, ""));
+            Assert.Throws<ArgumentNullException>(() => SaveManager.SaveToJson(student, ""));
         }
 
         [Test]
         public void SaveToJson_CannotPassNullObject()
         {
-            Parent? nullParent = null;
+            Student? nullStudent = null;
             Assert.Throws<NullReferenceException>(
-                () => SaveManager.SaveToJson(nullParent, _testFileName)
+                () => SaveManager.SaveToJson(nullStudent, _testFileName)
             );
         }
 
@@ -48,7 +48,7 @@ namespace assignment_3.Tests
             string invalidFilePath = "non_existent_file.json";
 
             var ex = Assert.Throws<FileNotFoundException>(
-                () => SaveManager.LoadFromJson<Parent>(invalidFilePath)
+                () => SaveManager.LoadFromJson<Student>(invalidFilePath)
             );
         }
 
@@ -61,7 +61,7 @@ namespace assignment_3.Tests
             }
 
             var ex = Assert.Throws<JsonException>(
-                () => SaveManager.LoadFromJson<Parent>(_testFileName + ".json")
+                () => SaveManager.LoadFromJson<Student>(_testFileName + ".json")
             );
         }
 
@@ -79,7 +79,7 @@ namespace assignment_3.Tests
             }
 
             var ex = Assert.Throws<JsonException>(
-                () => SaveManager.LoadFromJson<Parent>(_testFileName + ".json")
+                () => SaveManager.LoadFromJson<Student>(_testFileName + ".json")
             );
         }
     }

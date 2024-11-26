@@ -32,7 +32,7 @@ namespace assignment_3
             set => _gpa = ValidateGPA(value);
         }
 
-        private static int nextId;
+        private static int nextId = 1;
 
         private static readonly Dictionary<int, List<string>> classSchedules = new();
         private static readonly List<string> assignments = new();
@@ -117,7 +117,9 @@ namespace assignment_3
             }
 
             assignments.Add(assignment);
-            Console.WriteLine($"Assignment submitted successfully for Student ID {StudentID}: {assignment}");
+            Console.WriteLine(
+                $"Assignment submitted successfully for Student ID {StudentID}: {assignment}"
+            );
         }
 
         public static void AddClassToSchedule(int studentId, string course)

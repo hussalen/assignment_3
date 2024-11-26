@@ -11,13 +11,12 @@ namespace assignment_3
 
         private bool _isPresent;
         public bool IsPresent
-
         {
             get => _isPresent;
             private set => _isPresent = value;
         }
 
-        private static int nextId;
+        private static int nextId = 1;
         private static readonly List<Attendance> _attendanceList = new();
 
         public Attendance()

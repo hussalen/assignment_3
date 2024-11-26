@@ -9,7 +9,7 @@ namespace assignment_3
     public class Report
     {
         public int ReportId { get; private set; }
-        private static int nextId;
+        private static int nextId = 1;
 
         private JsonArray? _content;
         public JsonArray? Content
@@ -27,9 +27,10 @@ namespace assignment_3
 
         private static readonly List<Report> _reportList = new();
 
-        public Report()
+        public Report(JsonArray content)
         {
             ReportId = Interlocked.Increment(ref nextId);
+            Content = content;
             AddReport(this);
             SaveManager.SaveToJson(_reportList, nameof(_reportList));
         }

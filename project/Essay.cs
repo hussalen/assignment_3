@@ -6,26 +6,33 @@ using System.Threading.Tasks;
 
 namespace assignment_3
 {
-    public class Essay : Assignment
+    public class Essay : IAssignment
     {
-        public int AssignmentID => throw new NotImplementedException();
+        private static int nextId = 1;
+        public int AssignmentID { get; private set; }
 
         private string _topic;
         public string Topic
         {
             get => _topic;
-            set => _topic = !string.IsNullOrWhiteSpace(value) && value.Length is >= 3 and <= 100
-                ? value
-                : throw new ArgumentException("Topic must be between 3 and 100 characters and cannot be empty.");
+            set =>
+                _topic =
+                    !string.IsNullOrWhiteSpace(value) && value.Length is >= 3 and <= 100
+                        ? value
+                        : throw new ArgumentException(
+                            "Topic must be between 3 and 100 characters and cannot be empty."
+                        );
         }
 
         private DateTime _dueDate;
         public DateTime DueDate
         {
             get => _dueDate;
-            set => _dueDate = value >= DateTime.Now
-                ? value
-                : throw new ArgumentException("DueDate must be in the future.");
+            set =>
+                _dueDate =
+                    value >= DateTime.Now
+                        ? value
+                        : throw new ArgumentException("DueDate must be in the future.");
         }
 
         public DateTime? SubmissionDate { get; set; }
@@ -50,6 +57,7 @@ namespace assignment_3
 
         public Essay(string topic, DateTime dueDate, uint minWordCount, uint maxWordCount)
         {
+            AssignmentID = Interlocked.Increment(ref nextId);
             Topic = topic;
             DueDate = dueDate;
             MinWordCount = minWordCount;
@@ -73,7 +81,9 @@ namespace assignment_3
         {
             if (minWordCount > maxWordCount)
             {
-                throw new ValidationException("Minimum word count cannot be greater than the maximum word count.");
+                throw new ValidationException(
+                    "Minimum word count cannot be greater than the maximum word count."
+                );
             }
             return maxWordCount;
         }
@@ -85,7 +95,6 @@ namespace assignment_3
                 throw new ValidationException(
                     $"Word count must be between {MinWordCount} and {MaxWordCount}."
                 );
-
             }
             WordCount = wordCount;
             SubmissionDate = DateTime.Now;

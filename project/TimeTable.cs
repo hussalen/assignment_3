@@ -18,7 +18,7 @@ namespace assignment_3
     {
         public int TimeTableId { get; private set; }
 
-        private static int nextId;
+        private static int nextId = 1;
 
         private Day _dayOfWeek;
         public Day DayOfWeek
