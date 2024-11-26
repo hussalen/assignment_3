@@ -22,16 +22,17 @@ public class Exam
     public Exam(DateTime examDate)
     {
         ExamId = Interlocked.Increment(ref nextId);
-        ExamDate = examDate; // Validates via setter
+        ExamDate = examDate;
         AddExam(this);
+        SaveManager.SaveToJson(_examList, nameof(_examList));
+
     }
 
     public void ScheduleExam(DateTime newDate)
     {
         if (newDate < DateTime.Now)
             throw new ArgumentException("Exam date cannot be in the past.");
-
-        ExamDate = newDate; // Validates via setter
+        ExamDate = newDate;
     }
 
     private static void AddExam(Exam exam)

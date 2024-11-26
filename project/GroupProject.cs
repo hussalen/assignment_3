@@ -16,18 +16,25 @@ namespace assignment_3
         public string Topic
         {
             get => _topic;
-            set => _topic = !string.IsNullOrWhiteSpace(value) && value.Length is >= 3 and <= 100
-                ? value
-                : throw new ArgumentException("Topic must be between 3 and 100 characters and cannot be empty.");
+            set =>
+                _topic =
+                    !string.IsNullOrWhiteSpace(value) && value.Length is >= 3 and <= 100
+                        ? value
+                        : throw new ArgumentException(
+                            "Topic must be between 3 and 100 characters and cannot be empty."
+                        );
+
         }
 
         private DateTime _dueDate;
         public DateTime DueDate
         {
             get => _dueDate;
-            set => _dueDate = value >= DateTime.Now
-                ? value
-                : throw new ArgumentException("DueDate must be in the future.");
+            set =>
+                _dueDate =
+                    value >= DateTime.Now
+                        ? value
+                        : throw new ArgumentException("DueDate must be in the future.");
         }
 
         public DateTime? SubmissionDate { get; set; }
@@ -52,19 +59,19 @@ namespace assignment_3
                 : throw new ArgumentException($"Roles array must have exactly {NoOfPeople} entries.");
         }
 
-        // Static list to track all GroupProjects
         private static readonly List<GroupProject> _groupProjectList = new();
 
         public GroupProject(string topic, DateTime dueDate, int noOfPeople, string documentation, Student[] roles)
         {
             AssignmentID = nextId++;
-            Topic = topic; // Validate Topic
-            DueDate = dueDate; // Validate DueDate
-            NoOfPeople = noOfPeople; // Validate NoOfPeople
+            Topic = topic;
+            DueDate = dueDate;
+            NoOfPeople = noOfPeople;
             Documentation = documentation ?? throw new ArgumentException("Documentation cannot be null.");
-            Roles = roles; // Validate Roles
-            SubmissionDate = null; // Optional field
+            Roles = roles;
+            SubmissionDate = null;
             AddGroupProject(this);
+            SaveManager.SaveToJson(_groupProjectList, nameof(_groupProjectList));
         }
 
         private static void AddGroupProject(GroupProject groupProject)

@@ -50,11 +50,12 @@ namespace assignment_3
 
         public Essay(string topic, DateTime dueDate, uint minWordCount, uint maxWordCount)
         {
-            Topic = topic; // Validate Topic
-            DueDate = dueDate; // Validate DueDate
-            MinWordCount = minWordCount; // Validate and set MinWordCount
-            MaxWordCount = maxWordCount; // Validate and set MaxWordCount
+            Topic = topic;
+            DueDate = dueDate;
+            MinWordCount = minWordCount;
+            MaxWordCount = maxWordCount;
             AddEssay(this);
+            SaveManager.SaveToJson(_essayList, nameof(_essayList));
         }
 
         private static void AddEssay(Essay essay)
@@ -81,7 +82,10 @@ namespace assignment_3
         {
             if (wordCount < MinWordCount || wordCount > MaxWordCount)
             {
-                throw new ValidationException($"Word count must be between {MinWordCount} and {MaxWordCount}.");
+                throw new ValidationException(
+                    $"Word count must be between {MinWordCount} and {MaxWordCount}."
+                );
+
             }
             WordCount = wordCount;
             SubmissionDate = DateTime.Now;

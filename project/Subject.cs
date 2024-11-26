@@ -33,9 +33,10 @@ public class Subject
             throw new ArgumentException("Subject ID cannot be null or empty.");
 
         SubjectId = subjectId;
-        SubjectName = subjectName; // Validates through setter
-        GradingScale = gradingScale; // Validates through setter
+        SubjectName = subjectName;
+        GradingScale = gradingScale;
         AddSubject(this);
+        SaveManager.SaveToJson(_subjectList, nameof(_subjectList));
     }
 
     private static readonly List<Subject> _subjectList = new();

@@ -32,6 +32,7 @@ namespace assignment_3
             GradeId = Interlocked.Increment(ref nextId);
             this.GradeValue = GradeValue;
             addGrade(this);
+            SaveManager.SaveToJson(_grade_List, nameof(_grade_List));
         }
 
         public void GenerateBasicGrades() { }

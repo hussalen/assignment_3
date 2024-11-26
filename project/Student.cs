@@ -34,8 +34,8 @@ namespace assignment_3
 
         private static int nextId;
 
-        private static readonly Dictionary<int, List<string>> classSchedules = new(); // Stores student schedules
-        private static readonly List<string> assignments = new(); // Stores submitted assignments
+        private static readonly Dictionary<int, List<string>> classSchedules = new();
+        private static readonly List<string> assignments = new();
 
         public Student(ClassLevel classLevel, float gpa)
         {
@@ -43,6 +43,7 @@ namespace assignment_3
             ClassLevel = classLevel;
             GPA = gpa;
             AddStudent(this);
+            SaveManager.SaveToJson(_studentList, nameof(_studentList));
         }
 
         private static readonly List<Student> _studentList = new();
@@ -56,7 +57,9 @@ namespace assignment_3
 
             if (_studentList.Any(s => s.StudentID == student.StudentID))
             {
-                throw new ArgumentException($"A student with ID {student.StudentID} already exists.");
+                throw new ArgumentException(
+                    $"A student with ID {student.StudentID} already exists."
+                );
             }
 
             _studentList.Add(student);

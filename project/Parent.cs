@@ -32,9 +32,10 @@ namespace assignment_3
         public Parent(string name, string email)
         {
             ParentID = Interlocked.Increment(ref nextId);
-            Name = name; // Validates via setter
+            Name = name;
             Email = ValidateEmail(email);
             AddParent(this);
+            SaveManager.SaveToJson(_parentList, nameof(_parentList));
         }
 
         private static void AddParent(Parent parent)
@@ -43,7 +44,9 @@ namespace assignment_3
                 throw new ArgumentException($"{nameof(parent)} cannot be null.");
 
             if (_parentList.Exists(p => p.Email.Address == parent.Email.Address))
-                throw new ArgumentException($"A parent with the email {parent.Email.Address} already exists.");
+                throw new ArgumentException(
+                    $"A parent with the email {parent.Email.Address} already exists."
+                );
 
             _parentList.Add(parent);
         }
@@ -55,7 +58,8 @@ namespace assignment_3
             if (string.IsNullOrWhiteSpace(name) || name.Length > MAX_NAME_LENGTH)
             {
                 throw new ArgumentException(
-                    $"Name must be non-empty and no longer than {MAX_NAME_LENGTH} characters.");
+                    $"Name must be non-empty and no longer than {MAX_NAME_LENGTH} characters."
+                );
             }
             return name;
         }
@@ -68,13 +72,17 @@ namespace assignment_3
             }
             catch (Exception ex)
             {
-                throw new ValidationException($"Invalid email address '{email}'. Error: {ex.Message}");
+                throw new ValidationException(
+                    $"Invalid email address '{email}'. Error: {ex.Message}"
+                );
             }
         }
 
         public void ViewStudentAttendance()
         {
-            Console.WriteLine($"Parent {Name} with Email {Email.Address} is viewing student attendance.");
+            Console.WriteLine(
+                $"Parent {Name} with Email {Email.Address} is viewing student attendance."
+            );
             // Logic for viewing student attendance goes here
         }
     }

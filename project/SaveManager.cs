@@ -17,10 +17,14 @@ namespace assignment_3
                 PropertyNameCaseInsensitive = true
             };
 
-        public static void SaveToJson<T>(T obj, string name, string path)
+        public static void SaveToJson<T>(T obj, string name)
         {
             if (obj is null)
                 throw new NullReferenceException($"Object can't be saved! It is null.");
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentNullException("Name of save file must not be empty.");
+            }
             try
             {
                 string jsonString = JsonSerializer.Serialize(obj, _options);
@@ -33,16 +37,21 @@ namespace assignment_3
             }
         }
 
-        public static T? LoadFromJson<T>(string filePath)
+        public static T LoadFromJson<T>(string filePath)
         {
             try
             {
                 using StreamReader reader = new(filePath);
                 string jsonString = reader.ReadToEnd();
-                T? obj = JsonSerializer.Deserialize<T>(jsonString);
-
+                T obj =
+                    JsonSerializer.Deserialize<T>(jsonString)
+                    ?? throw new NullReferenceException($"Cannot save null object.");
                 Console.WriteLine($"Object loaded from {filePath}");
                 return obj;
+            }
+            catch (FileNotFoundException)
+            {
+                throw;
             }
             catch (Exception e)
             {

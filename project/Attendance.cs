@@ -11,9 +11,10 @@ namespace assignment_3
 
         private bool _isPresent;
         public bool IsPresent
+
         {
             get => _isPresent;
-            private set => _isPresent = value; // Restrict direct external modification
+            private set => _isPresent = value;
         }
 
         private static int nextId;
@@ -22,8 +23,9 @@ namespace assignment_3
         public Attendance()
         {
             AttendanceID = Interlocked.Increment(ref nextId);
-            IsPresent = false; // Default to not present
+            IsPresent = false;
             AddAttendance(this);
+            SaveManager.SaveToJson(_attendanceList, nameof(_attendanceList));
         }
 
         private static void AddAttendance(Attendance attendance)
@@ -41,7 +43,9 @@ namespace assignment_3
         {
             if (isPresent != true)
             {
-                Console.WriteLine($"Attendance not marked for ID {AttendanceID} because the student is absent.");
+                Console.WriteLine(
+                    $"Attendance not marked for ID {AttendanceID} because the student is absent."
+                );
                 return;
             }
 

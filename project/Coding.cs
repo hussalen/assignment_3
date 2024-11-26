@@ -13,6 +13,7 @@ namespace assignment_3
         public string Topic
         {
             get => _topic;
+
             set => _topic = !string.IsNullOrWhiteSpace(value) && value.Length is >= 3 and <= 100
                 ? value
                 : throw new ArgumentException("Topic must be between 3 and 100 characters and cannot be empty.");
@@ -22,6 +23,7 @@ namespace assignment_3
         public DateTime DueDate
         {
             get => _dueDate;
+
             set => _dueDate = value >= DateTime.Now
                 ? value
                 : throw new ArgumentException("DueDate must be in the future.");
@@ -33,6 +35,7 @@ namespace assignment_3
         public string Language
         {
             get => _language;
+
             set => _language = !string.IsNullOrWhiteSpace(value)
                 ? value
                 : throw new ArgumentException("Language cannot be null or empty.");
@@ -51,12 +54,13 @@ namespace assignment_3
 
         public Coding(string topic, DateTime dueDate, string language, string repositoryUrl)
         {
-            Topic = topic; // Validate Topic
-            DueDate = dueDate; // Validate DueDate
-            Language = language; // Validate Language
-            RepositoryUrl = repositoryUrl; // Validate RepositoryUrl
-            SubmissionDate = null; // Optional
+            Topic = topic;
+            DueDate = dueDate;
+            Language = language;
+            RepositoryUrl = repositoryUrl;
+            SubmissionDate = null;
             AddCoding(this);
+            SaveManager.SaveToJson(_codingList, nameof(_codingList));
         }
 
         private static void AddCoding(Coding coding)

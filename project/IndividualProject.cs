@@ -16,39 +16,50 @@ namespace assignment_3
         public string Topic
         {
             get => _topic;
-            set => _topic = !string.IsNullOrWhiteSpace(value) && value.Length is >= 3 and <= 100
-                ? value
-                : throw new ArgumentException("Topic must be between 3 and 100 characters and cannot be empty.");
+            set =>
+                _topic =
+                    !string.IsNullOrWhiteSpace(value) && value.Length is >= 3 and <= 100
+                        ? value
+                        : throw new ArgumentException(
+                            "Topic must be between 3 and 100 characters and cannot be empty."
+                        );
         }
 
         private DateTime _dueDate;
         public DateTime DueDate
         {
             get => _dueDate;
-            set => _dueDate = value >= DateTime.Now
-                ? value
-                : throw new ArgumentException("DueDate must be in the future.");
+            set =>
+                _dueDate =
+                    value >= DateTime.Now
+                        ? value
+                        : throw new ArgumentException("DueDate must be in the future.");
         }
 
         private DateTime? _submissionDate;
         public DateTime? SubmissionDate
         {
             get => _submissionDate;
-            set => _submissionDate = value == null || value <= DueDate
-                ? value
-                : throw new ArgumentException("SubmissionDate cannot be after the DueDate.");
+            set =>
+                _submissionDate =
+                    value == null || value <= DueDate
+                        ? value
+                        : throw new ArgumentException(
+                            "SubmissionDate cannot be after the DueDate."
+                        );
         }
 
-        public string description; 
+        public string description;
         public List<string> notes;
 
         public IndividualProject(string topic, DateTime dueDate)
         {
             AssignmentID = nextId++;
-            Topic = topic; 
-            DueDate = dueDate; 
-            SubmissionDate = null; 
+            Topic = topic;
+            DueDate = dueDate;
+            SubmissionDate = null;
             AddIndividualProject(this);
+            SaveManager.SaveToJson(_individualProject_List, nameof(_individualProject_List));
         }
 
         private static readonly List<IndividualProject> _individualProject_List = new();
