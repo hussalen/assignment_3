@@ -58,6 +58,8 @@ namespace assignment_3
 
         private static readonly List<Coding> _codingList = new();
 
+        public Student SubmittingStudent { get; set; }
+
         public Coding(string topic, DateTime dueDate, string language, string repositoryUrl)
         {
             AssignmentID = Interlocked.Increment(ref nextId);

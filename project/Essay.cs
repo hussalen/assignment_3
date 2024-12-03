@@ -54,6 +54,7 @@ namespace assignment_3
         }
 
         private static readonly List<Essay> _essayList = new();
+        public Student SubmittingStudent { get; set; }
 
         public Essay(string topic, DateTime dueDate, uint minWordCount, uint maxWordCount)
         {

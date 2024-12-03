@@ -72,5 +72,7 @@ namespace assignment_3
 
         public static List<IndividualProject> GetIndividualProjectExtent() =>
             new(_individualProject_List);
+
+        public Student SubmittingStudent { get; set; }
     }
 }
