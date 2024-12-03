@@ -61,6 +61,7 @@ namespace assignment_3
                             $"Roles array must have exactly {NoOfPeople} entries."
                         );
         }
+        public Student SubmittingStudent { get; set; }
 
         private static readonly List<GroupProject> _groupProjectList = new();
 

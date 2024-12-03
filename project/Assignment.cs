@@ -14,5 +14,7 @@ namespace assignment_3
 
         public DateTime DueDate { get; set; }
         public DateTime? SubmissionDate { get; set; }
+
+        public Student SubmittingStudent { get; set; }
     }
 }

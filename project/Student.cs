@@ -35,7 +35,9 @@ namespace assignment_3
         private static int nextId = 1;
 
         private static readonly Dictionary<int, List<string>> classSchedules = new();
-        private static readonly List<string> assignments = new();
+        private List<IAssignment> _assignments = new();
+
+        public List<IAssignment> GetAssignments() => new(_assignments);
 
         public Student(ClassLevel classLevel, float gpa)
         {
@@ -109,19 +111,6 @@ namespace assignment_3
             }
         }
 
-        public void SubmitAssignment(string assignment)
-        {
-            if (string.IsNullOrWhiteSpace(assignment))
-            {
-                throw new ArgumentException("Assignment cannot be null or empty.");
-            }
-
-            assignments.Add(assignment);
-            Console.WriteLine(
-                $"Assignment submitted successfully for Student ID {StudentID}: {assignment}"
-            );
-        }
-
         public static void AddClassToSchedule(int studentId, string course)
         {
             if (string.IsNullOrWhiteSpace(course))
@@ -135,6 +124,22 @@ namespace assignment_3
             }
 
             classSchedules[studentId].Add(course);
+        }
+
+        public void RemoveAssignmentSubmission(IAssignment assignment)
+        {
+            ArgumentNullException.ThrowIfNull(assignment);
+            ArgumentNullException.ThrowIfNull(assignment.SubmissionDate);
+            if (!_assignments.Contains(assignment))
+                throw new ArgumentException(
+                    $"The student nameof(this) does not have the assignment {nameof(assignment)} submitted"
+                );
+            if (assignment.SubmittingStudent != this)
+                throw new InvalidOperationException(
+                    "This assignment does not belong to the current student."
+                );
+            assignment.SubmissionDate = null;
+            _assignments.Remove(assignment);
         }
     }
 }
