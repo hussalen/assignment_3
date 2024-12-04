@@ -83,14 +83,5 @@ namespace assignment_3
 
         public static List<Coding> GetCodingExtent() => new(_codingList);
         
-        public void Submit()
-        {
-            if (string.IsNullOrWhiteSpace(RepositoryUrl)){
-                throw new InvalidOperationException("Repository URL cannot be empty");
-            }
-                
-            SubmissionDate = DateTime.Now; //marked as submitted
-            Console.WriteLine("Coding assignment submitted successfully!");
-        }
     }
 }
