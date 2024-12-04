@@ -37,8 +37,6 @@ namespace assignment_3
 
         public DateTime? SubmissionDate { get; set; }
 
-        public int WordCount { get; private set; }
-
         private uint _minWordCount;
         public uint MinWordCount
         {
@@ -52,6 +50,20 @@ namespace assignment_3
             get => _maxWordCount;
             init => _maxWordCount = ValidateEssayWordCount(_minWordCount, value);
         }
+        private int _wordCount;
+        public int WordCount
+        {
+            get => _wordCount;
+            set
+            {
+                if (value < MinWordCount || value > MaxWordCount)
+                {
+                    throw new ValidationException(
+                        $"Word count must be between {MinWordCount} and {MaxWordCount}.");
+                }
+                _wordCount = value;
+            }
+        }
 
         private static readonly List<Essay> _essayList = new();
         public Student SubmittingStudent { get; set; }
@@ -61,6 +73,10 @@ namespace assignment_3
             AssignmentID = Interlocked.Increment(ref nextId);
             Topic = topic;
             DueDate = dueDate;
+            if (minWordCount > maxWordCount)
+            {
+                throw new ValidationException("Minimum word count cannot be greater than the maximum word count.");
+            }
             MinWordCount = minWordCount;
             MaxWordCount = maxWordCount;
             AddEssay(this);
@@ -88,18 +104,16 @@ namespace assignment_3
             }
             return maxWordCount;
         }
-
-        public void SubmitEssay(int wordCount)
+        //from IAssignment
+        public void Submit()
         {
-            if (wordCount < MinWordCount || wordCount > MaxWordCount)
-            {
+            if (WordCount < MinWordCount || WordCount > MaxWordCount) {
                 throw new ValidationException(
-                    $"Word count must be between {MinWordCount} and {MaxWordCount}."
-                );
+                    $"Word count must be between {MinWordCount} and {MaxWordCount}.");
             }
-            WordCount = wordCount;
+            
             SubmissionDate = DateTime.Now;
-            Console.WriteLine($"Essay submitted successfully with {wordCount} words.");
+            Console.WriteLine("Essay submitted successfully!");
         }
     }
 }

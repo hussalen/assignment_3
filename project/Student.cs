@@ -126,6 +126,20 @@ namespace assignment_3
             classSchedules[studentId].Add(course);
         }
 
+        public void SubmitAssignment(IAssignment assignment, int wordCount)
+        {
+            ArgumentNullException.ThrowIfNull(assignment);
+            if (assignment.SubmissionDate!=null){
+                throw new InvalidOperationException("Assignment already submitted, edit to modify");
+            }
+            if (DateTime.Now>assignment.DueDate) {
+                throw new InvalidOperationException("Cannot submit the assignment after the due date");
+            }
+                assignment.Submit(); 
+            
+
+        }
+
         public void RemoveAssignmentSubmission(IAssignment assignment)
         {
             ArgumentNullException.ThrowIfNull(assignment);

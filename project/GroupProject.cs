@@ -95,5 +95,16 @@ namespace assignment_3
         }
 
         public static List<GroupProject> GetGroupProjectExtent() => new(_groupProjectList);
+        public void Submit()
+        {
+            if (Roles == null || Roles.Length != NoOfPeople){
+                throw new InvalidOperationException($"The number of roles must match {NoOfPeople}.");
+            }
+            if (string.IsNullOrWhiteSpace(Documentation)){
+                throw new InvalidOperationException("To submit provide the documentation");
+            }
+            SubmissionDate = DateTime.Now;
+            Console.WriteLine("Group project submitted successfully!");
+        }
     }
 }
