@@ -129,15 +129,14 @@ namespace assignment_3
         public void SubmitAssignment(IAssignment assignment, int wordCount)
         {
             ArgumentNullException.ThrowIfNull(assignment);
+            if (_assignments.Contains(assignment)) throw new ArgumentException("Assignment already exists.");
             if (assignment.SubmissionDate!=null){
                 throw new InvalidOperationException("Assignment already submitted, edit to modify");
             }
             if (DateTime.Now>assignment.DueDate) {
                 throw new InvalidOperationException("Cannot submit the assignment after the due date");
             }
-                assignment.Submit(); 
-            
-
+            _assignments.Add(assignment);
         }
 
         public void RemoveAssignmentSubmission(IAssignment assignment)

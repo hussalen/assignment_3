@@ -73,10 +73,6 @@ namespace assignment_3
             AssignmentID = Interlocked.Increment(ref nextId);
             Topic = topic;
             DueDate = dueDate;
-            if (minWordCount > maxWordCount)
-            {
-                throw new ValidationException("Minimum word count cannot be greater than the maximum word count.");
-            }
             MinWordCount = minWordCount;
             MaxWordCount = maxWordCount;
             AddEssay(this);
