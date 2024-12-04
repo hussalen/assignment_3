@@ -74,5 +74,12 @@ namespace assignment_3
             new(_individualProject_List);
 
         public Student SubmittingStudent { get; set; }
+
+        public void Submit()
+        {
+            SubmissionDate=DateTime.Now;
+            Console.Write("Individual Project submitted");
+            
+        }
     }
 }

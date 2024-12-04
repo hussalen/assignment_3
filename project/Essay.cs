@@ -37,8 +37,6 @@ namespace assignment_3
 
         public DateTime? SubmissionDate { get; set; }
 
-        public int WordCount { get; private set; }
-
         private uint _minWordCount;
         public uint MinWordCount
         {
@@ -51,6 +49,20 @@ namespace assignment_3
         {
             get => _maxWordCount;
             init => _maxWordCount = ValidateEssayWordCount(_minWordCount, value);
+        }
+        private int _wordCount;
+        public int WordCount
+        {
+            get => _wordCount;
+            set
+            {
+                if (value < MinWordCount || value > MaxWordCount)
+                {
+                    throw new ValidationException(
+                        $"Word count must be between {MinWordCount} and {MaxWordCount}.");
+                }
+                _wordCount = value;
+            }
         }
 
         private static readonly List<Essay> _essayList = new();
@@ -88,18 +100,18 @@ namespace assignment_3
             }
             return maxWordCount;
         }
-
-        public void SubmitEssay(int wordCount)
+        
+        public void Submit(int wordCount)
         {
-            if (wordCount < MinWordCount || wordCount > MaxWordCount)
-            {
-                throw new ValidationException(
-                    $"Word count must be between {MinWordCount} and {MaxWordCount}."
-                );
-            }
-            WordCount = wordCount;
+            WordCount = wordCount;  // using the setter for WordCount validation
             SubmissionDate = DateTime.Now;
             Console.WriteLine($"Essay submitted successfully with {wordCount} words.");
+        }
+
+        //from IAssignment
+        public void Submit()
+        {
+            Console.WriteLine("Essay submitted successfully!");
         }
     }
 }
