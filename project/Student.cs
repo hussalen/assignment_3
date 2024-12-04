@@ -135,14 +135,8 @@ namespace assignment_3
             if (DateTime.Now>assignment.DueDate) {
                 throw new InvalidOperationException("Cannot submit the assignment after the due date");
             }
-            if (assignment is Essay essay)
-            {
-                essay.Submit(wordCount);  
-            }
-            else
-            {
                 assignment.Submit(); 
-            }
+            
 
         }
 

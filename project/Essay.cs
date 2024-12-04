@@ -73,6 +73,10 @@ namespace assignment_3
             AssignmentID = Interlocked.Increment(ref nextId);
             Topic = topic;
             DueDate = dueDate;
+            if (minWordCount > maxWordCount)
+            {
+                throw new ValidationException("Minimum word count cannot be greater than the maximum word count.");
+            }
             MinWordCount = minWordCount;
             MaxWordCount = maxWordCount;
             AddEssay(this);
@@ -100,17 +104,15 @@ namespace assignment_3
             }
             return maxWordCount;
         }
-        
-        public void Submit(int wordCount)
-        {
-            WordCount = wordCount;  // using the setter for WordCount validation
-            SubmissionDate = DateTime.Now;
-            Console.WriteLine($"Essay submitted successfully with {wordCount} words.");
-        }
-
         //from IAssignment
         public void Submit()
         {
+            if (WordCount < MinWordCount || WordCount > MaxWordCount) {
+                throw new ValidationException(
+                    $"Word count must be between {MinWordCount} and {MaxWordCount}.");
+            }
+            
+            SubmissionDate = DateTime.Now;
             Console.WriteLine("Essay submitted successfully!");
         }
     }
