@@ -141,5 +141,23 @@ namespace assignment_3
             assignment.SubmissionDate = null;
             _assignments.Remove(assignment);
         }
+        public void EditAssignmentSubmission(IAssignment assignment)
+        {
+            ArgumentNullException.ThrowIfNull(assignment);
+            ArgumentNullException.ThrowIfNull(assignment.SubmissionDate);
+
+            if (!_assignments.Contains(assignment))
+                throw new ArgumentException(
+                    $"The student {nameof(this)} does not have the assignment {nameof(assignment)} submitted"
+                );
+
+            if (assignment.SubmittingStudent != this)
+                throw new InvalidOperationException(
+                    "This assignment does not belong to the current student."
+                );
+
+            assignment.SubmissionDate = DateTime.UtcNow;
+            _assignments[assignment] = assignment;
+        }
     }
 }
