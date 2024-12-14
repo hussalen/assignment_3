@@ -17,7 +17,7 @@ namespace assignment_3
         }
 
         private static int nextId = 1;
-        private static readonly List<Attendance> _attendanceList = new();
+        private static List<Attendance> _attendanceList = new();
 
         public Attendance()
         {

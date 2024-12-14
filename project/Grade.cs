@@ -25,12 +25,15 @@ namespace assignment_3
             }
         }
 
+        public Student Student { get; set; }
+
         static int nextId;
 
-        public Grade(uint GradeValue)
+        public Grade(uint GradeValue, Student student)
         {
             GradeId = Interlocked.Increment(ref nextId);
             this.GradeValue = GradeValue;
+            Student = student;
             addGrade(this);
             SaveManager.SaveToJson(_grade_List, nameof(_grade_List));
         }

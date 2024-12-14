@@ -58,5 +58,7 @@ namespace assignment_3
                 throw new JsonException($"An error occurred while loading from JSON: {e.Message}");
             }
         }
+
+        public static T LoadAll<T>() { }
     }
 }

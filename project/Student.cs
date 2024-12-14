@@ -29,26 +29,30 @@ namespace assignment_3
         public float GPA
         {
             get => _gpa;
-            set => _gpa = ValidateGPA(value);
+            set => _gpa = value == 0.0f ? 0.0f : ValidateGPA(value);
         }
 
         private static int nextId = 1;
 
-        private static readonly Dictionary<int, List<string>> classSchedules = new();
+        private static Dictionary<int, List<string>> classSchedules = new();
         private List<IAssignment> _assignments = new();
 
         public List<IAssignment> GetAssignments() => new(_assignments);
 
-        public Student(ClassLevel classLevel, float gpa)
+        private List<Grade> _grades = new();
+
+        public List<Grade> GetGrades() => new(_grades);
+
+        public Student(ClassLevel classLevel)
         {
             StudentID = Interlocked.Increment(ref nextId);
             ClassLevel = classLevel;
-            GPA = gpa;
+            GPA = 0.0f;
             AddStudent(this);
             SaveManager.SaveToJson(_studentList, nameof(_studentList));
         }
 
-        private static readonly List<Student> _studentList = new();
+        private static List<Student> _studentList = new();
 
         private static void AddStudent(Student student)
         {
@@ -78,12 +82,57 @@ namespace assignment_3
                 );
             }
 
-            if (gpa >= 3.0f && gpa <= 5.0f)
+            if (gpa is < 3.0f or > 5.0f)
             {
-                return gpa;
+                throw new ValidationException("GPA must be between 3.0 and 5.0.");
             }
 
-            throw new ValidationException("GPA must be between 3.0 and 5.0.");
+            return gpa;
+        }
+
+        private float CalculateGPA(List<Grade> grades)
+        {
+            uint sum = 0;
+            foreach (var grade in grades)
+            {
+                sum += grade.GradeValue;
+            }
+            return sum / grades.Count;
+        }
+
+        public void AddGrade(Grade grade)
+        {
+            // Does this make sense?
+            if (grade.Student == this)
+            {
+                throw new ArgumentException("Grade is already assigned.");
+            }
+            if (_grades.Contains(grade))
+                throw new ArgumentException("Grade already exists.");
+            _grades.Add(grade);
+            grade.Student = this;
+            GPA = CalculateGPA(_grades);
+        }
+
+        public void RemoveGrade(Grade grade)
+        {
+            if (grade.Student != this)
+            {
+                throw new ArgumentException(
+                    $"Grade is not assigned to this student's grade, but assigned to {nameof(grade.Student)}."
+                );
+            }
+            if (!_grades.Contains(grade))
+                throw new ArgumentException("Grade does not exist.");
+            _grades.Remove(grade);
+            grade.Student = null; //Wait a second, this doesn't even make sense!
+            GPA = CalculateGPA(_grades);
+        }
+
+        public void UpdateGrade(Grade grade)
+        {
+            RemoveGrade(grade);
+            AddGrade(grade);
         }
 
         private ClassLevel ValidateClassLevel(ClassLevel classLevel)
@@ -129,12 +178,17 @@ namespace assignment_3
         public void SubmitAssignment(IAssignment assignment, int wordCount)
         {
             ArgumentNullException.ThrowIfNull(assignment);
-            if (_assignments.Contains(assignment)) throw new ArgumentException("Assignment already exists.");
-            if (assignment.SubmissionDate!=null){
+            if (_assignments.Contains(assignment))
+                throw new ArgumentException("Assignment already exists.");
+            if (assignment.SubmissionDate != null)
+            {
                 throw new InvalidOperationException("Assignment already submitted, edit to modify");
             }
-            if (DateTime.Now>assignment.DueDate) {
-                throw new InvalidOperationException("Cannot submit the assignment after the due date");
+            if (DateTime.Now > assignment.DueDate)
+            {
+                throw new InvalidOperationException(
+                    "Cannot submit the assignment after the due date"
+                );
             }
             _assignments.Add(assignment);
         }
@@ -145,7 +199,7 @@ namespace assignment_3
             ArgumentNullException.ThrowIfNull(assignment.SubmissionDate);
             if (!_assignments.Contains(assignment))
                 throw new ArgumentException(
-                    $"The student nameof(this) does not have the assignment {nameof(assignment)} submitted"
+                    $"The student does not have the assignment {nameof(assignment)} submitted"
                 );
             if (assignment.SubmittingStudent != this)
                 throw new InvalidOperationException(
@@ -154,6 +208,7 @@ namespace assignment_3
             assignment.SubmissionDate = null;
             _assignments.Remove(assignment);
         }
+
         public void EditAssignmentSubmission(IAssignment assignment)
         {
             ArgumentNullException.ThrowIfNull(assignment);
@@ -161,7 +216,7 @@ namespace assignment_3
 
             if (!_assignments.Contains(assignment))
                 throw new ArgumentException(
-                    $"The student {nameof(this)} does not have the assignment {nameof(assignment)} submitted"
+                    $"The student does not have the assignment {nameof(assignment)} submitted"
                 );
 
             if (assignment.SubmittingStudent != this)
@@ -170,7 +225,8 @@ namespace assignment_3
                 );
 
             assignment.SubmissionDate = DateTime.UtcNow;
-            _assignments[assignment] = assignment;
+            _assignments.Remove(assignment);
+            _assignments.Add(assignment);
         }
     }
 }

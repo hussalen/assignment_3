@@ -59,13 +59,14 @@ namespace assignment_3
                 if (value < MinWordCount || value > MaxWordCount)
                 {
                     throw new ValidationException(
-                        $"Word count must be between {MinWordCount} and {MaxWordCount}.");
+                        $"Word count must be between {MinWordCount} and {MaxWordCount}."
+                    );
                 }
                 _wordCount = value;
             }
         }
 
-        private static readonly List<Essay> _essayList = new();
+        private static List<Essay> _essayList = new();
         public Student SubmittingStudent { get; set; }
 
         public Essay(string topic, DateTime dueDate, uint minWordCount, uint maxWordCount)
@@ -100,14 +101,17 @@ namespace assignment_3
             }
             return maxWordCount;
         }
+
         //from IAssignment
         public void Submit()
         {
-            if (WordCount < MinWordCount || WordCount > MaxWordCount) {
+            if (WordCount < MinWordCount || WordCount > MaxWordCount)
+            {
                 throw new ValidationException(
-                    $"Word count must be between {MinWordCount} and {MaxWordCount}.");
+                    $"Word count must be between {MinWordCount} and {MaxWordCount}."
+                );
             }
-            
+
             SubmissionDate = DateTime.Now;
             Console.WriteLine("Essay submitted successfully!");
         }

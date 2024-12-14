@@ -27,7 +27,7 @@ namespace assignment_3
             private set => _dayOfWeek = ValidateDayOfWeek(value);
         }
 
-        private static readonly List<TimeTable> _timetableList = new();
+        private static List<TimeTable> _timetableList = new();
 
         public TimeTable(Day dayOfWeek)
         {

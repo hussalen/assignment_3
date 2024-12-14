@@ -56,7 +56,7 @@ namespace assignment_3
                     : throw new ArgumentException("RepositoryUrl must be a valid URL.");
         }
 
-        private static readonly List<Coding> _codingList = new();
+        private static List<Coding> _codingList = new();
 
         public Student SubmittingStudent { get; set; }
 
@@ -82,6 +82,5 @@ namespace assignment_3
         }
 
         public static List<Coding> GetCodingExtent() => new(_codingList);
-        
     }
 }

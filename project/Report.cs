@@ -25,7 +25,7 @@ namespace assignment_3
             }
         }
 
-        private static readonly List<Report> _reportList = new();
+        private static List<Report> _reportList = new();
 
         public Report(JsonArray content)
         {
