@@ -44,6 +44,11 @@ public class Timeslot
         }
     }
 
+    
+    public Admin ManagedBy { get; private set; }
+
+    public Teacher AssignedTeacher { get; private set; }
+
     public Timeslot(int scheduleId, DateTime date, TimeSpan startTime, TimeSpan endTime)
     {
         if (scheduleId <= 0)
@@ -87,5 +92,37 @@ public class Timeslot
 
         StartTime = newStartTime;
         EndTime = newEndTime;
+    }
+
+    // Establishes the reverse connection to an Admin
+    public void SetAdmin(Admin admin)
+    {
+        if (admin == null)
+            throw new ArgumentException("Admin cannot be null.");
+
+        if (ManagedBy != admin)
+        {
+            ManagedBy = admin;
+            if (!admin.ManagedTimeslots.Contains(this))
+            {
+                admin.AddTimeslot(this); 
+            }
+        }
+    }
+
+    
+    public void SetTeacher(Teacher teacher)
+    {
+        if (teacher == null)
+            throw new ArgumentException("Teacher cannot be null.");
+
+        if (AssignedTeacher != teacher)
+        {
+            AssignedTeacher = teacher;
+            if (!teacher.AssignedTimeslots.Contains(this))
+            {
+                teacher.AssignTimeslot(this); 
+            }
+        }
     }
 }

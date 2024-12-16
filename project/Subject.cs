@@ -3,6 +3,7 @@ namespace assignment_3;
 public class Subject
 {
     public string SubjectId { get; private set; }
+
     private string _subjectName;
     public string SubjectName
     {
@@ -26,6 +27,9 @@ public class Subject
             _gradingScale = value;
         }
     }
+
+   
+    public Teacher AssignedTeacher { get; private set; }
 
     public Subject(string subjectId, string subjectName, int gradingScale)
     {
@@ -63,5 +67,21 @@ public class Subject
         if (string.IsNullOrWhiteSpace(newSubjectName))
             throw new ArgumentException("Subject name cannot be null or empty.");
         SubjectName = newSubjectName;
+    }
+
+    
+    public void SetTeacher(Teacher teacher)
+    {
+        if (teacher == null)
+            throw new ArgumentException("Teacher cannot be null.");
+
+        if (AssignedTeacher != teacher)
+        {
+            AssignedTeacher = teacher;
+            if (!teacher.Subjects.Contains(this))
+            {
+                teacher.AddSubject(this); 
+            }
+        }
     }
 }

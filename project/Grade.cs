@@ -27,21 +27,30 @@ namespace assignment_3
 
         static int nextId;
 
-        public Grade(uint GradeValue)
+        
+        public Teacher AssignedTeacher { get; private set; }
+
+        public Grade(uint gradeValue)
         {
             GradeId = Interlocked.Increment(ref nextId);
-            this.GradeValue = GradeValue;
-            addGrade(this);
+            this.GradeValue = gradeValue;
+            AddGrade(this);
             SaveManager.SaveToJson(_grade_List, nameof(_grade_List));
         }
 
-        public void GenerateBasicGrades() { }
+        public void GenerateBasicGrades()
+        {
+            
+        }
 
-        public void UpdateGrade() { }
+        public void UpdateGrade()
+        {
+            
+        }
 
         private static List<Grade> _grade_List = new();
 
-        private static void addGrade(Grade grade)
+        private static void AddGrade(Grade grade)
         {
             if (grade is null)
             {
@@ -51,5 +60,20 @@ namespace assignment_3
         }
 
         public static List<Grade> GetGradeExtent() => new List<Grade>(_grade_List);
+
+        
+        public void SetTeacher(Teacher teacher)
+        {
+            if (teacher == null)
+                throw new ArgumentException("Teacher cannot be null.");
+
+            if (AssignedTeacher != teacher)
+            {
+                AssignedTeacher = teacher;
+                if (!teacher.AssignedGrades.Contains(this))
+                {
+                    teacher.AssignGrade(this); 
+            }
+        }
     }
 }
