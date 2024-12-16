@@ -26,6 +26,9 @@ public class Subject
             _gradingScale = value;
         }
     }
+    //Reflex subject having subsubjects
+    private Subject _parentSubject; //Parent ref
+    private readonly List<Subject> _subSubjects = new();
 
     public Subject(string subjectId, string subjectName, int gradingScale)
     {
@@ -64,4 +67,43 @@ public class Subject
             throw new ArgumentException("Subject name cannot be null or empty.");
         SubjectName = newSubjectName;
     }
+    public void AddSubSubject(Subject subSubject)
+    {
+        if (subSubject == null)
+            throw new ArgumentNullException(nameof(subSubject));
+
+        if (subSubject == this)
+            throw new InvalidOperationException("A subject cannot be a sub-subject of itself.");
+        
+        if (subSubject._parentSubject != null)
+            throw new InvalidOperationException("A subject cannot have two parents.");
+
+        if (!_subSubjects.Contains(subSubject))
+        {
+            _subSubjects.Add(subSubject);
+            subSubject.SetParentSubject(this); 
+        }
+    }
+
+    private void SetParentSubject(Subject parentSubject)
+    {
+        _parentSubject = parentSubject;
+    }
+    public void RemoveSubSubject(Subject subSubject)
+    {
+        if (subSubject == null)
+            throw new ArgumentNullException(nameof(subSubject));
+
+        if (_subSubjects.Contains(subSubject))
+        {
+            _subSubjects.Remove(subSubject);
+            subSubject.RemoveParentSubject(); 
+        }
+    }
+
+    private void RemoveParentSubject()
+    {
+        _parentSubject = null;
+    }
+
 }
