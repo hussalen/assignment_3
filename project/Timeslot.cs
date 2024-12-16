@@ -94,7 +94,7 @@ public class Timeslot
         EndTime = newEndTime;
     }
 
-    // Establishes the reverse connection to an Admin
+    
     public void SetAdmin(Admin admin)
     {
         if (admin == null)
