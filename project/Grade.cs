@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text.Json.Serialization;
 using System.Threading;
 
@@ -17,7 +18,7 @@ namespace assignment_3
             get => _gradeValue;
             init
             {
-                if (value is > 5)
+                if (value is < 1 or > 5)
                 {
                     throw new ArgumentOutOfRangeException($"Invalid grade value: {value}");
                 }
@@ -25,17 +26,28 @@ namespace assignment_3
             }
         }
 
-        public Student Student { get; set; }
+        private Student _student;
+        public Student Student
+        {
+            get => new(_student.ClassLevel);
+            set => _student = value;
+        }
+        private static readonly Student DEFAULT_STUDENT = new(ClassLevel.Freshman);
 
         static int nextId;
 
-        public Grade(uint GradeValue, Student student)
+        public Grade(uint GradeValue)
         {
             GradeId = Interlocked.Increment(ref nextId);
             this.GradeValue = GradeValue;
-            Student = student;
+            Student = DEFAULT_STUDENT;
             addGrade(this);
             SaveManager.SaveToJson(_grade_List, nameof(_grade_List));
+        }
+
+        public void ClearStudent()
+        {
+            Student = DEFAULT_STUDENT;
         }
 
         public void GenerateBasicGrades() { }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,13 +36,32 @@ namespace assignment_3
         private static int nextId = 1;
 
         private static Dictionary<int, List<string>> classSchedules = new();
-        private List<IAssignment> _assignments = new();
 
-        public List<IAssignment> GetAssignments() => new(_assignments);
+        private List<IAssignment> _assignments = [DEFAULT_CODING];
+        public List<IAssignment> Assignments
+        {
+            get => new(_assignments);
+            private set => _assignments = value;
+        }
 
-        private List<Grade> _grades = new();
+        private List<Grade> _grades = [DEFAULT_GRADE];
 
-        public List<Grade> GetGrades() => new(_grades);
+        public List<Grade> Grades
+        {
+            get => new(_grades);
+            private set => _grades = value;
+        }
+
+        private static readonly Grade DEFAULT_GRADE = new(2);
+        private static readonly Coding DEFAULT_CODING =
+            new("DEFAULT", new DateTime(2024, 01, 01), "Python", "http://def.com");
+        private static readonly TimeTable DEFAULT_TIMETABLE = new(Day.MONDAY);
+        private static Dictionary<int, TimeTable> _timeTables = new() { { -1, DEFAULT_TIMETABLE } };
+        public Dictionary<int, TimeTable> TimeTables
+        {
+            get => new(_timeTables);
+            private set => _timeTables = value;
+        }
 
         public Student(ClassLevel classLevel)
         {
@@ -53,6 +73,7 @@ namespace assignment_3
         }
 
         private static List<Student> _studentList = new();
+        private int? TimeTableKey { get; set; }
 
         private static void AddStudent(Student student)
         {
@@ -97,19 +118,18 @@ namespace assignment_3
             {
                 sum += grade.GradeValue;
             }
-            return sum / grades.Count;
+            return sum / Grades.Count;
         }
 
         public void AddGrade(Grade grade)
         {
-            // Does this make sense?
             if (grade.Student == this)
             {
                 throw new ArgumentException("Grade is already assigned.");
             }
-            if (_grades.Contains(grade))
+            if (Grades.Contains(grade))
                 throw new ArgumentException("Grade already exists.");
-            _grades.Add(grade);
+            Grades.Add(grade);
             grade.Student = this;
             GPA = CalculateGPA(_grades);
         }
@@ -122,10 +142,10 @@ namespace assignment_3
                     $"Grade is not assigned to this student's grade, but assigned to {nameof(grade.Student)}."
                 );
             }
-            if (!_grades.Contains(grade))
+            if (!Grades.Contains(grade))
                 throw new ArgumentException("Grade does not exist.");
-            _grades.Remove(grade);
-            grade.Student = null; //Wait a second, this doesn't even make sense!
+            Grades.Remove(grade);
+            grade.ClearStudent();
             GPA = CalculateGPA(_grades);
         }
 
@@ -178,7 +198,7 @@ namespace assignment_3
         public void SubmitAssignment(IAssignment assignment, int wordCount)
         {
             ArgumentNullException.ThrowIfNull(assignment);
-            if (_assignments.Contains(assignment))
+            if (Assignments.Contains(assignment))
                 throw new ArgumentException("Assignment already exists.");
             if (assignment.SubmissionDate != null)
             {
@@ -190,14 +210,14 @@ namespace assignment_3
                     "Cannot submit the assignment after the due date"
                 );
             }
-            _assignments.Add(assignment);
+            Assignments.Add(assignment);
         }
 
         public void RemoveAssignmentSubmission(IAssignment assignment)
         {
             ArgumentNullException.ThrowIfNull(assignment);
             ArgumentNullException.ThrowIfNull(assignment.SubmissionDate);
-            if (!_assignments.Contains(assignment))
+            if (!Assignments.Contains(assignment))
                 throw new ArgumentException(
                     $"The student does not have the assignment {nameof(assignment)} submitted"
                 );
@@ -206,7 +226,7 @@ namespace assignment_3
                     "This assignment does not belong to the current student."
                 );
             assignment.SubmissionDate = null;
-            _assignments.Remove(assignment);
+            Assignments.Remove(assignment);
         }
 
         public void EditAssignmentSubmission(IAssignment assignment)
@@ -214,7 +234,7 @@ namespace assignment_3
             ArgumentNullException.ThrowIfNull(assignment);
             ArgumentNullException.ThrowIfNull(assignment.SubmissionDate);
 
-            if (!_assignments.Contains(assignment))
+            if (!Assignments.Contains(assignment))
                 throw new ArgumentException(
                     $"The student does not have the assignment {nameof(assignment)} submitted"
                 );
@@ -225,8 +245,34 @@ namespace assignment_3
                 );
 
             assignment.SubmissionDate = DateTime.UtcNow;
-            _assignments.Remove(assignment);
-            _assignments.Add(assignment);
+            Assignments.Remove(assignment);
+            Assignments.Add(assignment);
+        }
+
+        public void AddTimeTable(TimeTable timeTable)
+        {
+            ArgumentNullException.ThrowIfNull(timeTable);
+
+            if (timeTable.Student != null || _timeTables.ContainsKey(timeTable.Id))
+            {
+                throw new InvalidOperationException(
+                    $"TimeTable {timeTable.Id} is already assigned to Student."
+                );
+            }
+            TimeTableKey = timeTable.Id;
+            _timeTables[timeTable.Id] = timeTable;
+            timeTable.AssignStudent(this);
+        }
+
+        public void RemoveTimeTable()
+        {
+            if (TimeTableKey == null)
+                throw new InvalidOperationException($"No timetable is assigned to Student.");
+
+            TimeTable timeTable = _timeTables[TimeTableKey.Value];
+            timeTable.RemoveStudent();
+            _timeTables.Remove(TimeTableKey.Value);
+            TimeTableKey = null;
         }
     }
 }

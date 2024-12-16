@@ -20,7 +20,7 @@ namespace assignment_3.Tests
             var distinctTimeTableIds = new HashSet<int>();
             foreach (var timeTable in timeTables)
             {
-                Assert.That(distinctTimeTableIds.Add(timeTable.TimeTableId), Is.True);
+                Assert.That(distinctTimeTableIds.Add(timeTable.Id), Is.True);
             }
         }
 
