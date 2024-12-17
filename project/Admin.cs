@@ -23,7 +23,13 @@ namespace assignment_3
             }
         }
 
-        public List<Timeslot> ManagedTimeslots { get; private set; } = new();
+        
+        public List<Timeslot> ManagedTimeslots
+        {
+            get => new List<Timeslot>(_managedTimeslots);
+        }
+
+        private List<Timeslot> _managedTimeslots = new();
 
         public Admin(string name)
         {
@@ -41,7 +47,7 @@ namespace assignment_3
             if (startTime >= endTime)
                 throw new ArgumentException("Start time must be earlier than end time.");
 
-            var newTimeslot = new Timeslot(ManagedTimeslots.Count + 1, date, startTime, endTime);
+            var newTimeslot = new Timeslot(_managedTimeslots.Count + 1, date, startTime, endTime);
             AddTimeslot(newTimeslot);
 
             Console.WriteLine(
@@ -58,24 +64,16 @@ namespace assignment_3
         {
             if (scheduleId <= 0)
                 throw new ArgumentException("Schedule ID must be a positive integer.");
-            if (date < DateTime.Now.Date)
-                throw new ArgumentException("Schedule date cannot be in the past.");
-            if (startTime >= endTime)
-                throw new ArgumentException("Start time must be earlier than end time.");
 
-            var timeslot = ManagedTimeslots.Find(t => t.ScheduleId == scheduleId);
-            if (timeslot != null)
-            {
-                timeslot.Date = date;
-                timeslot.UpdateTime(startTime, endTime);
-                Console.WriteLine(
-                    $"Schedule ID {scheduleId} updated by Admin {Name}: {date.ToShortDateString()}, {startTime} - {endTime}"
-                );
-            }
-            else
-            {
+            var timeslot = _managedTimeslots.Find(t => t.ScheduleId == scheduleId);
+            if (timeslot == null)
                 throw new ArgumentException($"No timeslot with Schedule ID {scheduleId} found.");
-            }
+
+            timeslot.Date = date;
+            timeslot.UpdateTime(startTime, endTime);
+            Console.WriteLine(
+                $"Schedule ID {scheduleId} updated by Admin {Name}: {date.ToShortDateString()}, {startTime} - {endTime}"
+            );
         }
 
         public void DeleteSchedule(int scheduleId)
@@ -83,16 +81,12 @@ namespace assignment_3
             if (scheduleId <= 0)
                 throw new ArgumentException("Schedule ID must be a positive integer.");
 
-            var timeslot = ManagedTimeslots.Find(t => t.ScheduleId == scheduleId);
-            if (timeslot != null)
-            {
-                ManagedTimeslots.Remove(timeslot);
-                Console.WriteLine($"Schedule ID {scheduleId} deleted by Admin {Name}");
-            }
-            else
-            {
+            var timeslot = _managedTimeslots.Find(t => t.ScheduleId == scheduleId);
+            if (timeslot == null)
                 throw new ArgumentException($"No timeslot with Schedule ID {scheduleId} found.");
-            }
+
+            _managedTimeslots.Remove(timeslot);
+            Console.WriteLine($"Schedule ID {scheduleId} deleted by Admin {Name}");
         }
 
         public Report GenerateReport(string title, JsonArray content)
@@ -107,16 +101,17 @@ namespace assignment_3
             return report;
         }
 
+        
         public void AddTimeslot(Timeslot timeslot)
         {
             if (timeslot == null)
                 throw new ArgumentException("Timeslot cannot be null.");
 
-            if (!ManagedTimeslots.Contains(timeslot))
-            {
-                ManagedTimeslots.Add(timeslot);
-                timeslot.SetAdmin(this); 
-            }
+            if (_managedTimeslots.Contains(timeslot))
+                throw new InvalidOperationException("This timeslot is already managed by the admin.");
+
+            _managedTimeslots.Add(timeslot);
+            timeslot.SetAdmin(this); 
         }
     }
 }
