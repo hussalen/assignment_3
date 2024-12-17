@@ -44,7 +44,9 @@ namespace assignment_3
             private set => _assignments = value;
         }
 
-        private List<Grade> _grades = [DEFAULT_GRADE];
+        //private static readonly Grade DEFAULT_GRADE = new(2);
+
+        private List<Grade> _grades;
 
         public List<Grade> Grades
         {
@@ -52,16 +54,15 @@ namespace assignment_3
             private set => _grades = value;
         }
 
-        private static readonly Grade DEFAULT_GRADE = new(2);
         private static readonly Coding DEFAULT_CODING =
-            new("DEFAULT", new DateTime(2024, 01, 01), "Python", "http://def.com");
-        private static readonly TimeTable DEFAULT_TIMETABLE = new(Day.MONDAY);
-        private static Dictionary<int, TimeTable> _timeTables = new() { { -1, DEFAULT_TIMETABLE } };
+            new("DEFAULT", new DateTime(2026, 01, 01), "Python", "http://def.com");
+        private static Dictionary<int, TimeTable> _timeTables = new() { { -1, new(Day.MONDAY) } };
         public Dictionary<int, TimeTable> TimeTables
         {
             get => new(_timeTables);
             private set => _timeTables = value;
         }
+        private static List<Student> _studentList = new();
 
         public Student(ClassLevel classLevel)
         {
@@ -72,17 +73,18 @@ namespace assignment_3
             SaveManager.SaveToJson(_studentList, nameof(_studentList));
         }
 
-        private static List<Student> _studentList = new();
         private int? TimeTableKey { get; set; }
 
         private static void AddStudent(Student student)
         {
+            if (_studentList == null)
+                _studentList = new();
             if (student == null)
             {
                 throw new ArgumentException($"{nameof(student)} cannot be null.");
             }
 
-            if (_studentList.Any(s => s.StudentID == student.StudentID))
+            if (_studentList.Contains(student))
             {
                 throw new ArgumentException(
                     $"A student with ID {student.StudentID} already exists."
@@ -253,14 +255,14 @@ namespace assignment_3
         {
             ArgumentNullException.ThrowIfNull(timeTable);
 
-            if (timeTable.Student != null || _timeTables.ContainsKey(timeTable.Id))
+            if (timeTable.Student != null || TimeTables.ContainsKey(timeTable.Id))
             {
                 throw new InvalidOperationException(
                     $"TimeTable {timeTable.Id} is already assigned to Student."
                 );
             }
             TimeTableKey = timeTable.Id;
-            _timeTables[timeTable.Id] = timeTable;
+            TimeTables[timeTable.Id] = timeTable;
             timeTable.AssignStudent(this);
         }
 
@@ -269,9 +271,9 @@ namespace assignment_3
             if (TimeTableKey == null)
                 throw new InvalidOperationException($"No timetable is assigned to Student.");
 
-            TimeTable timeTable = _timeTables[TimeTableKey.Value];
+            TimeTable timeTable = TimeTables[TimeTableKey.Value];
             timeTable.RemoveStudent();
-            _timeTables.Remove(TimeTableKey.Value);
+            TimeTables.Remove(TimeTableKey.Value);
             TimeTableKey = null;
         }
     }

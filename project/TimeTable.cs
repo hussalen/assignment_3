@@ -27,14 +27,19 @@ namespace assignment_3
             private set => _dayOfWeek = ValidateDayOfWeek(value);
         }
 
-        private static List<TimeTable> _timetableList = new();
+        private static List<TimeTable> _timetableList;
 
-        private static readonly Student DEFAULT_STUDENT = new(ClassLevel.Freshman);
+        private static Student DEFAULT_STUDENT;
+
+        static TimeTable()
+        {
+            _timetableList = new();
+        }
 
         private Student _student;
         public Student Student
         {
-            get => _student = DEFAULT_STUDENT;
+            get => _student;
             private set => _student = value;
         }
 
@@ -42,6 +47,7 @@ namespace assignment_3
         {
             Id = Interlocked.Increment(ref nextId);
             DayOfWeek = dayOfWeek;
+            DEFAULT_STUDENT = new(ClassLevel.Freshman);
             AddTimeTable(this);
             SaveManager.SaveToJson(_timetableList, nameof(_timetableList));
         }

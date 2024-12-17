@@ -5,7 +5,7 @@ namespace assignment_3.Tests
     public class SaveManagerTests
     {
         const string _testFileName = "object_file";
-        readonly Student student = new(ClassLevel.Freshman, 3.5f);
+        readonly Student student = new(ClassLevel.Freshman);
 
         [TearDown]
         public void TearDown()

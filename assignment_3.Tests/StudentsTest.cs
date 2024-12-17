@@ -39,5 +39,13 @@ namespace assignment_3.Tests
             var validGpa = new Student(ClassLevel.Freshman);
             Assert.That(validGpa.GPA, Is.EqualTo(4.0f), "Valid GPA should be accepted.");
         }
+
+        // [Test]
+        // AddGrade
+        [Test]
+        public void RemoveGrade_ThrowsArgumentException_WhenGradeIsNotAssignedToStudent()
+        {
+            var student1 = new Student(ClassLevel.Freshman);
+        }
     }
 }
