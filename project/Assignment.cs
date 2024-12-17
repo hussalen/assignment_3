@@ -17,7 +17,4 @@ namespace assignment_3
 
         public Student SubmittingStudent { get; set; }
     }
-    
-    
 }
-

@@ -63,7 +63,7 @@ namespace assignment_3
         }
         public Student SubmittingStudent { get; set; }
 
-        private static readonly List<GroupProject> _groupProjectList = new();
+        private static List<GroupProject> _groupProjectList = new();
 
         public GroupProject(
             string topic,

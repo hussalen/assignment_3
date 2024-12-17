@@ -17,7 +17,7 @@ public class Exam
         }
     }
 
-    private static readonly List<Exam> _examList = new();
+    private static List<Exam> _examList = new();
 
     public Exam(DateTime examDate)
     {

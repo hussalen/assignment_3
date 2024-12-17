@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,26 +30,50 @@ namespace assignment_3
         public float GPA
         {
             get => _gpa;
-            set => _gpa = ValidateGPA(value);
+            set => _gpa = value == 0.0f ? 0.0f : ValidateGPA(value);
         }
 
         private static int nextId = 1;
 
-        private static readonly Dictionary<int, List<string>> classSchedules = new();
-        private List<IAssignment> _assignments = new();
+        private static Dictionary<int, List<string>> classSchedules = new();
 
-        public List<IAssignment> GetAssignments() => new(_assignments);
+        private List<IAssignment> _assignments = [DEFAULT_CODING];
+        public List<IAssignment> Assignments
+        {
+            get => new(_assignments);
+            private set => _assignments = value;
+        }
 
-        public Student(ClassLevel classLevel, float gpa)
+        private List<Grade> _grades = [DEFAULT_GRADE];
+
+        public List<Grade> Grades
+        {
+            get => new(_grades);
+            private set => _grades = value;
+        }
+
+        private static readonly Grade DEFAULT_GRADE = new(2);
+        private static readonly Coding DEFAULT_CODING =
+            new("DEFAULT", new DateTime(2024, 01, 01), "Python", "http://def.com");
+        private static readonly TimeTable DEFAULT_TIMETABLE = new(Day.MONDAY);
+        private static Dictionary<int, TimeTable> _timeTables = new() { { -1, DEFAULT_TIMETABLE } };
+        public Dictionary<int, TimeTable> TimeTables
+        {
+            get => new(_timeTables);
+            private set => _timeTables = value;
+        }
+
+        public Student(ClassLevel classLevel)
         {
             StudentID = Interlocked.Increment(ref nextId);
             ClassLevel = classLevel;
-            GPA = gpa;
+            GPA = 0.0f;
             AddStudent(this);
             SaveManager.SaveToJson(_studentList, nameof(_studentList));
         }
 
-        private static readonly List<Student> _studentList = new();
+        private static List<Student> _studentList = new();
+        private int? TimeTableKey { get; set; }
 
         private static void AddStudent(Student student)
         {
@@ -78,12 +103,56 @@ namespace assignment_3
                 );
             }
 
-            if (gpa >= 3.0f && gpa <= 5.0f)
+            if (gpa is < 3.0f or > 5.0f)
             {
-                return gpa;
+                throw new ValidationException("GPA must be between 3.0 and 5.0.");
             }
 
-            throw new ValidationException("GPA must be between 3.0 and 5.0.");
+            return gpa;
+        }
+
+        private float CalculateGPA(List<Grade> grades)
+        {
+            uint sum = 0;
+            foreach (var grade in grades)
+            {
+                sum += grade.GradeValue;
+            }
+            return sum / Grades.Count;
+        }
+
+        public void AddGrade(Grade grade)
+        {
+            if (grade.Student == this)
+            {
+                throw new ArgumentException("Grade is already assigned.");
+            }
+            if (Grades.Contains(grade))
+                throw new ArgumentException("Grade already exists.");
+            Grades.Add(grade);
+            grade.Student = this;
+            GPA = CalculateGPA(_grades);
+        }
+
+        public void RemoveGrade(Grade grade)
+        {
+            if (grade.Student != this)
+            {
+                throw new ArgumentException(
+                    $"Grade is not assigned to this student's grade, but assigned to {nameof(grade.Student)}."
+                );
+            }
+            if (!Grades.Contains(grade))
+                throw new ArgumentException("Grade does not exist.");
+            Grades.Remove(grade);
+            grade.ClearStudent();
+            GPA = CalculateGPA(_grades);
+        }
+
+        public void UpdateGrade(Grade grade)
+        {
+            RemoveGrade(grade);
+            AddGrade(grade);
         }
 
         private ClassLevel ValidateClassLevel(ClassLevel classLevel)
@@ -129,39 +198,45 @@ namespace assignment_3
         public void SubmitAssignment(IAssignment assignment, int wordCount)
         {
             ArgumentNullException.ThrowIfNull(assignment);
-            if (_assignments.Contains(assignment)) throw new ArgumentException("Assignment already exists.");
-            if (assignment.SubmissionDate!=null){
+            if (Assignments.Contains(assignment))
+                throw new ArgumentException("Assignment already exists.");
+            if (assignment.SubmissionDate != null)
+            {
                 throw new InvalidOperationException("Assignment already submitted, edit to modify");
             }
-            if (DateTime.Now>assignment.DueDate) {
-                throw new InvalidOperationException("Cannot submit the assignment after the due date");
+            if (DateTime.Now > assignment.DueDate)
+            {
+                throw new InvalidOperationException(
+                    "Cannot submit the assignment after the due date"
+                );
             }
-            _assignments.Add(assignment);
+            Assignments.Add(assignment);
         }
 
         public void RemoveAssignmentSubmission(IAssignment assignment)
         {
             ArgumentNullException.ThrowIfNull(assignment);
             ArgumentNullException.ThrowIfNull(assignment.SubmissionDate);
-            if (!_assignments.Contains(assignment))
+            if (!Assignments.Contains(assignment))
                 throw new ArgumentException(
-                    $"The student nameof(this) does not have the assignment {nameof(assignment)} submitted"
+                    $"The student does not have the assignment {nameof(assignment)} submitted"
                 );
             if (assignment.SubmittingStudent != this)
                 throw new InvalidOperationException(
                     "This assignment does not belong to the current student."
                 );
             assignment.SubmissionDate = null;
-            _assignments.Remove(assignment);
+            Assignments.Remove(assignment);
         }
+
         public void EditAssignmentSubmission(IAssignment assignment)
         {
             ArgumentNullException.ThrowIfNull(assignment);
             ArgumentNullException.ThrowIfNull(assignment.SubmissionDate);
 
-            if (!_assignments.Contains(assignment))
+            if (!Assignments.Contains(assignment))
                 throw new ArgumentException(
-                    $"The student {nameof(this)} does not have the assignment {nameof(assignment)} submitted"
+                    $"The student does not have the assignment {nameof(assignment)} submitted"
                 );
 
             if (assignment.SubmittingStudent != this)
@@ -170,7 +245,34 @@ namespace assignment_3
                 );
 
             assignment.SubmissionDate = DateTime.UtcNow;
-            _assignments[assignment] = assignment;
+            Assignments.Remove(assignment);
+            Assignments.Add(assignment);
+        }
+
+        public void AddTimeTable(TimeTable timeTable)
+        {
+            ArgumentNullException.ThrowIfNull(timeTable);
+
+            if (timeTable.Student != null || _timeTables.ContainsKey(timeTable.Id))
+            {
+                throw new InvalidOperationException(
+                    $"TimeTable {timeTable.Id} is already assigned to Student."
+                );
+            }
+            TimeTableKey = timeTable.Id;
+            _timeTables[timeTable.Id] = timeTable;
+            timeTable.AssignStudent(this);
+        }
+
+        public void RemoveTimeTable()
+        {
+            if (TimeTableKey == null)
+                throw new InvalidOperationException($"No timetable is assigned to Student.");
+
+            TimeTable timeTable = _timeTables[TimeTableKey.Value];
+            timeTable.RemoveStudent();
+            _timeTables.Remove(TimeTableKey.Value);
+            TimeTableKey = null;
         }
     }
 }
