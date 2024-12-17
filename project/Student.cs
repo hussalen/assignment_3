@@ -35,7 +35,10 @@ namespace assignment_3
 
         private static int nextId = 1;
 
-        private static Dictionary<int, List<string>> classSchedules = new();
+        private static Dictionary<Int32, List<string>> classSchedules = new();
+
+        private static readonly Coding DEFAULT_CODING =
+            new("DEFAULT", new DateTime(2026, 01, 01), "Python", "http://def.com");
 
         private List<IAssignment> _assignments = [DEFAULT_CODING];
         public List<IAssignment> Assignments
@@ -44,9 +47,9 @@ namespace assignment_3
             private set => _assignments = value;
         }
 
-        //private static readonly Grade DEFAULT_GRADE = new(2);
+        private static readonly Grade DEFAULT_GRADE = new(2);
 
-        private List<Grade> _grades;
+        private List<Grade> _grades = [DEFAULT_GRADE];
 
         public List<Grade> Grades
         {
@@ -54,34 +57,35 @@ namespace assignment_3
             private set => _grades = value;
         }
 
-        private static readonly Coding DEFAULT_CODING =
-            new("DEFAULT", new DateTime(2026, 01, 01), "Python", "http://def.com");
-        private static Dictionary<int, TimeTable> _timeTables = new() { { -1, new(Day.MONDAY) } };
+        private static Dictionary<int, TimeTable> _timeTables;
         public Dictionary<int, TimeTable> TimeTables
         {
             get => new(_timeTables);
             private set => _timeTables = value;
         }
         private static List<Student> _studentList = new();
+        private int? TimeTableKey { get; set; }
 
         public Student(ClassLevel classLevel)
         {
             StudentID = Interlocked.Increment(ref nextId);
             ClassLevel = classLevel;
             GPA = 0.0f;
+            TimeTables = new();
             AddStudent(this);
             SaveManager.SaveToJson(_studentList, nameof(_studentList));
         }
 
-        private int? TimeTableKey { get; set; }
-
-        private static void AddStudent(Student student)
+        private void AddStudent(Student student)
         {
-            if (_studentList == null)
-                _studentList = new();
             if (student == null)
             {
                 throw new ArgumentException($"{nameof(student)} cannot be null.");
+            }
+
+            if (_studentList == null)
+            {
+                _studentList = new();
             }
 
             if (_studentList.Contains(student))
@@ -251,30 +255,30 @@ namespace assignment_3
             Assignments.Add(assignment);
         }
 
-        public void AddTimeTable(TimeTable timeTable)
-        {
-            ArgumentNullException.ThrowIfNull(timeTable);
+        // public void AddTimeTable(TimeTable timeTable)
+        // {
+        //     ArgumentNullException.ThrowIfNull(timeTable);
 
-            if (timeTable.Student != null || TimeTables.ContainsKey(timeTable.Id))
-            {
-                throw new InvalidOperationException(
-                    $"TimeTable {timeTable.Id} is already assigned to Student."
-                );
-            }
-            TimeTableKey = timeTable.Id;
-            TimeTables[timeTable.Id] = timeTable;
-            timeTable.AssignStudent(this);
-        }
+        //     if (timeTable.Student != null || TimeTables.ContainsKey(timeTable.Id))
+        //     {
+        //         throw new InvalidOperationException(
+        //             $"TimeTable {timeTable.Id} is already assigned to Student."
+        //         );
+        //     }
+        //     TimeTableKey = timeTable.Id;
+        //     TimeTables[timeTable.Id] = timeTable;
+        //     timeTable.AssignStudent(this);
+        // }
 
-        public void RemoveTimeTable()
-        {
-            if (TimeTableKey == null)
-                throw new InvalidOperationException($"No timetable is assigned to Student.");
+        // public void RemoveTimeTable()
+        // {
+        //     if (TimeTableKey == null)
+        //         throw new InvalidOperationException($"No timetable is assigned to Student.");
 
-            TimeTable timeTable = TimeTables[TimeTableKey.Value];
-            timeTable.RemoveStudent();
-            TimeTables.Remove(TimeTableKey.Value);
-            TimeTableKey = null;
-        }
+        //     TimeTable timeTable = TimeTables[TimeTableKey.Value];
+        //     timeTable.RemoveStudent();
+        //     TimeTables.Remove(TimeTableKey.Value);
+        //     TimeTableKey = null;
+        // }
     }
 }
