@@ -17,22 +17,6 @@ public class Exam
         }
     }
 
-    private Timeslot _timeslot;
-    public Timeslot Timeslot
-    {
-        get => _timeslot;
-        set
-        {
-            if (value != null && value.Exam != null && value.Exam != this)
-                throw new InvalidOperationException("The timeslot is already assigned to another exam.");
-            _timeslot = value;
-            if (value != null && value.Exam != this)
-                value.Exam = this; 
-        }
-    }
-
-    private static readonly List<Exam> _examList = new();
-
     public Exam(DateTime examDate)
     {
         ExamId = Interlocked.Increment(ref nextId);
@@ -84,4 +68,19 @@ public class Exam
     }
 
     public static List<Exam> GetExamExtent() => new(_examList);
+    private Timeslot _timeslot;
+    public Timeslot Timeslot
+    {
+        get => _timeslot;
+        set
+        {
+            if (value != null && value.Exam != null && value.Exam != this)
+                throw new InvalidOperationException("The timeslot is already assigned to another exam.");
+            _timeslot = value;
+            if (value != null && value.Exam != this)
+                value.Exam = this; 
+        }
+    }
+
+    private static readonly List<Exam> _examList = new();
 }
