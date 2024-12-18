@@ -56,25 +56,25 @@ namespace assignment_3.Tests
         [Test]
         public void EditAssignmentSubmissionUpdatesSubmissionDate()
         {
-       //     var assignment = new Assignment("Test Assignment") { SubmissionDate = DateTime.Now };
-      //      currentStudent.EditAssignmentSubmission(assignment);
+            var assignment = new Assignment("Test Assignment") { SubmissionDate = DateTime.Now };
+            currentStudent.EditAssignmentSubmission(assignment);
 
-      //    Assert.That(assignment.SubmissionDate, Is.EqualTo(DateTime.UtcNow));
+          Assert.That(assignment.SubmissionDate, Is.EqualTo(DateTime.UtcNow));
         }
 
         [Test]
         public void EditAssignmentSubmissionThrowsExceptionIfAssignmentDoesNotExist()
         {
-       //     var nonExistentAssignment = new Assignment("Non-existent Assignment");
-       //     Assert.Throws<ArgumentException>(() => currentStudent.EditAssignmentSubmission(nonExistentAssignment));
+            var nonExistentAssignment = new Assignment("Non-existent Assignment");
+            Assert.Throws<ArgumentException>(() => currentStudent.EditAssignmentSubmission(nonExistentAssignment));
         }
 
         [Test]
         public void EditAssignmentSubmissionThrowsExceptionIfNotCurrentStudent()
         {
             var otherStudent = new Student(ClassLevel.Sophomore, 4.0f);
-     //       var assignment = new Assignment("Test Assignment") { SubmittingStudent = otherStudent };
-      //      Assert.Throws<InvalidOperationException>(() => currentStudent.EditAssignmentSubmission(assignment));
+            var assignment = new Assignment("Test Assignment") { SubmittingStudent = otherStudent };
+            Assert.Throws<InvalidOperationException>(() => currentStudent.EditAssignmentSubmission(assignment));
         }
     }
 }

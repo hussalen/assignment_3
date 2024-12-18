@@ -161,7 +161,7 @@ namespace assignment_3
 
             if (!_assignments.Contains(assignment))
                 throw new ArgumentException(
-               //     $"The student {nameof(this)} does not have the assignment {nameof(assignment)} submitted"
+                    $"The student {nameof(this)} does not have the assignment {nameof(assignment)} submitted"
                 );
 
             if (assignment.SubmittingStudent != this)
@@ -170,7 +170,7 @@ namespace assignment_3
                 );
 
             assignment.SubmissionDate = DateTime.UtcNow;
-          //  _assignments[assignment] = assignment;
+            _assignments[assignment] = assignment;
         }
     }
 }
