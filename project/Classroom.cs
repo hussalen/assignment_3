@@ -100,6 +100,22 @@ public class Classroom
         newClassroom.AssignTimeslot(timeslot);
         
     }
+    public bool IsEmpty()
+    {
+        return _assignedTimeslots.Count == 1 && _assignedTimeslots[0].ScheduleId == 0;
+    }
+    public void CheckAndSendEmptyClassroomNotification()
+    {
+        if (IsEmpty())
+        {
+            var notification = new ClassroomNotification(this, null)
+            {
+                NotifMessage = "This classroom is empty and not scheduled for any timeslot.",
+                Availability = false
+            };
+            notification.SendNotification();
+        }
+    }
     public List<Timeslot> GetAssignedTimeslots() => new List<Timeslot>(_assignedTimeslots);
 
 }
