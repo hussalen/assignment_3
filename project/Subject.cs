@@ -42,7 +42,7 @@ public class Subject
         SaveManager.SaveToJson(_subjectList, nameof(_subjectList));
     }
 
-    private static readonly List<Subject> _subjectList = new();
+    private static List<Subject> _subjectList = new();
 
     private static void AddSubject(Subject subject)
     {

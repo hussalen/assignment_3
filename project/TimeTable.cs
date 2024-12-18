@@ -16,7 +16,7 @@ namespace assignment_3
 
     public class TimeTable
     {
-        public int TimeTableId { get; private set; }
+        public int Id { get; private set; }
 
         private static int nextId = 1;
 
@@ -27,12 +27,27 @@ namespace assignment_3
             private set => _dayOfWeek = ValidateDayOfWeek(value);
         }
 
-        private static readonly List<TimeTable> _timetableList = new();
+        private static List<TimeTable> _timetableList;
+
+        private static Student DEFAULT_STUDENT;
+
+        static TimeTable()
+        {
+            _timetableList = new();
+        }
+
+        private Student _student;
+        public Student Student
+        {
+            get => _student;
+            private set => _student = value;
+        }
 
         public TimeTable(Day dayOfWeek)
         {
-            TimeTableId = Interlocked.Increment(ref nextId);
+            Id = Interlocked.Increment(ref nextId);
             DayOfWeek = dayOfWeek;
+            DEFAULT_STUDENT = new(ClassLevel.Freshman);
             AddTimeTable(this);
             SaveManager.SaveToJson(_timetableList, nameof(_timetableList));
         }
@@ -64,12 +79,25 @@ namespace assignment_3
             if (!Enum.IsDefined(typeof(Day), newDayOfWeek))
                 throw new ArgumentOutOfRangeException($"Day {newDayOfWeek} is invalid.");
 
-            if (
-                _timetableList.Any(t => t.TimeTableId != TimeTableId && t.DayOfWeek == newDayOfWeek)
-            )
+            if (_timetableList.Any(t => t.Id != Id && t.DayOfWeek == newDayOfWeek))
                 throw new ArgumentException($"A timetable for {newDayOfWeek} already exists.");
 
             DayOfWeek = newDayOfWeek;
+        }
+
+        public void AssignStudent(Student student)
+        {
+            if (Student != null)
+                throw new InvalidOperationException(
+                    $"Timetable is already assigned to Student {nameof(Student)}."
+                );
+
+            Student = student;
+        }
+
+        public void RemoveStudent()
+        {
+            Student = DEFAULT_STUDENT;
         }
     }
 }

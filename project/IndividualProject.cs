@@ -48,19 +48,32 @@ namespace assignment_3
         }
 
         public string description;
-        public List<string> notes;
 
-        public IndividualProject(string topic, DateTime dueDate)
+        private List<string> _notes;
+        public List<string> Notes
+        {
+            get => _notes;
+            set =>
+                _notes =
+                    value.Count != 0 && !value.Any(string.IsNullOrWhiteSpace)
+                        ? value
+                        : throw new ArgumentNullException(
+                            $"Cannot have empty notes, source: {nameof(value)}"
+                        );
+        }
+
+        public IndividualProject(string topic, DateTime dueDate, List<string> notes)
         {
             AssignmentID = Interlocked.Increment(ref nextId);
             Topic = topic;
             DueDate = dueDate;
             SubmissionDate = null;
+            Notes = notes;
             AddIndividualProject(this);
             SaveManager.SaveToJson(_individualProject_List, nameof(_individualProject_List));
         }
 
-        private static readonly List<IndividualProject> _individualProject_List = new();
+        private static List<IndividualProject> _individualProject_List = new();
 
         private static void AddIndividualProject(IndividualProject individualProject)
         {

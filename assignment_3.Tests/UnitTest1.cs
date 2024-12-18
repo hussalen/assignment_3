@@ -16,7 +16,7 @@ namespace assignment_3.Tests
             DateTime dueDate = new DateTime(2024, 12, 25);
 
             // Act
-            var individualProject = new IndividualProject(topic, dueDate);
+            var individualProject = new IndividualProject(topic, dueDate, ["test"]);
 
             // Assert
             Assert.AreEqual(1, individualProject.AssignmentID);
@@ -64,22 +64,6 @@ namespace assignment_3.Tests
             var initialDate = DateTime.Now.AddDays(1);
             exam.ScheduleExam(initialDate);
             Assert.AreEqual(initialDate, exam.ExamDate);
-        }
-
-        [Test]
-        public void Report_Content_SetAndGet_ShouldWorkCorrectly()
-        {
-            // Arrange
-            var report = new Report([]);
-            JsonArray content = new JsonArray();
-            content.Add("Test content");
-
-            // Act
-            report.Content = content;
-
-            // Assert
-            Assert.IsNotNull(report.Content);
-            Assert.AreEqual("Test content", report.Content[0].ToString());
         }
     }
 

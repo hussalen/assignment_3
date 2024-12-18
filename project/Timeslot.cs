@@ -56,7 +56,7 @@ public class Timeslot
         SaveManager.SaveToJson(_timeslotList, nameof(_timeslotList));
     }
 
-    private static readonly List<Timeslot> _timeslotList = new();
+    private static List<Timeslot> _timeslotList = new();
 
     private static void AddTimeslot(Timeslot timeslot)
     {
