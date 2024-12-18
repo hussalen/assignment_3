@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace assignment_3
 {
@@ -17,21 +17,52 @@ namespace assignment_3
         public string Name { get; set; }
         private static int nextId = 1;
         public int TeacherID { get; private set; }
-        public List<Subject> Subject { get; set; }
+        private List<Subject> _subjects = new();
+        public List<Subject> Subjects
+        {
+            get => new(_subjects); // Encapsulation: Read-only access
+            private set => _subjects = value;
+        }
+
         public Availability AvailabilityStatus { get; set; }
 
-        public Teacher(List<Subject> subjects, string name)
+        public Teacher(string name)
         {
-            Name = name;
+            Name = name ?? throw new ArgumentException("Name cannot be null or empty.");
             TeacherID = Interlocked.Increment(ref nextId);
-            Subject = subjects;
             AvailabilityStatus = Availability.Available;
         }
 
-        public void ViewSchedule() { }
+        public void AssignSubject(Subject subject)
+        {
+            ArgumentNullException.ThrowIfNull(subject);
+            if (_subjects.Contains(subject))
+                throw new ArgumentException("Subject is already assigned to this teacher.");
 
-        public void RequestScheduleChange() { }
+            if (subject.Teacher != null && subject.Teacher != this)
+                throw new InvalidOperationException("Subject is already assigned to another teacher.");
 
-        public void AssignRole() { }
+            _subjects.Add(subject);
+            subject.Teacher = this; 
+        }
+
+        public void RemoveSubject(Subject subject)
+        {
+            ArgumentNullException.ThrowIfNull(subject);
+            if (!_subjects.Contains(subject))
+                throw new ArgumentException("Subject is not assigned to this teacher.");
+
+            _subjects.Remove(subject);
+            subject.Teacher = null; 
+        }
+
+        public void ViewSchedule()
+        {
+            Console.WriteLine($"Schedule for Teacher {Name}:");
+            foreach (var subject in _subjects)
+            {
+                Console.WriteLine($"- {subject.SubjectName} (ID: {subject.SubjectId})");
+            }
+        }
     }
 }
