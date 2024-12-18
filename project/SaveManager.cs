@@ -33,7 +33,9 @@ namespace assignment_3
             }
             catch (Exception e)
             {
-                throw new JsonException($"An error occurred while saving to JSON: {e.Message}");
+                throw new JsonException(
+                    $"An error occurred while saving to JSON: {e.Message} and {e.TargetSite}"
+                );
             }
         }
 
