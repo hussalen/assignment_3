@@ -28,15 +28,27 @@ namespace assignment_3
             }
         }
 
-        private Teacher _teacher;
-        public Teacher Teacher
+        private List<Teacher> _teachers = new();
+        public List<Teacher> Teachers
         {
-            get => _teacher;
+            get => new(_teachers);
             set
             {
-                if (_teacher != null && value != null)
-                    throw new InvalidOperationException("This subject is already assigned to a teacher.");
-                _teacher = value;
+                if (value == null || value.Count == 0)
+                    throw new InvalidOperationException("A subject must be assigned to at least one teacher.");
+                _teachers = value;
+            }
+        }
+
+        private List<Student> _students = new();
+        public List<Student> Students
+        {
+            get => new(_students);
+            set
+            {
+                if (value == null)
+                    throw new ArgumentException("Student list cannot be null.");
+                _students = value;
             }
         }
 

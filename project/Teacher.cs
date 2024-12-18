@@ -28,7 +28,10 @@ namespace assignment_3
 
         public Teacher(string name)
         {
-            Name = name ?? throw new ArgumentException("Name cannot be null or empty.");
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Name cannot be null or empty.");
+
+            Name = name;
             TeacherID = Interlocked.Increment(ref nextId);
             AvailabilityStatus = Availability.Available;
         }
@@ -43,7 +46,7 @@ namespace assignment_3
                 throw new InvalidOperationException("Subject is already assigned to another teacher.");
 
             _subjects.Add(subject);
-            subject.Teacher = this; 
+            subject.Teacher = this;
         }
 
         public void RemoveSubject(Subject subject)
@@ -53,7 +56,7 @@ namespace assignment_3
                 throw new ArgumentException("Subject is not assigned to this teacher.");
 
             _subjects.Remove(subject);
-            subject.Teacher = null; 
+            subject.Teacher = null;
         }
 
         public void ViewSchedule()
