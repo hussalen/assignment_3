@@ -3,8 +3,11 @@ namespace assignment_3;
 public class Timeslot
 {
     public int ScheduleId { get; private set; }
-
+    public Classroom Classroom { get; private set; }
+    private Subject _subject; 
     private DateTime _date;
+    private TimeSpan _startTime;
+    private TimeSpan _endTime;
     public DateTime Date
     {
         get => _date;
@@ -15,8 +18,6 @@ public class Timeslot
             _date = value;
         }
     }
-
-    private TimeSpan _startTime;
     public TimeSpan StartTime
     {
         get => _startTime;
@@ -29,8 +30,6 @@ public class Timeslot
             _startTime = value;
         }
     }
-
-    private TimeSpan _endTime;
     public TimeSpan EndTime
     {
         get => _endTime;
@@ -88,4 +87,64 @@ public class Timeslot
         StartTime = newStartTime;
         EndTime = newEndTime;
     }
+
+    internal void SetClassroom(Classroom classroom)
+    {
+        Classroom = classroom;
+    }
+
+    internal void ClearClassroom()
+    {
+        Classroom = null;
+    }
+    private Exam _exam;
+    public Exam Exam
+    {
+        get => _exam;
+        set
+        {
+            if (value != null && value.Timeslot != null && value.Timeslot != this)
+                throw new InvalidOperationException("The exam is already assigned to another timeslot.");
+            _exam = value;
+            if (value != null && value.Timeslot != this)
+                value.Timeslot = this; 
+        }
+    }
+    public void AddExam(Exam exam)
+    {
+        if (_exam != null)
+            throw new InvalidOperationException("This timeslot already has an associated exam.");
+        
+        Exam = exam;
+    }
+
+    public void EditExam(Exam newExam)
+    {
+        RemoveExam();
+        AddExam(newExam);
+    }
+
+    public void RemoveExam()
+    {
+        if (_exam != null)
+        {
+            var temp = _exam;
+            _exam = null;
+            temp.Timeslot = null;
+        }
+    }
+    public void SetSubject(Subject subject)
+    {
+        if (_subject != null)
+            throw new InvalidOperationException("This timeslot is already assigned to another subject.");
+
+        _subject = subject; //cannot be assigned to second subject before clearing the ref
+    }
+
+    public void ClearSubject()
+    {
+        _subject = null;
+    }
+    public Subject GetSubject() => _subject;  // Get the subject that owns this timeslot
 }
+
