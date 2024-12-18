@@ -72,7 +72,11 @@ namespace assignment_3.Tests
         public void IndividualProjectSubmit_ValidSubmission_SetsSubmissionDate()
         {
             // Arrange
-            IAssignment assignment = new IndividualProject("Test Project", DateTime.Now.AddDays(7));
+            IAssignment assignment = new IndividualProject(
+                "Test Project",
+                DateTime.Now.AddDays(7),
+                ["test"]
+            );
 
             // Act
             assignment.SubmissionDate = DateTime.Now;
@@ -87,7 +91,8 @@ namespace assignment_3.Tests
         {
             IAssignment assignment = new IndividualProject(
                 "testtestest",
-                new DateTime(2024, 12, 12)
+                new DateTime(2024, 12, 12),
+                ["test"]
             );
             // Explicitly setting to null despite it already being null
             assignment.SubmissionDate = null;
@@ -101,7 +106,8 @@ namespace assignment_3.Tests
         {
             IAssignment assignment = new IndividualProject(
                 "testtestest",
-                new DateTime(2024, 12, 12)
+                new DateTime(2024, 12, 12),
+                ["test"]
             );
 
             assignment.SubmissionDate = new DateTime(2020, 11, 11);

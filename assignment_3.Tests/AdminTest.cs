@@ -8,6 +8,17 @@ namespace assignment_3.Tests
     [TestFixture]
     public class AdminTests
     {
+        private Admin _admin = new Admin("Test Admin");
+        private JsonArray jsonArrayExample = new JsonArray
+        {
+            new
+            {
+                name = "1",
+                test = "2",
+                testt2 = "3"
+            }
+        };
+
         [Test]
         public void Admin_Creation_ShouldInitializeCorrectly()
         {
@@ -19,8 +30,8 @@ namespace assignment_3.Tests
 
             // Assert
             Assert.IsNotNull(admin);
-            Assert.AreEqual(1, admin.AdminID);
-            Assert.AreEqual(name, admin.Name);
+            Assert.That(admin.AdminID, Is.EqualTo(3));
+            Assert.That(admin.Name, Is.EqualTo(name));
         }
 
         [Test]
@@ -30,11 +41,112 @@ namespace assignment_3.Tests
             var admin = new Admin("Jane Doe");
 
             // Act
-            var report = admin.GenerateReport("test", []);
+            var report = admin.GenerateReport("test", ["testestsetes"]);
 
             // Assert
             Assert.IsNotNull(report);
-            Assert.AreEqual(1, report.ReportId);
+            Assert.AreEqual(2, report.ReportId);
+        }
+
+        [Test]
+        public void CreatingAdminWithEmptyNameThrowsError()
+        {
+            Assert.Throws<ArgumentException>(() => new Admin(string.Empty));
+        }
+
+        [Test]
+        public void CreatingScheduleWithPastDateThrowsError()
+        {
+            Assert.Throws<ArgumentException>(
+                () =>
+                    _admin.CreateSchedule(
+                        DateTime.Now.AddDays(-1),
+                        TimeSpan.FromHours(10),
+                        TimeSpan.FromHours(11)
+                    )
+            );
+        }
+
+        [Test]
+        public void CreatingScheduleWithInvalidTimeRangeThrowsError()
+        {
+            Assert.Throws<ArgumentException>(
+                () =>
+                    _admin.CreateSchedule(
+                        DateTime.Now,
+                        TimeSpan.FromHours(11),
+                        TimeSpan.FromHours(10)
+                    )
+            );
+        }
+
+        [Test]
+        public void UpdatingScheduleWithInvalidIdThrowsError()
+        {
+            Assert.Throws<ArgumentException>(
+                () =>
+                    _admin.UpdateSchedule(
+                        0,
+                        DateTime.Now,
+                        TimeSpan.FromHours(10),
+                        TimeSpan.FromHours(11)
+                    )
+            );
+        }
+
+        [Test]
+        public void UpdatingScheduleWithPastDateThrowsError()
+        {
+            Assert.Throws<ArgumentException>(
+                () =>
+                    _admin.UpdateSchedule(
+                        1,
+                        DateTime.Now.AddDays(-1),
+                        TimeSpan.FromHours(10),
+                        TimeSpan.FromHours(11)
+                    )
+            );
+        }
+
+        [Test]
+        public void UpdatingScheduleWithInvalidTimeRangeThrowsError()
+        {
+            Assert.Throws<ArgumentException>(
+                () =>
+                    _admin.UpdateSchedule(
+                        1,
+                        DateTime.Now,
+                        TimeSpan.FromHours(11),
+                        TimeSpan.FromHours(10)
+                    )
+            );
+        }
+
+        [Test]
+        public void DeletingScheduleWithInvalidIdThrowsError()
+        {
+            Assert.Throws<ArgumentException>(() => _admin.DeleteSchedule(0));
+        }
+
+        [Test]
+        public void GeneratingReportWithNullTitleThrowsError()
+        {
+            Assert.Throws<ArgumentException>(() => _admin.GenerateReport("", jsonArrayExample));
+        }
+
+        [Test]
+        public void GeneratingReportWithEmptyTitleThrowsError()
+        {
+            Assert.Throws<ArgumentException>(
+                () => _admin.GenerateReport(string.Empty, jsonArrayExample)
+            );
+        }
+
+        [Test]
+        public void SettingReportContentToEmptyJsonArrayThrowsError()
+        {
+            var report = _admin.GenerateReport("Test Report", jsonArrayExample);
+            Assert.Throws<ArgumentException>(() => report.Content = new JsonArray());
         }
     }
 }

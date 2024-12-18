@@ -10,6 +10,7 @@ namespace assignment_3
 {
     public class Grade
     {
+        private static readonly Student DEFAULT_STUDENT = new(ClassLevel.Freshman);
         public int GradeId { get; private set; }
 
         private uint _gradeValue;
@@ -32,7 +33,6 @@ namespace assignment_3
             get => new(_student.ClassLevel);
             set => _student = value;
         }
-        private static readonly Student DEFAULT_STUDENT = new(ClassLevel.Freshman);
 
         static int nextId;
 

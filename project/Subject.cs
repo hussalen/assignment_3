@@ -69,4 +69,69 @@ namespace assignment_3
             SubjectName = newSubjectName;
         }
     }
+    public void AddSubSubject(Subject subSubject)
+    {
+        if (subSubject == null)
+            throw new ArgumentNullException(nameof(subSubject));
+
+        if (subSubject == this)
+            throw new InvalidOperationException("A subject cannot be a sub-subject of itself.");
+        
+        if (subSubject._parentSubject != null)
+            throw new InvalidOperationException("A subject cannot have two parents.");
+
+        if (!_subSubjects.Contains(subSubject))
+        {
+            _subSubjects.Add(subSubject);
+            subSubject.SetParentSubject(this); 
+        }
+    }
+
+    private void SetParentSubject(Subject parentSubject)
+    {
+        _parentSubject = parentSubject;
+    }
+    public void RemoveSubSubject(Subject subSubject)
+    {
+        if (subSubject == null)
+            throw new ArgumentNullException(nameof(subSubject));
+
+        if (_subSubjects.Contains(subSubject))
+        {
+            _subSubjects.Remove(subSubject);
+            subSubject.RemoveParentSubject(); 
+        }
+    }
+
+    private void RemoveParentSubject()
+    {
+        _parentSubject = null;
+    }
+    public void AddTimeslot(Timeslot timeslot)
+    {
+        if (timeslot == null)
+            throw new ArgumentNullException(nameof(timeslot));
+        
+        if (timeslot.GetSubject() != null)
+            throw new ArgumentException("A timeslot can only belong to one subject.");
+        _timeslots.Add(timeslot);
+        timeslot.SetSubject(this); 
+    }
+
+    // Method to remove a timeslot from this subject
+    public void RemoveTimeslot(Timeslot timeslot)
+    {
+        if (timeslot == null)
+            throw new ArgumentNullException(nameof(timeslot));
+
+        if (_timeslots.Contains(timeslot))
+        {
+            _timeslots.Remove(timeslot);
+            timeslot.ClearSubject();  // Remove the Subject from the Timeslot
+        }
+    }
+
+    // Get all timeslots for this subject
+    public List<Timeslot> GetTimeslots() => new List<Timeslot>(_timeslots);
 }
+

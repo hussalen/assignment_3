@@ -17,8 +17,6 @@ public class Exam
         }
     }
 
-    private static List<Exam> _examList = new();
-
     public Exam(DateTime examDate)
     {
         ExamId = Interlocked.Increment(ref nextId);
@@ -44,6 +42,45 @@ public class Exam
 
         _examList.Add(exam);
     }
+    
+    public void AddTimeslot(Timeslot timeslot)
+    {
+        if (_timeslot != null)
+            throw new InvalidOperationException("This exam already has an associated timeslot.");
+        
+        Timeslot = timeslot;
+    }
+
+    public void EditTimeslot(Timeslot newTimeslot)
+    {
+        RemoveTimeslot();
+        AddTimeslot(newTimeslot);
+    }
+
+    public void RemoveTimeslot()
+    {
+        if (_timeslot != null)
+        {
+            var temp = _timeslot;
+            _timeslot = null;
+            temp.Exam = null; // Clear reverse connection
+        }
+    }
 
     public static List<Exam> GetExamExtent() => new(_examList);
+    private Timeslot _timeslot;
+    public Timeslot Timeslot
+    {
+        get => _timeslot;
+        set
+        {
+            if (value != null && value.Exam != null && value.Exam != this)
+                throw new InvalidOperationException("The timeslot is already assigned to another exam.");
+            _timeslot = value;
+            if (value != null && value.Exam != this)
+                value.Exam = this; 
+        }
+    }
+
+    private static readonly List<Exam> _examList = new();
 }
