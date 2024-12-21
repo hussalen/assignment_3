@@ -35,7 +35,9 @@ namespace assignment_3
             set
             {
                 if (value == null || value.Count == 0)
-                    throw new InvalidOperationException("A subject must be assigned to at least one teacher.");
+                    throw new InvalidOperationException(
+                        "A subject must be assigned to at least one teacher."
+                    );
                 _teachers = value;
             }
         }
@@ -69,6 +71,7 @@ namespace assignment_3
             SubjectName = newSubjectName;
         }
     }
+
     public void AddSubSubject(Subject subSubject)
     {
         if (subSubject == null)
@@ -76,14 +79,14 @@ namespace assignment_3
 
         if (subSubject == this)
             throw new InvalidOperationException("A subject cannot be a sub-subject of itself.");
-        
+
         if (subSubject._parentSubject != null)
             throw new InvalidOperationException("A subject cannot have two parents.");
 
         if (!_subSubjects.Contains(subSubject))
         {
             _subSubjects.Add(subSubject);
-            subSubject.SetParentSubject(this); 
+            subSubject.SetParentSubject(this);
         }
     }
 
@@ -91,6 +94,7 @@ namespace assignment_3
     {
         _parentSubject = parentSubject;
     }
+
     public void RemoveSubSubject(Subject subSubject)
     {
         if (subSubject == null)
@@ -99,7 +103,7 @@ namespace assignment_3
         if (_subSubjects.Contains(subSubject))
         {
             _subSubjects.Remove(subSubject);
-            subSubject.RemoveParentSubject(); 
+            subSubject.RemoveParentSubject();
         }
     }
 
@@ -107,15 +111,16 @@ namespace assignment_3
     {
         _parentSubject = null;
     }
+
     public void AddTimeslot(Timeslot timeslot)
     {
         if (timeslot == null)
             throw new ArgumentNullException(nameof(timeslot));
-        
+
         if (timeslot.GetSubject() != null)
             throw new ArgumentException("A timeslot can only belong to one subject.");
         _timeslots.Add(timeslot);
-        timeslot.SetSubject(this); 
+        timeslot.SetSubject(this);
     }
 
     // Method to remove a timeslot from this subject
@@ -127,11 +132,10 @@ namespace assignment_3
         if (_timeslots.Contains(timeslot))
         {
             _timeslots.Remove(timeslot);
-            timeslot.ClearSubject();  // Remove the Subject from the Timeslot
+            timeslot.ClearSubject(); // Remove the Subject from the Timeslot
         }
     }
 
     // Get all timeslots for this subject
     public List<Timeslot> GetTimeslots() => new List<Timeslot>(_timeslots);
 }
-
