@@ -49,7 +49,7 @@ namespace assignment_3
             DayOfWeek = dayOfWeek;
             DEFAULT_STUDENT = new(ClassLevel.Freshman);
             AddTimeTable(this);
-            SaveManager.SaveToJson(_timetableList, nameof(_timetableList));
+            //SaveManager.SaveToJson(_timetableList, nameof(_timetableList));
         }
 
         private static void AddTimeTable(TimeTable timetable)

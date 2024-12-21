@@ -57,7 +57,7 @@ namespace assignment_3
             private set => _grades = value;
         }
 
-        private static Dictionary<int, TimeTable> _timeTables;
+        private Dictionary<int, TimeTable> _timeTables;
         public Dictionary<int, TimeTable> TimeTables
         {
             get => new(_timeTables);
@@ -73,7 +73,7 @@ namespace assignment_3
             GPA = 0.0f;
             TimeTables = new();
             AddStudent(this);
-            SaveManager.SaveToJson(_studentList, nameof(_studentList));
+            //SaveManager.SaveToJson(_studentList, nameof(_studentList));
         }
 
         private void AddStudent(Student student)

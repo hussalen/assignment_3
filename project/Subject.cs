@@ -35,12 +35,25 @@ namespace assignment_3
             set
             {
                 if (value == null || value.Count == 0)
-                    throw new InvalidOperationException("A subject must be assigned to at least one teacher.");
+                    throw new InvalidOperationException(
+                        "A subject must be assigned to at least one teacher."
+                    );
                 _teachers = value;
             }
         }
 
         private List<Student> _students = new();
+        private Subject _subSubject;
+        private List<Subject> _subSubjects => throw new NotImplementedException();
+
+        private List<Timeslot> _timeslots => throw new NotImplementedException();
+
+        public Subject SubSubject
+        {
+            get => _subSubject;
+            private set { _subSubject = value; }
+        }
+
         public List<Student> Students
         {
             get => new(_students);
@@ -51,6 +64,8 @@ namespace assignment_3
                 _students = value;
             }
         }
+
+        public Teacher Teacher => throw new NotImplementedException();
 
         public Subject(string subjectId, string subjectName, int gradingScale)
         {
@@ -68,70 +83,70 @@ namespace assignment_3
                 throw new ArgumentException("Subject name cannot be null or empty.");
             SubjectName = newSubjectName;
         }
-    }
-    public void AddSubSubject(Subject subSubject)
-    {
-        if (subSubject == null)
-            throw new ArgumentNullException(nameof(subSubject));
 
-        if (subSubject == this)
-            throw new InvalidOperationException("A subject cannot be a sub-subject of itself.");
-        
-        if (subSubject._parentSubject != null)
-            throw new InvalidOperationException("A subject cannot have two parents.");
-
-        if (!_subSubjects.Contains(subSubject))
+        public void AddSubSubject(Subject subSubject)
         {
-            _subSubjects.Add(subSubject);
-            subSubject.SetParentSubject(this); 
+            if (subSubject == null)
+                throw new ArgumentNullException(nameof(subSubject));
+
+            if (subSubject == this)
+                throw new InvalidOperationException("A subject cannot be a sub-subject of itself.");
+
+            if (subSubject.SubSubject != null)
+                throw new InvalidOperationException("A subject cannot have two parents.");
+
+            if (!_subSubjects.Contains(subSubject))
+            {
+                _subSubjects.Add(subSubject);
+                subSubject.SetParentSubject(this);
+            }
         }
-    }
 
-    private void SetParentSubject(Subject parentSubject)
-    {
-        _parentSubject = parentSubject;
-    }
-    public void RemoveSubSubject(Subject subSubject)
-    {
-        if (subSubject == null)
-            throw new ArgumentNullException(nameof(subSubject));
-
-        if (_subSubjects.Contains(subSubject))
+        private void SetParentSubject(Subject parentSubject)
         {
-            _subSubjects.Remove(subSubject);
-            subSubject.RemoveParentSubject(); 
+            SubSubject = parentSubject;
         }
-    }
 
-    private void RemoveParentSubject()
-    {
-        _parentSubject = null;
-    }
-    public void AddTimeslot(Timeslot timeslot)
-    {
-        if (timeslot == null)
-            throw new ArgumentNullException(nameof(timeslot));
-        
-        if (timeslot.GetSubject() != null)
-            throw new ArgumentException("A timeslot can only belong to one subject.");
-        _timeslots.Add(timeslot);
-        timeslot.SetSubject(this); 
-    }
-
-    // Method to remove a timeslot from this subject
-    public void RemoveTimeslot(Timeslot timeslot)
-    {
-        if (timeslot == null)
-            throw new ArgumentNullException(nameof(timeslot));
-
-        if (_timeslots.Contains(timeslot))
+        public void RemoveSubSubject(Subject subSubject)
         {
-            _timeslots.Remove(timeslot);
-            timeslot.ClearSubject();  // Remove the Subject from the Timeslot
-        }
-    }
+            if (subSubject == null)
+                throw new ArgumentNullException(nameof(subSubject));
 
-    // Get all timeslots for this subject
-    public List<Timeslot> GetTimeslots() => new List<Timeslot>(_timeslots);
+            if (_subSubjects.Contains(subSubject))
+            {
+                _subSubjects.Remove(subSubject);
+                subSubject.RemoveParentSubject();
+            }
+        }
+
+        private void RemoveParentSubject()
+        {
+            SubSubject = null;
+        }
+
+        public void AddTimeslot(Timeslot timeslot)
+        {
+            if (timeslot == null)
+                throw new ArgumentNullException(nameof(timeslot));
+
+            if (timeslot.GetSubject() != null)
+                throw new ArgumentException("A timeslot can only belong to one subject.");
+            _timeslots.Add(timeslot);
+            timeslot.SetSubject(this);
+        }
+
+        public void RemoveTimeslot(Timeslot timeslot)
+        {
+            if (timeslot == null)
+                throw new ArgumentNullException(nameof(timeslot));
+
+            if (_timeslots.Contains(timeslot))
+            {
+                _timeslots.Remove(timeslot);
+                timeslot.ClearSubject();
+            }
+        }
+
+        public List<Timeslot> GetTimeslots() => new List<Timeslot>(_timeslots);
+    }
 }
-
