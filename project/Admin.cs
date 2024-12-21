@@ -125,7 +125,7 @@ namespace assignment_3
                 Content = content;
                 Admin = admin;
                 AddReport(this);
-                SaveManager.SaveToJson(_reportList, nameof(_reportList));
+                //SaveManager.SaveToJson(_reportList, nameof(_reportList));
             }
 
             public void GenerateReport()

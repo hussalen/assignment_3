@@ -82,7 +82,7 @@ namespace assignment_3
             Roles = roles;
             SubmissionDate = null;
             AddGroupProject(this);
-            SaveManager.SaveToJson(_groupProjectList, nameof(_groupProjectList));
+            //SaveManager.SaveToJson(_groupProjectList, nameof(_groupProjectList));
         }
 
         private static void AddGroupProject(GroupProject groupProject)

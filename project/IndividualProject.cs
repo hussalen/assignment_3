@@ -70,7 +70,7 @@ namespace assignment_3
             SubmissionDate = null;
             Notes = notes;
             AddIndividualProject(this);
-            SaveManager.SaveToJson(_individualProject_List, nameof(_individualProject_List));
+            //SaveManager.SaveToJson(_individualProject_List, nameof(_individualProject_List));
         }
 
         private static List<IndividualProject> _individualProject_List = new();

@@ -42,7 +42,7 @@ namespace assignment_3
             this.GradeValue = GradeValue;
             Student = DEFAULT_STUDENT;
             addGrade(this);
-            SaveManager.SaveToJson(_grade_List, nameof(_grade_List));
+            //SaveManager.SaveToJson(_grade_List, nameof(_grade_List));
         }
 
         public void ClearStudent()

@@ -4,7 +4,7 @@ public class Timeslot
 {
     public int ScheduleId { get; private set; }
     public Classroom Classroom { get; private set; }
-    private Subject _subject; 
+    private Subject _subject;
     private DateTime _date;
     private TimeSpan _startTime;
     private TimeSpan _endTime;
@@ -53,7 +53,7 @@ public class Timeslot
         StartTime = startTime;
         EndTime = endTime;
         AddTimeslot(this);
-        SaveManager.SaveToJson(_timeslotList, nameof(_timeslotList));
+        //SaveManager.SaveToJson(_timeslotList, nameof(_timeslotList));
     }
 
     private static List<Timeslot> _timeslotList = new();
@@ -97,6 +97,7 @@ public class Timeslot
     {
         Classroom = null;
     }
+
     private Exam _exam;
     public Exam Exam
     {
@@ -104,17 +105,20 @@ public class Timeslot
         set
         {
             if (value != null && value.Timeslot != null && value.Timeslot != this)
-                throw new InvalidOperationException("The exam is already assigned to another timeslot.");
+                throw new InvalidOperationException(
+                    "The exam is already assigned to another timeslot."
+                );
             _exam = value;
             if (value != null && value.Timeslot != this)
-                value.Timeslot = this; 
+                value.Timeslot = this;
         }
     }
+
     public void AddExam(Exam exam)
     {
         if (_exam != null)
             throw new InvalidOperationException("This timeslot already has an associated exam.");
-        
+
         Exam = exam;
     }
 
@@ -133,10 +137,13 @@ public class Timeslot
             temp.Timeslot = null;
         }
     }
+
     public void SetSubject(Subject subject)
     {
         if (_subject != null)
-            throw new InvalidOperationException("This timeslot is already assigned to another subject.");
+            throw new InvalidOperationException(
+                "This timeslot is already assigned to another subject."
+            );
 
         _subject = subject; //cannot be assigned to second subject before clearing the ref
     }
@@ -145,6 +152,6 @@ public class Timeslot
     {
         _subject = null;
     }
-    public Subject GetSubject() => _subject;  // Get the subject that owns this timeslot
-}
 
+    public Subject GetSubject() => _subject;
+}

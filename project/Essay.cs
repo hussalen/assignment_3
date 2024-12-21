@@ -77,7 +77,7 @@ namespace assignment_3
             MinWordCount = minWordCount;
             MaxWordCount = maxWordCount;
             AddEssay(this);
-            SaveManager.SaveToJson(_essayList, nameof(_essayList));
+            //SaveManager.SaveToJson(_essayList, nameof(_essayList));
         }
 
         private static void AddEssay(Essay essay)

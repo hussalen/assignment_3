@@ -7,6 +7,7 @@ public class Classroom
     private static List<Classroom> _classrooms_List = new();
 
     public static List<Classroom> GetClassroomExtent() => new List<Classroom>(_classrooms_List);
+
     private readonly List<Timeslot> _assignedTimeslots = new();
 
     public int RoomId
@@ -34,6 +35,7 @@ public class Classroom
     {
         return Capacity > 0;
     }
+
     public Classroom(int roomId, int capacity)
     {
         RoomId = roomId;
@@ -44,8 +46,9 @@ public class Classroom
         };
 
         addClassroom(this);
-        SaveManager.SaveToJson(_classrooms_List, nameof(_classrooms_List));
+        //SaveManager.SaveToJson(_classrooms_List, nameof(_classrooms_List));
     }
+
     private static void addClassroom(Classroom classroom)
     {
         if (classroom is null)
@@ -61,13 +64,21 @@ public class Classroom
             throw new ArgumentNullException(nameof(timeslot));
 
         if (_assignedTimeslots.Contains(timeslot))
-            throw new InvalidOperationException("This timeslot is already assigned to the classroom");
+            throw new InvalidOperationException(
+                "This timeslot is already assigned to the classroom"
+            );
 
-        if (_assignedTimeslots.Any(t => t.Date == timeslot.Date &&
-                                        t.StartTime < timeslot.EndTime &&
-                                        timeslot.StartTime < t.EndTime))
+        if (
+            _assignedTimeslots.Any(t =>
+                t.Date == timeslot.Date
+                && t.StartTime < timeslot.EndTime
+                && timeslot.StartTime < t.EndTime
+            )
+        )
         {
-            throw new InvalidOperationException("Overlapping timeslots, cannot assign new timeslot to this classroom");
+            throw new InvalidOperationException(
+                "Overlapping timeslots, cannot assign new timeslot to this classroom"
+            );
         }
         if (_assignedTimeslots.Count == 1 && _assignedTimeslots[0].ScheduleId == 0)
         {
@@ -78,32 +89,33 @@ public class Classroom
         timeslot.SetClassroom(this);
     }
 
-        
     public void RemoveTimeslot(Timeslot timeslot)
     {
         if (timeslot == null)
             throw new ArgumentNullException(nameof(timeslot));
         if (_assignedTimeslots.Remove(timeslot))
         {
-            timeslot.ClearClassroom(); 
+            timeslot.ClearClassroom();
         }
     }
 
     public void ChangeClassroom(Timeslot timeslot, Classroom newClassroom)
-    {   if (timeslot == null)
-            throw new ArgumentNullException(nameof(timeslot), "Timeslot cannot be null."); 
+    {
+        if (timeslot == null)
+            throw new ArgumentNullException(nameof(timeslot), "Timeslot cannot be null.");
         if (newClassroom == null)
             throw new ArgumentNullException(nameof(newClassroom), "New classroom cannot be null.");
         if (!_assignedTimeslots.Contains(timeslot))
             throw new InvalidOperationException("Timeslot is not assigned");
         RemoveTimeslot(timeslot);
         newClassroom.AssignTimeslot(timeslot);
-        
     }
+
     public bool IsEmpty()
     {
         return _assignedTimeslots.Count == 1 && _assignedTimeslots[0].ScheduleId == 0;
     }
+
     public void CheckAndSendEmptyClassroomNotification()
     {
         if (IsEmpty())
@@ -116,6 +128,6 @@ public class Classroom
             notification.SendNotification();
         }
     }
-    public List<Timeslot> GetAssignedTimeslots() => new List<Timeslot>(_assignedTimeslots);
 
+    public List<Timeslot> GetAssignedTimeslots() => new List<Timeslot>(_assignedTimeslots);
 }

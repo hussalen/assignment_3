@@ -22,7 +22,7 @@ public class Exam
         ExamId = Interlocked.Increment(ref nextId);
         ExamDate = examDate;
         AddExam(this);
-        SaveManager.SaveToJson(_examList, nameof(_examList));
+        //SaveManager.SaveToJson(_examList, nameof(_examList));
     }
 
     public void ScheduleExam(DateTime newDate)
@@ -42,12 +42,12 @@ public class Exam
 
         _examList.Add(exam);
     }
-    
+
     public void AddTimeslot(Timeslot timeslot)
     {
         if (_timeslot != null)
             throw new InvalidOperationException("This exam already has an associated timeslot.");
-        
+
         Timeslot = timeslot;
     }
 
@@ -68,6 +68,7 @@ public class Exam
     }
 
     public static List<Exam> GetExamExtent() => new(_examList);
+
     private Timeslot _timeslot;
     public Timeslot Timeslot
     {
@@ -75,10 +76,12 @@ public class Exam
         set
         {
             if (value != null && value.Exam != null && value.Exam != this)
-                throw new InvalidOperationException("The timeslot is already assigned to another exam.");
+                throw new InvalidOperationException(
+                    "The timeslot is already assigned to another exam."
+                );
             _timeslot = value;
             if (value != null && value.Exam != this)
-                value.Exam = this; 
+                value.Exam = this;
         }
     }
 

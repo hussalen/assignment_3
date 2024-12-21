@@ -69,7 +69,7 @@ namespace assignment_3
             RepositoryUrl = repositoryUrl;
             SubmissionDate = null;
             AddCoding(this);
-            SaveManager.SaveToJson(_codingList, nameof(_codingList));
+            //SaveManager.SaveToJson(_codingList, nameof(_codingList));
         }
 
         private static void AddCoding(Coding coding)

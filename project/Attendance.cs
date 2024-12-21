@@ -24,7 +24,7 @@ namespace assignment_3
             AttendanceID = Interlocked.Increment(ref nextId);
             IsPresent = false;
             AddAttendance(this);
-            SaveManager.SaveToJson(_attendanceList, nameof(_attendanceList));
+            //SaveManager.SaveToJson(_attendanceList, nameof(_attendanceList));
         }
 
         private static void AddAttendance(Attendance attendance)
