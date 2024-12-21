@@ -255,30 +255,30 @@ namespace assignment_3
             Assignments.Add(assignment);
         }
 
-        // public void AddTimeTable(TimeTable timeTable)
-        // {
-        //     ArgumentNullException.ThrowIfNull(timeTable);
+        public void AddTimeTable(TimeTable timeTable)
+        {
+            ArgumentNullException.ThrowIfNull(timeTable);
 
-        //     if (timeTable.Student != null || TimeTables.ContainsKey(timeTable.Id))
-        //     {
-        //         throw new InvalidOperationException(
-        //             $"TimeTable {timeTable.Id} is already assigned to Student."
-        //         );
-        //     }
-        //     TimeTableKey = timeTable.Id;
-        //     TimeTables[timeTable.Id] = timeTable;
-        //     timeTable.AssignStudent(this);
-        // }
+            if (timeTable.Student != null || TimeTables.ContainsKey(timeTable.Id))
+            {
+                throw new InvalidOperationException(
+                    $"TimeTable {timeTable.Id} is already assigned to Student."
+                );
+            }
+            TimeTableKey = timeTable.Id;
+            TimeTables[timeTable.Id] = timeTable;
+            timeTable.AssignStudent(this);
+        }
 
-        // public void RemoveTimeTable()
-        // {
-        //     if (TimeTableKey == null)
-        //         throw new InvalidOperationException($"No timetable is assigned to Student.");
+        public void RemoveTimeTable()
+        {
+            if (TimeTableKey == null)
+                throw new InvalidOperationException($"No timetable is assigned to Student.");
 
-        //     TimeTable timeTable = TimeTables[TimeTableKey.Value];
-        //     timeTable.RemoveStudent();
-        //     TimeTables.Remove(TimeTableKey.Value);
-        //     TimeTableKey = null;
-        // }
+            TimeTable timeTable = TimeTables[TimeTableKey.Value];
+            timeTable.RemoveStudent();
+            TimeTables.Remove(TimeTableKey.Value);
+            TimeTableKey = null;
+        }
     }
 }
