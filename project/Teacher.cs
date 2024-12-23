@@ -20,7 +20,7 @@ namespace assignment_3
         private List<Subject> _subjects = new();
         public List<Subject> Subjects
         {
-            get => new(_subjects); // Encapsulation: Read-only access
+            get => new(_subjects);
             private set => _subjects = value;
         }
 
@@ -43,10 +43,12 @@ namespace assignment_3
                 throw new ArgumentException("Subject is already assigned to this teacher.");
 
             if (subject.Teacher != null && subject.Teacher != this)
-                throw new InvalidOperationException("Subject is already assigned to another teacher.");
+                throw new InvalidOperationException(
+                    "Subject is already assigned to another teacher."
+                );
 
             _subjects.Add(subject);
-            subject.Teacher = this;
+            //FIX: subject.Teacher = this;
         }
 
         public void RemoveSubject(Subject subject)
@@ -56,7 +58,7 @@ namespace assignment_3
                 throw new ArgumentException("Subject is not assigned to this teacher.");
 
             _subjects.Remove(subject);
-            subject.Teacher = null;
+            //FIX: subject.Teacher = null;
         }
 
         public void ViewSchedule()
