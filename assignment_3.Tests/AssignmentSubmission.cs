@@ -10,8 +10,15 @@ namespace assignment_3.Tests
 {
     public class AssignmentSubmission
     {
-        readonly Student student = new(ClassLevel.Freshman);
-        readonly Student student2 = new(ClassLevel.Freshman);
+        private readonly Student student = new(ClassLevel.Freshman);
+        private readonly Student student2 = new(ClassLevel.Freshman);
+
+        private readonly IAssignment coding = new Coding(
+            "test",
+            new DateTime(2027, 10, 10),
+            "Python",
+            "https://yes.com"
+        );
 
         [Test]
         public void Submit_Essay_WithInvalidWordCount_Fails()
@@ -112,6 +119,37 @@ namespace assignment_3.Tests
 
             assignment.SubmissionDate = new DateTime(2020, 11, 11);
             Assert.Throws<ArgumentException>(() => student.RemoveAssignmentSubmission(assignment));
+        }
+
+        [Test]
+        public void WhenAssignmentAlreadyExists()
+        {
+            student.SubmitAssignment(coding, 100);
+
+            var ex = Assert.Throws<ArgumentException>(() => student.SubmitAssignment(coding, 100));
+            Assert.That(ex.Message, Is.EqualTo("Assignment already exists."));
+        }
+
+        [Test]
+        public void WhenAssignmentAlreadySubmitted()
+        {
+            coding.SubmissionDate = DateTime.UtcNow;
+
+            var ex = Assert.Throws<InvalidOperationException>(
+                () => student.SubmitAssignment(coding, 100)
+            );
+            Assert.That(ex.Message, Is.EqualTo("Assignment already submitted, edit to modify"));
+        }
+
+        [Test]
+        public void WhenDueDateIsPassed()
+        {
+            coding.DueDate = DateTime.UtcNow.AddDays(-1);
+
+            var ex = Assert.Throws<InvalidOperationException>(
+                () => student.SubmitAssignment(coding, 100)
+            );
+            Assert.That(ex.Message, Is.EqualTo("Cannot submit the assignment after the due date"));
         }
     }
 }

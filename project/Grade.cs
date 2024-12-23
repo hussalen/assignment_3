@@ -40,7 +40,7 @@ namespace assignment_3
         {
             GradeId = Interlocked.Increment(ref nextId);
             this.GradeValue = GradeValue;
-            Student = DEFAULT_STUDENT;
+            _student = DEFAULT_STUDENT;
             addGrade(this);
             //SaveManager.SaveToJson(_grade_List, nameof(_grade_List));
         }
