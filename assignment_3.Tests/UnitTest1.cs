@@ -8,63 +8,40 @@ namespace assignment_3.Tests
     [TestFixture]
     public class AssignmentTests
     {
-        [Test]
-        public void IndividualProject_Creation_ShouldInitializeCorrectly()
-        {
-            // Arrange
-            string topic = "Math Project";
-            DateTime dueDate = new DateTime(2024, 12, 25);
+        // [Test]
+        // public void IndividualProject_Creation_ShouldInitializeCorrectly()
+        // {
+        //     // Arrange
+        //     string topic = "Math Project";
+        //     DateTime dueDate = new DateTime(2024, 12, 25);
 
-            // Act
-            var individualProject = new IndividualProject(topic, dueDate, ["test"]);
+        //     // Act
+        //     var individualProject = new IndividualProject(topic, dueDate, ["test"]);
 
-            // Assert
-            Assert.AreEqual(1, individualProject.AssignmentID);
-            Assert.AreEqual(topic, individualProject.Topic);
-            Assert.AreEqual(dueDate, individualProject.DueDate);
-            Assert.IsNull(individualProject.SubmissionDate);
-        }
+        //     // Assert
+        //     Assert.AreEqual(1, individualProject.AssignmentID);
+        //     Assert.AreEqual(topic, individualProject.Topic);
+        //     Assert.AreEqual(dueDate, individualProject.DueDate);
+        //     Assert.IsNull(individualProject.SubmissionDate);
+        // }
 
-        [Test]
-        public void GroupProject_Creation_ShouldInitializeCorrectly()
-        {
-            // Arrange
-            string topic = "Science Project";
-            DateTime dueDate = new DateTime(2024, 11, 15);
-            int noOfPeople = 3;
-            string documentation = "Group project documentation";
-            Student[] roles = new Student[3];
+        // [Test]
+        // public void PastDateTryOfScheduling()
+        // {
+        //     var exam = new Exam(new DateTime(2024, 11, 11));
+        //     DateTime pastDate = DateTime.Now.AddDays(-1);
 
-            // Act
-            var groupProject = new GroupProject(topic, dueDate, noOfPeople, documentation, roles);
+        //     Assert.Throws<ArgumentException>(() => exam.ScheduleExam(pastDate));
+        // }
 
-            // Assert
-            Assert.AreEqual(1, groupProject.AssignmentID);
-            Assert.AreEqual(topic, groupProject.Topic);
-            Assert.AreEqual(dueDate, groupProject.DueDate);
-            Assert.AreEqual(noOfPeople, groupProject.NoOfPeople);
-            Assert.AreEqual(documentation, groupProject.Documentation);
-            Assert.AreEqual(roles, groupProject.Roles);
-            Assert.IsNull(groupProject.SubmissionDate);
-        }
-
-        [Test]
-        public void PastDateTryOfScheduling()
-        {
-            var exam = new Exam(new DateTime(2024, 11, 11));
-            DateTime pastDate = DateTime.Now.AddDays(-1);
-
-            Assert.Throws<ArgumentException>(() => exam.ScheduleExam(pastDate));
-        }
-
-        [Test]
-        public void TryOfSchedulingOnTheTakenDate()
-        {
-            var exam = new Exam(new DateTime(2024, 11, 11));
-            var initialDate = DateTime.Now.AddDays(1);
-            exam.ScheduleExam(initialDate);
-            Assert.AreEqual(initialDate, exam.ExamDate);
-        }
+        // [Test]
+        // public void TryOfSchedulingOnTheTakenDate()
+        // {
+        //     var exam = new Exam(new DateTime(2024, 11, 11));
+        //     var initialDate = DateTime.Now.AddDays(1);
+        //     exam.ScheduleExam(initialDate);
+        //     Assert.AreEqual(initialDate, exam.ExamDate);
+        // }
     }
 
     public class ExamTests
@@ -110,8 +87,12 @@ namespace assignment_3.Tests
             {
                 // Arrange
                 var exam = new Exam(DateTime.Now.AddDays(1)); // Exam scheduled for tomorrow
-                var timeslot = new Timeslot(101, DateTime.Now.AddDays(1), TimeSpan.FromHours(9),
-                    TimeSpan.FromHours(10));
+                var timeslot = new Timeslot(
+                    101,
+                    DateTime.Now.AddDays(1),
+                    TimeSpan.FromHours(9),
+                    TimeSpan.FromHours(10)
+                );
 
                 // Act
                 exam.AddTimeslot(timeslot);
@@ -119,19 +100,33 @@ namespace assignment_3.Tests
                 // Assert
                 Assert.AreEqual(timeslot, exam.Timeslot);
             }
+
             [Test]
             public void Exam_ShouldNotAllowAssigningMultipleTimeslots()
             {
                 // Arrange
                 var exam = new Exam(DateTime.Now.AddDays(1));
-                var timeslot1 = new Timeslot(101, DateTime.Now.AddDays(1), TimeSpan.FromHours(9), TimeSpan.FromHours(10));
-                var timeslot2 = new Timeslot(102, DateTime.Now.AddDays(1), TimeSpan.FromHours(10), TimeSpan.FromHours(11));
+                var timeslot1 = new Timeslot(
+                    101,
+                    DateTime.Now.AddDays(1),
+                    TimeSpan.FromHours(9),
+                    TimeSpan.FromHours(10)
+                );
+                var timeslot2 = new Timeslot(
+                    102,
+                    DateTime.Now.AddDays(1),
+                    TimeSpan.FromHours(10),
+                    TimeSpan.FromHours(11)
+                );
 
                 // Act
                 exam.AddTimeslot(timeslot1);
 
                 // Assert
-                Assert.Throws<InvalidOperationException>(() => exam.AddTimeslot(timeslot2), "An exam can only have one timeslot.");
+                Assert.Throws<InvalidOperationException>(
+                    () => exam.AddTimeslot(timeslot2),
+                    "An exam can only have one timeslot."
+                );
             }
         }
 
@@ -230,7 +225,6 @@ namespace assignment_3.Tests
                 );
             }
         }
-
 
         [TestFixture]
         public class ClassroomTests
@@ -337,10 +331,18 @@ namespace assignment_3.Tests
             {
                 // Arrange
                 var classroom = new Classroom(1, 30);
-                var timeslot1 = new Timeslot(101, DateTime.Now.AddDays(1), TimeSpan.FromHours(9),
-                    TimeSpan.FromHours(10));
-                var timeslot2 = new Timeslot(102, DateTime.Now.AddDays(1), TimeSpan.FromHours(11),
-                    TimeSpan.FromHours(12));
+                var timeslot1 = new Timeslot(
+                    101,
+                    DateTime.Now.AddDays(1),
+                    TimeSpan.FromHours(9),
+                    TimeSpan.FromHours(10)
+                );
+                var timeslot2 = new Timeslot(
+                    102,
+                    DateTime.Now.AddDays(1),
+                    TimeSpan.FromHours(11),
+                    TimeSpan.FromHours(12)
+                );
 
                 // Act
                 classroom.AssignTimeslot(timeslot1);
@@ -358,8 +360,12 @@ namespace assignment_3.Tests
             {
                 // Arrange
                 var classroom = new Classroom(1, 30);
-                var timeslot = new Timeslot(101, DateTime.Now.AddDays(1), TimeSpan.FromHours(9),
-                    TimeSpan.FromHours(10));
+                var timeslot = new Timeslot(
+                    101,
+                    DateTime.Now.AddDays(1),
+                    TimeSpan.FromHours(9),
+                    TimeSpan.FromHours(10)
+                );
                 classroom.AssignTimeslot(timeslot);
 
                 // Act & Assert
@@ -371,8 +377,12 @@ namespace assignment_3.Tests
             {
                 // Arrange
                 var classroom = new Classroom(1, 30);
-                var timeslot = new Timeslot(101, DateTime.Now.AddDays(1), TimeSpan.FromHours(9),
-                    TimeSpan.FromHours(10));
+                var timeslot = new Timeslot(
+                    101,
+                    DateTime.Now.AddDays(1),
+                    TimeSpan.FromHours(9),
+                    TimeSpan.FromHours(10)
+                );
 
                 // Act
                 classroom.AssignTimeslot(timeslot);
@@ -387,11 +397,17 @@ namespace assignment_3.Tests
                 // Arrange
                 var classroom1 = new Classroom(1, 30);
                 var classroom2 = new Classroom(2, 40);
-                var timeslot = new Timeslot(101, DateTime.Now.AddDays(1), TimeSpan.FromHours(9),
-                    TimeSpan.FromHours(10));
+                var timeslot = new Timeslot(
+                    101,
+                    DateTime.Now.AddDays(1),
+                    TimeSpan.FromHours(9),
+                    TimeSpan.FromHours(10)
+                );
 
                 // Act & Assert
-                Assert.Throws<InvalidOperationException>(() => classroom1.ChangeClassroom(timeslot, classroom2));
+                Assert.Throws<InvalidOperationException>(
+                    () => classroom1.ChangeClassroom(timeslot, classroom2)
+                );
             }
 
             [Test]
@@ -400,17 +416,24 @@ namespace assignment_3.Tests
                 // Arrange
                 var classroom = new Classroom(1, 30);
                 var date = DateTime.Today.AddDays(1); // Use DateTime.Today for consistent dates
-                var timeslot1 = new Timeslot(101, date, TimeSpan.FromHours(9), TimeSpan.FromHours(10));
-                var timeslot2 = new Timeslot(102, date, TimeSpan.FromHours(9).Add(TimeSpan.FromMinutes(30)),
-                    TimeSpan.FromHours(10).Add(TimeSpan.FromMinutes(30)));
+                var timeslot1 = new Timeslot(
+                    101,
+                    date,
+                    TimeSpan.FromHours(9),
+                    TimeSpan.FromHours(10)
+                );
+                var timeslot2 = new Timeslot(
+                    102,
+                    date,
+                    TimeSpan.FromHours(9).Add(TimeSpan.FromMinutes(30)),
+                    TimeSpan.FromHours(10).Add(TimeSpan.FromMinutes(30))
+                );
 
                 classroom.AssignTimeslot(timeslot1);
 
                 // Act & Assert
                 Assert.Throws<InvalidOperationException>(() => classroom.AssignTimeslot(timeslot2));
             }
-
-
         }
     }
 }

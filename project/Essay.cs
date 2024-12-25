@@ -30,7 +30,7 @@ namespace assignment_3
             get => _dueDate;
             set =>
                 _dueDate =
-                    value >= DateTime.Now
+                    value >= DateTime.UtcNow
                         ? value
                         : throw new ArgumentException("DueDate must be in the future.");
         }
@@ -41,14 +41,20 @@ namespace assignment_3
         public uint MinWordCount
         {
             get => _minWordCount;
-            init => _minWordCount = ValidateEssayWordCount(value, _maxWordCount);
+            init => _minWordCount = value;
         }
 
         private uint _maxWordCount;
         public uint MaxWordCount
         {
             get => _maxWordCount;
-            init => _maxWordCount = ValidateEssayWordCount(_minWordCount, value);
+            init =>
+                _maxWordCount =
+                    value > _minWordCount
+                        ? value
+                        : throw new ValidationException(
+                            "Minimum word count cannot be greater than/equal to the maximum word count."
+                        );
         }
         private int _wordCount;
         public int WordCount
@@ -90,17 +96,6 @@ namespace assignment_3
         }
 
         public static List<Essay> GetEssayExtent() => new(_essayList);
-
-        private static uint ValidateEssayWordCount(uint minWordCount, uint maxWordCount)
-        {
-            if (minWordCount > maxWordCount)
-            {
-                throw new ValidationException(
-                    "Minimum word count cannot be greater than the maximum word count."
-                );
-            }
-            return maxWordCount;
-        }
 
         //from IAssignment
         public void Submit()

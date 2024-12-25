@@ -29,7 +29,7 @@ namespace assignment_3
             get => _dueDate;
             set =>
                 _dueDate =
-                    value >= DateTime.Now
+                    value >= DateTime.UtcNow
                         ? value
                         : throw new ArgumentException("DueDate must be in the future.");
         }
