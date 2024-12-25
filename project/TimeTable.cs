@@ -29,8 +29,6 @@ namespace assignment_3
 
         private static List<TimeTable> _timetableList;
 
-        private static Student DEFAULT_STUDENT;
-
         static TimeTable()
         {
             _timetableList = new();
@@ -47,7 +45,6 @@ namespace assignment_3
         {
             Id = Interlocked.Increment(ref nextId);
             DayOfWeek = dayOfWeek;
-            DEFAULT_STUDENT = new(ClassLevel.Freshman);
             AddTimeTable(this);
             //SaveManager.SaveToJson(_timetableList, nameof(_timetableList));
         }
@@ -97,7 +94,7 @@ namespace assignment_3
 
         public void RemoveStudent()
         {
-            Student = DEFAULT_STUDENT;
+            Student = Defaults.DEFAULT_STUDENT;
         }
     }
 }

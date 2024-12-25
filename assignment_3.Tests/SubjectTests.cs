@@ -137,7 +137,7 @@ namespace assignment_3.Tests
             math.UpdateSubjectName("Advanced Mathematics");
 
             // Assert
-            Assert.AreEqual("Advanced Mathematics", math.SubjectName);  // Check if name was updated
+            Assert.AreEqual("Advanced Mathematics", math.SubjectName); // Check if name was updated
         }
 
         [Test]
@@ -147,7 +147,7 @@ namespace assignment_3.Tests
             var math = new Subject("S1", "Mathematics", 5);
 
             // Act & Assert
-            Assert.Throws<InvalidOperationException>(() => math.AddSubSubject(math));  // Should throw exception when adding itself as a sub-subject
+            Assert.Throws<InvalidOperationException>(() => math.AddSubSubject(math)); // Should throw exception when adding itself as a sub-subject
         }
 
         [Test]
@@ -305,9 +305,5 @@ namespace assignment_3.Tests
             Assert.Throws<InvalidOperationException>(() => parentSubject.AddSubSubject(childSubject),
                 "Adding the same sub-subject twice should throw an exception.");
         }
-
-
-
-        
     }
 }

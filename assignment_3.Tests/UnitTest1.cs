@@ -141,8 +141,12 @@ namespace assignment_3.Tests
             {
                 // Arrange
                 var exam = new Exam(DateTime.Now.AddDays(1)); // Exam scheduled for tomorrow
-                var timeslot = new Timeslot(101, DateTime.Now.AddDays(1), TimeSpan.FromHours(9),
-                    TimeSpan.FromHours(10));
+                var timeslot = new Timeslot(
+                    101,
+                    DateTime.Now.AddDays(1),
+                    TimeSpan.FromHours(9),
+                    TimeSpan.FromHours(10)
+                );
 
                 // Act
                 exam.AddTimeslot(timeslot);
@@ -150,19 +154,33 @@ namespace assignment_3.Tests
                 // Assert
                 Assert.AreEqual(timeslot, exam.Timeslot);
             }
+
             [Test]
             public void Exam_ShouldNotAllowAssigningMultipleTimeslots()
             {
                 // Arrange
                 var exam = new Exam(DateTime.Now.AddDays(1));
-                var timeslot1 = new Timeslot(101, DateTime.Now.AddDays(1), TimeSpan.FromHours(9), TimeSpan.FromHours(10));
-                var timeslot2 = new Timeslot(102, DateTime.Now.AddDays(1), TimeSpan.FromHours(10), TimeSpan.FromHours(11));
+                var timeslot1 = new Timeslot(
+                    101,
+                    DateTime.Now.AddDays(1),
+                    TimeSpan.FromHours(9),
+                    TimeSpan.FromHours(10)
+                );
+                var timeslot2 = new Timeslot(
+                    102,
+                    DateTime.Now.AddDays(1),
+                    TimeSpan.FromHours(10),
+                    TimeSpan.FromHours(11)
+                );
 
                 // Act
                 exam.AddTimeslot(timeslot1);
 
                 // Assert
-                Assert.Throws<InvalidOperationException>(() => exam.AddTimeslot(timeslot2), "An exam can only have one timeslot.");
+                Assert.Throws<InvalidOperationException>(
+                    () => exam.AddTimeslot(timeslot2),
+                    "An exam can only have one timeslot."
+                );
             }
             [Test]
             public void Exam_ShouldAllowTimeslotRemoval()
@@ -357,6 +375,7 @@ namespace assignment_3.Tests
                     "End time cannot be earlier than start time"
                 );
             }
+
             [Test]
             public void Timeslot_UpdateTime_WithValidTimes_ShouldNotThrowException()
             {
@@ -465,10 +484,18 @@ namespace assignment_3.Tests
             {
                 // Arrange
                 var classroom = new Classroom(1, 30);
-                var timeslot1 = new Timeslot(101, DateTime.Now.AddDays(1), TimeSpan.FromHours(9),
-                    TimeSpan.FromHours(10));
-                var timeslot2 = new Timeslot(102, DateTime.Now.AddDays(1), TimeSpan.FromHours(11),
-                    TimeSpan.FromHours(12));
+                var timeslot1 = new Timeslot(
+                    101,
+                    DateTime.Now.AddDays(1),
+                    TimeSpan.FromHours(9),
+                    TimeSpan.FromHours(10)
+                );
+                var timeslot2 = new Timeslot(
+                    102,
+                    DateTime.Now.AddDays(1),
+                    TimeSpan.FromHours(11),
+                    TimeSpan.FromHours(12)
+                );
 
                 // Act
                 classroom.AssignTimeslot(timeslot1);
@@ -486,8 +513,12 @@ namespace assignment_3.Tests
             {
                 // Arrange
                 var classroom = new Classroom(1, 30);
-                var timeslot = new Timeslot(101, DateTime.Now.AddDays(1), TimeSpan.FromHours(9),
-                    TimeSpan.FromHours(10));
+                var timeslot = new Timeslot(
+                    101,
+                    DateTime.Now.AddDays(1),
+                    TimeSpan.FromHours(9),
+                    TimeSpan.FromHours(10)
+                );
                 classroom.AssignTimeslot(timeslot);
 
                 // Act & Assert
@@ -499,8 +530,12 @@ namespace assignment_3.Tests
             {
                 // Arrange
                 var classroom = new Classroom(1, 30);
-                var timeslot = new Timeslot(101, DateTime.Now.AddDays(1), TimeSpan.FromHours(9),
-                    TimeSpan.FromHours(10));
+                var timeslot = new Timeslot(
+                    101,
+                    DateTime.Now.AddDays(1),
+                    TimeSpan.FromHours(9),
+                    TimeSpan.FromHours(10)
+                );
 
                 // Act
                 classroom.AssignTimeslot(timeslot);
@@ -515,11 +550,17 @@ namespace assignment_3.Tests
                 // Arrange
                 var classroom1 = new Classroom(1, 30);
                 var classroom2 = new Classroom(2, 40);
-                var timeslot = new Timeslot(101, DateTime.Now.AddDays(1), TimeSpan.FromHours(9),
-                    TimeSpan.FromHours(10));
+                var timeslot = new Timeslot(
+                    101,
+                    DateTime.Now.AddDays(1),
+                    TimeSpan.FromHours(9),
+                    TimeSpan.FromHours(10)
+                );
 
                 // Act & Assert
-                Assert.Throws<InvalidOperationException>(() => classroom1.ChangeClassroom(timeslot, classroom2));
+                Assert.Throws<InvalidOperationException>(
+                    () => classroom1.ChangeClassroom(timeslot, classroom2)
+                );
             }
 
             [Test]
@@ -528,9 +569,18 @@ namespace assignment_3.Tests
                 // Arrange
                 var classroom = new Classroom(1, 30);
                 var date = DateTime.Today.AddDays(1); // Use DateTime.Today for consistent dates
-                var timeslot1 = new Timeslot(101, date, TimeSpan.FromHours(9), TimeSpan.FromHours(10));
-                var timeslot2 = new Timeslot(102, date, TimeSpan.FromHours(9).Add(TimeSpan.FromMinutes(30)),
-                    TimeSpan.FromHours(10).Add(TimeSpan.FromMinutes(30)));
+                var timeslot1 = new Timeslot(
+                    101,
+                    date,
+                    TimeSpan.FromHours(9),
+                    TimeSpan.FromHours(10)
+                );
+                var timeslot2 = new Timeslot(
+                    102,
+                    date,
+                    TimeSpan.FromHours(9).Add(TimeSpan.FromMinutes(30)),
+                    TimeSpan.FromHours(10).Add(TimeSpan.FromMinutes(30))
+                );
 
                 classroom.AssignTimeslot(timeslot1);
 
@@ -570,10 +620,6 @@ namespace assignment_3.Tests
                 Assert.IsFalse(classroom.GetAssignedTimeslots().Contains(timeslot));
                 Assert.IsNull(timeslot.Classroom);
             }
-
-
-
-
         }
     }
 }
