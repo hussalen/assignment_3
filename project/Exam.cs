@@ -11,7 +11,7 @@ public class Exam
         get => _examDate;
         private set
         {
-            if (value < DateTime.Now)
+            if (value < DateTime.Now.Date)
                 throw new ArgumentException("Exam date cannot be in the past.");
             _examDate = value;
         }
@@ -27,7 +27,7 @@ public class Exam
 
     public void ScheduleExam(DateTime newDate)
     {
-        if (newDate < DateTime.Now)
+        if (newDate < DateTime.Now.Date)
             throw new ArgumentException("Exam date cannot be in the past.");
         ExamDate = newDate;
     }
@@ -35,7 +35,7 @@ public class Exam
     private static void AddExam(Exam exam)
     {
         if (exam == null)
-            throw new ArgumentException($"{nameof(exam)} cannot be null.");
+            throw new ArgumentNullException($"{nameof(exam)} cannot be null.");
 
         if (_examList.Any(e => e.ExamId == exam.ExamId))
             throw new ArgumentException($"An exam with ID {exam.ExamId} already exists.");
@@ -44,7 +44,11 @@ public class Exam
     }
 
     public void AddTimeslot(Timeslot timeslot)
-    {
+    {   
+        if (timeslot == null)
+        {
+            throw new ArgumentNullException(nameof(timeslot), "Timeslot cannot be null.");
+        }
         if (_timeslot != null)
             throw new InvalidOperationException("This exam already has an associated timeslot.");
 

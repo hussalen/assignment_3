@@ -5,6 +5,7 @@ namespace assignment_3
         public string SubjectId { get; private set; }
 
         private string _subjectName;
+        public Subject ParentSubject { get; private set; }
         public string SubjectName
         {
             get => _subjectName;
@@ -41,19 +42,18 @@ namespace assignment_3
                 _teachers = value;
             }
         }
-
-        private List<Student> _students = new();
+        
         private Subject _subSubject;
-        private List<Subject> _subSubjects => throw new NotImplementedException();
+        private List<Subject> _subSubjects = new List<Subject>();
 
-        private List<Timeslot> _timeslots => throw new NotImplementedException();
+        private List<Timeslot> _timeslots = new List<Timeslot>();
 
         public Subject SubSubject
         {
             get => _subSubject;
             private set { _subSubject = value; }
         }
-
+        private List<Student> _students = new();
         public List<Student> Students
         {
             get => new(_students);
@@ -88,23 +88,19 @@ namespace assignment_3
         {
             if (subSubject == null)
                 throw new ArgumentNullException(nameof(subSubject));
-
             if (subSubject == this)
                 throw new InvalidOperationException("A subject cannot be a sub-subject of itself.");
-
-            if (subSubject.SubSubject != null)
-                throw new InvalidOperationException("A subject cannot have two parents.");
-
-            if (!_subSubjects.Contains(subSubject))
-            {
-                _subSubjects.Add(subSubject);
-                subSubject.SetParentSubject(this);
-            }
+            if (subSubject.ParentSubject != null && subSubject.ParentSubject != this)
+                throw new InvalidOperationException("A sub-subject cannot have more than one parent.");
+            if (_subSubjects.Contains(subSubject))
+                throw new InvalidOperationException("This sub-subject is already added to the parent subject.");
+            _subSubjects.Add(subSubject);
+            subSubject.SetParentSubject(this);
         }
 
         private void SetParentSubject(Subject parentSubject)
         {
-            SubSubject = parentSubject;
+            ParentSubject = parentSubject;
         }
 
         public void RemoveSubSubject(Subject subSubject)
@@ -121,7 +117,7 @@ namespace assignment_3
 
         private void RemoveParentSubject()
         {
-            SubSubject = null;
+            ParentSubject = null;
         }
 
         public void AddTimeslot(Timeslot timeslot)

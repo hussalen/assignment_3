@@ -43,16 +43,20 @@ public class Timeslot
         }
     }
 
-    public Timeslot(int scheduleId, DateTime date, TimeSpan startTime, TimeSpan endTime)
+    public Timeslot(int scheduleId, DateTime date, TimeSpan startTime, TimeSpan endTime, bool isDummy = false)
     {
         if (scheduleId <= 0)
             throw new ArgumentException("Schedule ID must be a positive number.");
-
+        if (date.Date < DateTime.Today)
+            throw new ArgumentException("Date cannot be in the past.");
+        
         ScheduleId = scheduleId;
         Date = date;
         StartTime = startTime;
         EndTime = endTime;
-        AddTimeslot(this);
+        if(!isDummy){
+            AddTimeslot(this);
+        }
         //SaveManager.SaveToJson(_timeslotList, nameof(_timeslotList));
     }
 
@@ -60,9 +64,9 @@ public class Timeslot
 
     private static void AddTimeslot(Timeslot timeslot)
     {
-        if (timeslot is null)
+        if (timeslot == null)
         {
-            throw new ArgumentException($"{nameof(timeslot)} cannot be null.");
+            throw new ArgumentNullException($"{nameof(timeslot)} cannot be null.");
         }
 
         if (_timeslotList.Any(t => t.ScheduleId == timeslot.ScheduleId))
@@ -79,7 +83,7 @@ public class Timeslot
 
     public void UpdateTime(TimeSpan newStartTime, TimeSpan newEndTime)
     {
-        if (newStartTime >= newEndTime)
+        if (newEndTime <= newStartTime)
             throw new ArgumentException("New start time must be earlier than the new end time.");
         if (newStartTime < TimeSpan.Zero || newEndTime > TimeSpan.FromHours(24))
             throw new ArgumentException("Time must be within a valid range (00:00 to 24:00).");
@@ -140,7 +144,7 @@ public class Timeslot
 
     public void SetSubject(Subject subject)
     {
-        if (_subject != null)
+        if (_subject != null && _subject != subject)
             throw new InvalidOperationException(
                 "This timeslot is already assigned to another subject."
             );
