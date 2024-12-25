@@ -10,7 +10,6 @@ namespace assignment_3
 {
     public class Grade
     {
-        private static readonly Student DEFAULT_STUDENT = new(ClassLevel.Freshman);
         public int GradeId { get; private set; }
 
         private uint _gradeValue;
@@ -40,14 +39,14 @@ namespace assignment_3
         {
             GradeId = Interlocked.Increment(ref nextId);
             this.GradeValue = GradeValue;
-            _student = DEFAULT_STUDENT;
+            Student = Defaults.DEFAULT_STUDENT;
             addGrade(this);
             //SaveManager.SaveToJson(_grade_List, nameof(_grade_List));
         }
 
         public void ClearStudent()
         {
-            Student = DEFAULT_STUDENT;
+            Student = Defaults.DEFAULT_STUDENT;
         }
 
         public void GenerateBasicGrades() { }

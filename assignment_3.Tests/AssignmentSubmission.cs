@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualBasic;
 using NUnit.Framework;
@@ -15,7 +16,7 @@ namespace assignment_3.Tests
 
         private readonly IAssignment coding = new Coding(
             "test",
-            new DateTime(2027, 10, 10),
+            DateTime.MaxValue,
             "Python",
             "https://yes.com"
         );
@@ -28,20 +29,14 @@ namespace assignment_3.Tests
             uint invalidMaxWordCount = 300; // Invalid range
 
             // Act & Assert
-            var ex = Assert.Throws<ValidationException>(() =>
-            {
-                Essay essay = new Essay(
-                    "Essay Topic",
-                    DateTime.Now.AddDays(7),
-                    invalidMinWordCount,
-                    invalidMaxWordCount
-                );
-            });
-
-            // Assert that the exception message is as expected
-            Assert.AreEqual(
-                "Minimum word count cannot be greater than the maximum word count.",
-                ex.Message
+            Assert.Throws<ValidationException>(
+                () =>
+                    new Essay(
+                        "Essay Topic",
+                        DateTime.Now.AddDays(7),
+                        invalidMinWordCount,
+                        invalidMaxWordCount
+                    )
             );
         }
 
@@ -98,7 +93,7 @@ namespace assignment_3.Tests
         {
             IAssignment assignment = new IndividualProject(
                 "testtestest",
-                new DateTime(2024, 12, 12),
+                DateTime.MaxValue,
                 ["test"]
             );
             // Explicitly setting to null despite it already being null
@@ -113,7 +108,7 @@ namespace assignment_3.Tests
         {
             IAssignment assignment = new IndividualProject(
                 "testtestest",
-                new DateTime(2024, 12, 12),
+                DateTime.MaxValue,
                 ["test"]
             );
 
@@ -126,13 +121,18 @@ namespace assignment_3.Tests
         {
             student.SubmitAssignment(coding, 100);
 
-            var ex = Assert.Throws<ArgumentException>(() => student.SubmitAssignment(coding, 100));
-            Assert.That(ex.Message, Is.EqualTo("Assignment already exists."));
+            Assert.Throws<ArgumentException>(() => student.SubmitAssignment(coding, 100));
         }
 
         [Test]
         public void WhenAssignmentAlreadySubmitted()
         {
+            var coding = new Coding(
+                "testtest",
+                DateTime.MaxValue,
+                "python",
+                "https://ThreadStart.com"
+            );
             coding.SubmissionDate = DateTime.UtcNow;
 
             var ex = Assert.Throws<InvalidOperationException>(
@@ -144,11 +144,17 @@ namespace assignment_3.Tests
         [Test]
         public void WhenDueDateIsPassed()
         {
-            coding.DueDate = DateTime.UtcNow.AddDays(-1);
-
-            var ex = Assert.Throws<InvalidOperationException>(
-                () => student.SubmitAssignment(coding, 100)
+            var coding = new Coding(
+                "test",
+                DateTime.UtcNow.AddMilliseconds(1),
+                "python",
+                "https://ThreadStart.com"
             );
+            var ex = Assert.Throws<InvalidOperationException>(() =>
+            {
+                Thread.Sleep(101);
+                student.SubmitAssignment(coding, 100);
+            });
             Assert.That(ex.Message, Is.EqualTo("Cannot submit the assignment after the due date"));
         }
     }

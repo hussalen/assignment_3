@@ -30,26 +30,21 @@ namespace assignment_3
         public float GPA
         {
             get => _gpa;
-            set => _gpa = value == 0.0f ? 0.0f : ValidateGPA(value);
+            set => _gpa = value == 0.0f || value == 0 ? 0.0f : ValidateGPA(value);
         }
 
         private static int nextId = 1;
 
         private static Dictionary<Int32, List<string>> classSchedules = new();
 
-        private static readonly Coding DEFAULT_CODING =
-            new("DEFAULT", new DateTime(2026, 01, 01), "Python", "http://def.com");
-
-        private List<IAssignment> _assignments = [DEFAULT_CODING];
+        private List<IAssignment> _assignments = [Defaults.DEFAULT_CODING];
         public List<IAssignment> Assignments
         {
             get => new(_assignments);
             private set => _assignments = value;
         }
 
-        private static readonly Grade DEFAULT_GRADE = new(2);
-
-        private List<Grade> _grades = [DEFAULT_GRADE];
+        private List<Grade> _grades = [Defaults.DEFAULT_GRADE];
 
         public List<Grade> Grades
         {
@@ -120,11 +115,15 @@ namespace assignment_3
         private float CalculateGPA(List<Grade> grades)
         {
             uint sum = 0;
+            uint count = 0;
             foreach (var grade in grades)
             {
+                if (grade == Defaults.DEFAULT_GRADE)
+                    continue;
                 sum += grade.GradeValue;
+                count += 1;
             }
-            return sum / Grades.Count;
+            return sum / count;
         }
 
         public void AddGrade(Grade grade)
@@ -133,10 +132,11 @@ namespace assignment_3
             {
                 throw new ArgumentException("Grade is already assigned.");
             }
-            if (Grades.Contains(grade))
+            if (_grades.Contains(grade))
                 throw new ArgumentException("Grade already exists.");
-            Grades.Add(grade);
+            _grades.Add(grade);
             grade.Student = this;
+
             GPA = CalculateGPA(_grades);
         }
 
@@ -148,9 +148,9 @@ namespace assignment_3
                     $"Grade is not assigned to this student's grade, but assigned to {nameof(grade.Student)}."
                 );
             }
-            if (!Grades.Contains(grade))
+            if (!_grades.Contains(grade))
                 throw new ArgumentException("Grade does not exist.");
-            Grades.Remove(grade);
+            _grades.Remove(grade);
             grade.ClearStudent();
             GPA = CalculateGPA(_grades);
         }
@@ -204,7 +204,7 @@ namespace assignment_3
         public void SubmitAssignment(IAssignment assignment, int wordCount)
         {
             ArgumentNullException.ThrowIfNull(assignment);
-            if (Assignments.Contains(assignment))
+            if (_assignments.Contains(assignment))
                 throw new ArgumentException("Assignment already exists.");
             if (assignment.SubmissionDate != null)
             {
@@ -216,14 +216,14 @@ namespace assignment_3
                     "Cannot submit the assignment after the due date"
                 );
             }
-            Assignments.Add(assignment);
+            _assignments.Add(assignment);
         }
 
         public void RemoveAssignmentSubmission(IAssignment assignment)
         {
             ArgumentNullException.ThrowIfNull(assignment);
             ArgumentNullException.ThrowIfNull(assignment.SubmissionDate);
-            if (!Assignments.Contains(assignment))
+            if (!_assignments.Contains(assignment))
                 throw new ArgumentException(
                     $"The student does not have the assignment {nameof(assignment)} submitted"
                 );
@@ -232,7 +232,7 @@ namespace assignment_3
                     "This assignment does not belong to the current student."
                 );
             assignment.SubmissionDate = null;
-            Assignments.Remove(assignment);
+            _assignments.Remove(assignment);
         }
 
         public void EditAssignmentSubmission(IAssignment assignment)
@@ -240,7 +240,7 @@ namespace assignment_3
             ArgumentNullException.ThrowIfNull(assignment);
             ArgumentNullException.ThrowIfNull(assignment.SubmissionDate);
 
-            if (!Assignments.Contains(assignment))
+            if (!_assignments.Contains(assignment))
                 throw new ArgumentException(
                     $"The student does not have the assignment {nameof(assignment)} submitted"
                 );
@@ -251,8 +251,8 @@ namespace assignment_3
                 );
 
             assignment.SubmissionDate = DateTime.UtcNow;
-            Assignments.Remove(assignment);
-            Assignments.Add(assignment);
+            _assignments.Remove(assignment);
+            _assignments.Add(assignment);
         }
 
         public void AddTimeTable(TimeTable timeTable)
