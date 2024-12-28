@@ -4,6 +4,7 @@ public class Timeslot
 {
     public int ScheduleId { get; private set; }
     public Classroom Classroom { get; private set; }
+    public Teacher AssignedTeacher { get; private set; }
     private Subject _subject;
     private DateTime _date;
     private TimeSpan _startTime;
@@ -154,4 +155,26 @@ public class Timeslot
     }
 
     public Subject GetSubject() => _subject;
+
+    public void AssignTeacher(Teacher teacher)
+    {
+        if (teacher == null)
+            throw new ArgumentNullException(nameof(teacher), "Teacher cannot be null.");
+
+        if (AssignedTeacher != null)
+            throw new InvalidOperationException("A teacher is already assigned to this timeslot.");
+
+        AssignedTeacher = teacher;
+        teacher.AssignTimeslot(this);
+    }
+
+    public void RemoveTeacher()
+    {
+        if (AssignedTeacher == null)
+            throw new InvalidOperationException("No teacher is assigned to this timeslot.");
+
+        var temp = AssignedTeacher;
+        AssignedTeacher = null;
+        temp.RemoveTimeslot(this);
+    }
 }

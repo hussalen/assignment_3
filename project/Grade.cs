@@ -32,6 +32,25 @@ namespace assignment_3
             get => new(_student.ClassLevel);
             set => _student = value;
         }
+        private Teacher _teacher;
+        public Teacher Teacher
+        {
+            get => _teacher;
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException(nameof(value), "Teacher cannot be null.");
+
+                if (_teacher != null && _teacher != value)
+                    throw new InvalidOperationException("This grade is already assigned to a different teacher.");
+
+                _teacher = value;
+                if (!_teacher.Grades.Contains(this))
+                {
+                    _teacher.AssignGrade(this); 
+                }
+            }
+        }
 
         static int nextId;
 

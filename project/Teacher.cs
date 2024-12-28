@@ -48,7 +48,10 @@ namespace assignment_3
                 );
 
             _subjects.Add(subject);
-            //FIX: subject.Teacher = this;
+            if (subject.Teacher != this)
+            {
+                subject.Teacher = this; 
+            }
         }
 
         public void RemoveSubject(Subject subject)
@@ -58,7 +61,10 @@ namespace assignment_3
                 throw new ArgumentException("Subject is not assigned to this teacher.");
 
             _subjects.Remove(subject);
-            //FIX: subject.Teacher = null;
+            if (subject.Teacher == this)
+            {
+                subject.Teacher = null; 
+            }
         }
 
         public void ViewSchedule()
@@ -67,6 +73,62 @@ namespace assignment_3
             foreach (var subject in _subjects)
             {
                 Console.WriteLine($"- {subject.SubjectName} (ID: {subject.SubjectId})");
+            }
+        }
+
+        private readonly List<Timeslot> _assignedTimeslots = new();
+
+        public List<Timeslot> AssignedTimeslots => new List<Timeslot>(_assignedTimeslots);
+
+        public void AssignTimeslot(Timeslot timeslot)
+        {
+            if (timeslot == null)
+                throw new ArgumentNullException(nameof(timeslot), "Timeslot cannot be null.");
+
+            if (_assignedTimeslots.Contains(timeslot))
+                throw new InvalidOperationException("This timeslot is already assigned to the teacher.");
+
+            _assignedTimeslots.Add(timeslot);
+        }
+
+        public void RemoveTimeslot(Timeslot timeslot)
+        {
+            if (timeslot == null)
+                throw new ArgumentNullException(nameof(timeslot), "Timeslot cannot be null.");
+
+            if (!_assignedTimeslots.Remove(timeslot))
+                throw new InvalidOperationException("This timeslot is not assigned to the teacher.");
+        }
+        private readonly List<Grade> _grades = new();
+
+        public List<Grade> Grades => new List<Grade>(_grades);
+
+        public void AssignGrade(Grade grade)
+        {
+            if (grade == null)
+                throw new ArgumentNullException(nameof(grade), "Grade cannot be null.");
+
+            if (_grades.Contains(grade))
+                throw new InvalidOperationException("This grade is already assigned to this teacher.");
+
+            _grades.Add(grade);
+            if (grade.Teacher != this)
+            {
+                grade.Teacher = this; 
+            }
+        }
+
+        public void RemoveGrade(Grade grade)
+        {
+            if (grade == null)
+                throw new ArgumentNullException(nameof(grade), "Grade cannot be null.");
+
+            if (!_grades.Remove(grade))
+                throw new InvalidOperationException("This grade is not assigned to this teacher.");
+
+            if (grade.Teacher == this)
+            {
+                grade.Teacher = null; 
             }
         }
     }
