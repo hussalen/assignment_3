@@ -62,13 +62,14 @@ namespace assignment_3.Tests
         [Test]
         public void TryOfSchedulingOnTheTakenDate()
         {
-            var exam = new Exam(new DateTime(2024, 12, 29)); 
-            var initialDate = DateTime.Now.AddDays(1);
-            
-            exam.ScheduleExam(initialDate);
-            
-            Assert.AreEqual(initialDate.Date, exam.ExamDate.Date);
+            var exam = new Exam(new DateTime(2025, 03, 15));
+            var initialDate = DateTime.Today.AddDays(1); // Use DateTime.Today for consistency
+    
+            exam.ScheduleExam(initialDate); // Schedule for the next day
+    
+            Assert.AreEqual(initialDate, exam.ExamDate); // No .Date needed since ExamDate is already adjusted
         }
+
 
 
         [Test]

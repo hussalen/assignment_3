@@ -17,19 +17,26 @@ public class Exam
         }
     }
 
-    public Exam(DateTime examDate)
+    public Exam(DateTime examDate, Timeslot timeslot)
     {
         ExamId = Interlocked.Increment(ref nextId);
         ExamDate = examDate;
+        Timeslot = 
+        AddTimeslot(timeslot);
         AddExam(this);
         //SaveManager.SaveToJson(_examList, nameof(_examList));
     }
 
-    public void ScheduleExam(DateTime newDate)
+    public void ScheduleExam(DateTime newDate, Timeslot timeslot)
     {
-        if (newDate < DateTime.Now.Date)
+        if (newDate < DateTime.Now)
             throw new ArgumentException("Exam date cannot be in the past.");
         ExamDate = newDate;
+        if (!_examList.Contains(this))
+        {
+            AddExam(this);
+        }
+        AddTimeslot(timeslot);
     }
 
     private static void AddExam(Exam exam)
