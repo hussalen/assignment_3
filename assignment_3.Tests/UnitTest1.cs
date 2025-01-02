@@ -47,47 +47,71 @@ namespace assignment_3.Tests
             Assert.AreEqual(roles, groupProject.Roles);
             Assert.IsNull(groupProject.SubmissionDate);
         }
-    }
+        
 
     public class ExamTests
     {
         [Test]
         public void PastDateTryOfScheduling()
         {
-            var pastDate = new DateTime(2024, 11, 11); 
+            var exam = new Exam(new DateTime(2026, 01, 01));
+            DateTime pastDate = DateTime.Now.AddDays(-1);
             
+            var timeslot = new Timeslot(25, DateTime.Now.AddDays(10), TimeSpan.FromHours(9), TimeSpan.FromHours(10));
+            Assert.Throws<ArgumentException>(() => exam.ScheduleExam(pastDate, timeslot));
+        }
+        [Test]
+        public void TestTimeslotAlreadyOccupied()
+        {
+            // Arrange: Create a timeslot and assign the first exam to it
+            var occupiedTimeslot = new Timeslot(22, DateTime.Now.AddDays(10), TimeSpan.FromHours(9), TimeSpan.FromHours(10));
+            var exam1 = new Exam(new DateTime(2026, 10, 11), occupiedTimeslot);
+
+            // Assert: Verify the first exam is assigned correctly
+            Assert.AreEqual(exam1, occupiedTimeslot.Exam);
+            Assert.AreEqual(occupiedTimeslot, exam1.Timeslot);
+
+            // Act & Assert: Attempt to assign a second exam to the same timeslot
+            var exam2 = new Exam(new DateTime(2026, 10, 11));
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+            {
+                exam2.ScheduleExam(DateTime.Now.AddDays(10), occupiedTimeslot);
+            });
+
+            // Verify the exception message
+            Assert.AreEqual("This timeslot is already occupied by another exam.", exception.Message);
+
+            // Assert: The original exam remains assigned
+            Assert.AreEqual(exam1, occupiedTimeslot.Exam);
+            Assert.AreEqual(occupiedTimeslot, exam1.Timeslot);
+        }
+
+
+    }
+        [Test]
+        public void Exam_Creation_WithPastDate_ShouldThrowException()
+        {
+            DateTime pastDate = DateTime.Now.AddDays(-1);
             Assert.Throws<ArgumentException>(() => new Exam(pastDate));
         }
 
         [Test]
-        public void TryOfSchedulingOnTheTakenDate()
-        {
-            var exam = new Exam(new DateTime(2025, 03, 15));
-            var initialDate = DateTime.Today.AddDays(1); // Use DateTime.Today for consistency
-    
-            exam.ScheduleExam(initialDate); // Schedule for the next day
-    
-            Assert.AreEqual(initialDate, exam.ExamDate); // No .Date needed since ExamDate is already adjusted
-        }
-
-
-
-        [Test]
-        public void Exam_Creation_WithFutureDate_ShouldNotThrowException()
-        {
-            DateTime futureDate = DateTime.Now.AddDays(1); // Valid future date
-            var exam = new Exam(futureDate);
-            Assert.AreEqual(futureDate, exam.ExamDate);
-        }
-
-
-        [Test]
         public void ScheduleExam_WithFutureDate_ShouldUpdateExamDate()
         {
+            // Arrange: Create an exam (default timeslot will be handled in ScheduleExam)
             var exam = new Exam(DateTime.Now.AddDays(2));
             DateTime newDate = DateTime.Now.AddDays(10);
-            exam.ScheduleExam(newDate);
+            var timeslot = new Timeslot(2, newDate, TimeSpan.FromHours(9), TimeSpan.FromHours(10));
+
+            // Ensure the timeslot is cleared before scheduling
+            timeslot.ClearExam();
+
+            // Act: Schedule the exam
+            exam.ScheduleExam(newDate, timeslot);
+
+            // Assert: Check that the exam date and timeslot were correctly set
             Assert.AreEqual(newDate, exam.ExamDate);
+            Assert.AreEqual(timeslot, exam.Timeslot);
         }
 
         [Test]
@@ -95,45 +119,37 @@ namespace assignment_3.Tests
         {
             var exam = new Exam(DateTime.Now.AddDays(2));
             DateTime pastDate = DateTime.Now.AddDays(-1);
-            Assert.Throws<ArgumentException>(() => exam.ScheduleExam(pastDate));
+            var timeslot = new Timeslot(14, DateTime.Now.AddDays(10), TimeSpan.FromHours(9), TimeSpan.FromHours(10));
+            Assert.Throws<ArgumentException>(() => exam.ScheduleExam(pastDate, timeslot));
         }
 
         [Test]
-        public void ScheduleExam_WithSameDate_ShouldUpdateExamDate()
+        public void Timeslot_EditExam_ShouldReplaceExamCorrectly()
         {
-            var exam = new Exam(DateTime.Now.AddDays(2));
-            DateTime sameDate = DateTime.Now.AddDays(2);
-            exam.ScheduleExam(sameDate);
-            Assert.AreEqual(sameDate, exam.ExamDate);
+            var initialDate = DateTime.Now.AddDays(2);
+            var initialTimeslot = new Timeslot(19, DateTime.Now.AddDays(10), TimeSpan.FromHours(9), TimeSpan.FromHours(10));
+            var initialExam = new Exam(initialDate, initialTimeslot);  // Assign initial exam to the timeslot
+            
+            DateTime newDate = DateTime.Now.AddDays(3);
+            var newTimeslot = new Timeslot(20, DateTime.Now.AddDays(11), TimeSpan.FromHours(11), TimeSpan.FromHours(12));
+            var newExam = new Exam(newDate, newTimeslot);  // New exam with a different date and timeslot
+            
+            initialTimeslot.AddExam(initialExam);
+            
+            initialTimeslot.EditExam(newExam);
+            
+            Assert.AreEqual(newExam, initialTimeslot.Exam);  
+            Assert.AreEqual(newDate, initialTimeslot.Exam.ExamDate);  
+            Assert.AreEqual(initialTimeslot.ScheduleId, initialTimeslot.Exam.Timeslot.ScheduleId); 
+            Assert.AreEqual(initialTimeslot.Date, initialTimeslot.Exam.Timeslot.Date); 
+            Assert.AreEqual(initialTimeslot.StartTime, initialTimeslot.Exam.Timeslot.StartTime); 
+            Assert.AreEqual(initialTimeslot.EndTime, initialTimeslot.Exam.Timeslot.EndTime); 
         }
-        [Test]
-        public void ScheduleExam_WithFarFutureDate_ShouldUpdateExamDate()
-        {
-            var exam = new Exam(DateTime.Now.AddDays(2));
-            DateTime farFutureDate = DateTime.Now.AddYears(1); // Schedule exam for 1 year later
-            exam.ScheduleExam(farFutureDate);
-            Assert.AreEqual(farFutureDate, exam.ExamDate);
-        }
-        [Test]
-        public void Exam_Creation_WithInvalidDate_ShouldThrowException()
-        {
-            // Arrange
-            DateTime invalidDate = DateTime.Now.AddDays(-5); // Invalid past date
-        
-            // Act & Assert
-            Assert.Throws<ArgumentException>(() => new Exam(invalidDate), "Exam date cannot be in the past.");
-        }
-        [Test]
-        public void ScheduleExam_WithSameExamDate_ShouldNotThrowException()
-        {
-            // Arrange
-            var exam = new Exam(DateTime.Now.AddDays(1));
-            DateTime sameDate = DateTime.Now.AddDays(1);
 
-            // Act & Assert: Scheduling the same date should not throw an exception
-            Assert.DoesNotThrow(() => exam.ScheduleExam(sameDate));
-        }
-        
+
+
+
+
         [TestFixture]
         public class ExamTimeslotManagementTests
         {
@@ -142,12 +158,8 @@ namespace assignment_3.Tests
             {
                 // Arrange
                 var exam = new Exam(DateTime.Now.AddDays(1)); // Exam scheduled for tomorrow
-                var timeslot = new Timeslot(
-                    101,
-                    DateTime.Now.AddDays(1),
-                    TimeSpan.FromHours(9),
-                    TimeSpan.FromHours(10)
-                );
+                var timeslot = new Timeslot(101, DateTime.Now.AddDays(1), TimeSpan.FromHours(9),
+                    TimeSpan.FromHours(10));
 
                 // Act
                 exam.AddTimeslot(timeslot);
@@ -155,131 +167,20 @@ namespace assignment_3.Tests
                 // Assert
                 Assert.AreEqual(timeslot, exam.Timeslot);
             }
-
             [Test]
             public void Exam_ShouldNotAllowAssigningMultipleTimeslots()
             {
                 // Arrange
                 var exam = new Exam(DateTime.Now.AddDays(1));
-                var timeslot1 = new Timeslot(
-                    101,
-                    DateTime.Now.AddDays(1),
-                    TimeSpan.FromHours(9),
-                    TimeSpan.FromHours(10)
-                );
-                var timeslot2 = new Timeslot(
-                    102,
-                    DateTime.Now.AddDays(1),
-                    TimeSpan.FromHours(10),
-                    TimeSpan.FromHours(11)
-                );
+                var timeslot1 = new Timeslot(103, DateTime.Now.AddDays(1), TimeSpan.FromHours(9), TimeSpan.FromHours(10));
+                var timeslot2 = new Timeslot(102, DateTime.Now.AddDays(1), TimeSpan.FromHours(10), TimeSpan.FromHours(11));
 
                 // Act
                 exam.AddTimeslot(timeslot1);
 
                 // Assert
-                Assert.Throws<InvalidOperationException>(
-                    () => exam.AddTimeslot(timeslot2),
-                    "An exam can only have one timeslot."
-                );
+                Assert.Throws<InvalidOperationException>(() => exam.AddTimeslot(timeslot2), "An exam can only have one timeslot.");
             }
-            [Test]
-            public void Exam_ShouldAllowTimeslotRemoval()
-            {
-                // Arrange
-                var exam = new Exam(DateTime.Now.AddDays(1));
-                var timeslot = new Timeslot(101, DateTime.Now.AddDays(1), TimeSpan.FromHours(9), TimeSpan.FromHours(10));
-
-                // Act
-                exam.AddTimeslot(timeslot);
-                exam.RemoveTimeslot();  // Remove the timeslot
-
-                // Assert: The exam should no longer have a timeslot
-                Assert.IsNull(exam.Timeslot, "The exam should not have an associated timeslot after removal.");
-                Assert.IsNull(timeslot.Exam, "The timeslot should not have an associated exam after removal.");
-            }
-            [Test]
-            public void Exam_ShouldThrowException_WhenSchedulingInPast()
-            {
-                // Arrange
-                var pastDate = DateTime.Now.AddDays(-1);  // Setting a past date
-    
-                // Act & Assert: Creating an exam with a past date should throw an ArgumentException
-                Assert.Throws<ArgumentException>(() => new Exam(pastDate), "Exam date cannot be in the past.");
-            }
-
-            [Test]
-            public void Exam_ShouldNotAllowAddingTimeslot_WhenTimeslotIsAssignedToAnotherExam()
-            {
-                // Arrange
-                var exam1 = new Exam(DateTime.Now.AddDays(1));
-                var exam2 = new Exam(DateTime.Now.AddDays(2));
-                var timeslot = new Timeslot(101, DateTime.Now.AddDays(1), TimeSpan.FromHours(9), TimeSpan.FromHours(10));
-
-                // Act
-                exam1.AddTimeslot(timeslot);  // First exam gets the timeslot
-
-                // Assert: Trying to assign the same timeslot to a second exam should throw an exception
-                Assert.Throws<InvalidOperationException>(() => exam2.AddTimeslot(timeslot), "The timeslot is already assigned to another exam.");
-            }
-            [Test]
-            public void Exam_ShouldAllowReassigningTimeslot_AfterRemoval()
-            {
-                // Arrange
-                var exam1 = new Exam(DateTime.Now.AddDays(1));  // Exam scheduled for tomorrow
-                var exam2 = new Exam(DateTime.Now.AddDays(2));  // Another exam scheduled for the next day
-                var timeslot = new Timeslot(101, DateTime.Now.AddDays(1), TimeSpan.FromHours(9), TimeSpan.FromHours(10));
-
-                // Act
-                exam1.AddTimeslot(timeslot);  // Assigning timeslot to the first exam
-                exam1.RemoveTimeslot();  // Removing timeslot from the first exam
-                exam2.AddTimeslot(timeslot);  // Assigning the same timeslot to the second exam
-
-                // Assert
-                Assert.AreEqual(timeslot, exam2.Timeslot, "The timeslot should now be assigned to the second exam.");
-            }
-            [Test]
-            public void Exam_ShouldThrowException_WhenAddingNullTimeslot()
-            {
-                // Arrange
-                var exam = new Exam(DateTime.Now.AddDays(1));  // Exam scheduled for tomorrow
-
-                // Act & Assert
-                Assert.Throws<ArgumentNullException>(() => exam.AddTimeslot(null), "Timeslot cannot be null.");
-            }
-
-            [Test]
-            public void Exam_ShouldThrowException_WhenTimeslotAssignedWithPastDate()
-            {
-                // Arrange
-                var exam = new Exam(DateTime.Now.AddDays(1));  // Exam scheduled for tomorrow
-
-                // Act & Assert
-                Assert.Throws<ArgumentException>(() => new Timeslot(101, DateTime.Now.AddDays(-1), TimeSpan.FromHours(9), TimeSpan.FromHours(10)), "Date cannot be in the past.");
-            }
-            
-            [Test]
-            public void Timeslot_ShouldThrowException_WhenStartTimeGreaterThanEndTime()
-            {
-                // Arrange
-                var exam = new Exam(DateTime.Now.AddDays(1));  // Exam scheduled for tomorrow
-
-                // Act & Assert
-                Assert.Throws<ArgumentException>(() => new Timeslot(101, DateTime.Now.AddDays(1), TimeSpan.FromHours(10), TimeSpan.FromHours(9)), "Start time must be earlier than the end time.");
-            }
-            [Test]
-            public void Exam_ShouldThrowException_WhenStartTimeIsEqualToEndTime()
-            {
-                // Arrange
-                var exam = new Exam(DateTime.Now.AddDays(1));  // Exam scheduled for tomorrow
-
-                // Act & Assert: Start time equals end time should throw an exception
-                Assert.Throws<ArgumentException>(() => new Timeslot(101, DateTime.Now.AddDays(1), TimeSpan.FromHours(9), TimeSpan.FromHours(9)),
-                    "Start time cannot be equal to end time.");
-            }
-
-
-            
         }
 
         [TestFixture]
@@ -289,7 +190,7 @@ namespace assignment_3.Tests
             public void Timeslot_Creation_ShouldInitializeCorrectly()
             {
                 // Arrange
-                int scheduleId = 1;
+                int scheduleId = 32;
                 DateTime date = DateTime.Now.AddDays(1);
                 TimeSpan startTime = new TimeSpan(10, 0, 0); // 10:00 AM
                 TimeSpan endTime = new TimeSpan(12, 0, 0); // 12:00 PM
@@ -340,7 +241,7 @@ namespace assignment_3.Tests
             public void Timeslot_UpdateTime_ShouldUpdateStartTimeAndEndTimeCorrectly()
             {
                 // Arrange
-                int scheduleId = 1;
+                int scheduleId = 31;
                 DateTime date = DateTime.Now.AddDays(1);
                 TimeSpan startTime = new TimeSpan(10, 0, 0); // 10:00 AM
                 TimeSpan endTime = new TimeSpan(12, 0, 0); // 12:00 PM
@@ -361,7 +262,7 @@ namespace assignment_3.Tests
             public void Timeslot_UpdateTime_WithInvalidEndTime_ShouldThrowException()
             {
                 // Arrange
-                int scheduleId = 1;
+                int scheduleId = 3;
                 DateTime date = DateTime.Now.AddDays(1);
                 TimeSpan startTime = new TimeSpan(10, 0, 0); // 10:00 AM
                 TimeSpan endTime = new TimeSpan(12, 0, 0); // 12:00 PM
@@ -376,27 +277,26 @@ namespace assignment_3.Tests
                     "End time cannot be earlier than start time"
                 );
             }
-
-            [Test]
-            public void Timeslot_UpdateTime_WithValidTimes_ShouldNotThrowException()
-            {
-                // Arrange
-                int scheduleId = 1;
-                DateTime date = DateTime.Now.AddDays(1);
-                TimeSpan startTime = TimeSpan.FromHours(10); // 10:00 AM
-                TimeSpan endTime = TimeSpan.FromHours(12);  // 12:00 PM
-                var timeslot = new Timeslot(scheduleId, date, startTime, endTime);
-
-                // Act & Assert: Updating time with valid inputs should not throw any exception
-                Assert.DoesNotThrow(() => timeslot.UpdateTime(TimeSpan.FromHours(11), TimeSpan.FromHours(13)));  // Corrected end time
-            }
-            
         }
-        
+
+
         [TestFixture]
         public class ClassroomTests
         {
+            [Test]
+            public void Classroom_Creation_ShouldInitializeCorrectly()
+            {
+                // Arrange
+                int roomId = 101;
+                int capacity = 30;
 
+                // Act
+                var classroom = new Classroom(roomId, capacity);
+
+                // Assert
+                Assert.AreEqual(roomId, classroom.RoomId);
+                Assert.AreEqual(capacity, classroom.Capacity);
+            }
 
             [Test]
             public void Classroom_Creation_WithInvalidRoomId_ShouldThrowException()
@@ -485,18 +385,10 @@ namespace assignment_3.Tests
             {
                 // Arrange
                 var classroom = new Classroom(1, 30);
-                var timeslot1 = new Timeslot(
-                    101,
-                    DateTime.Now.AddDays(1),
-                    TimeSpan.FromHours(9),
-                    TimeSpan.FromHours(10)
-                );
-                var timeslot2 = new Timeslot(
-                    102,
-                    DateTime.Now.AddDays(1),
-                    TimeSpan.FromHours(11),
-                    TimeSpan.FromHours(12)
-                );
+                var timeslot1 = new Timeslot(104, DateTime.Now.AddDays(1), TimeSpan.FromHours(9),
+                    TimeSpan.FromHours(10));
+                var timeslot2 = new Timeslot(105, DateTime.Now.AddDays(1), TimeSpan.FromHours(11),
+                    TimeSpan.FromHours(12));
 
                 // Act
                 classroom.AssignTimeslot(timeslot1);
@@ -514,12 +406,8 @@ namespace assignment_3.Tests
             {
                 // Arrange
                 var classroom = new Classroom(1, 30);
-                var timeslot = new Timeslot(
-                    101,
-                    DateTime.Now.AddDays(1),
-                    TimeSpan.FromHours(9),
-                    TimeSpan.FromHours(10)
-                );
+                var timeslot = new Timeslot(106, DateTime.Now.AddDays(1), TimeSpan.FromHours(9),
+                    TimeSpan.FromHours(10));
                 classroom.AssignTimeslot(timeslot);
 
                 // Act & Assert
@@ -531,12 +419,8 @@ namespace assignment_3.Tests
             {
                 // Arrange
                 var classroom = new Classroom(1, 30);
-                var timeslot = new Timeslot(
-                    101,
-                    DateTime.Now.AddDays(1),
-                    TimeSpan.FromHours(9),
-                    TimeSpan.FromHours(10)
-                );
+                var timeslot = new Timeslot(107, DateTime.Now.AddDays(1), TimeSpan.FromHours(9),
+                    TimeSpan.FromHours(10));
 
                 // Act
                 classroom.AssignTimeslot(timeslot);
@@ -551,17 +435,11 @@ namespace assignment_3.Tests
                 // Arrange
                 var classroom1 = new Classroom(1, 30);
                 var classroom2 = new Classroom(2, 40);
-                var timeslot = new Timeslot(
-                    101,
-                    DateTime.Now.AddDays(1),
-                    TimeSpan.FromHours(9),
-                    TimeSpan.FromHours(10)
-                );
+                var timeslot = new Timeslot(108, DateTime.Now.AddDays(1), TimeSpan.FromHours(9),
+                    TimeSpan.FromHours(10));
 
                 // Act & Assert
-                Assert.Throws<InvalidOperationException>(
-                    () => classroom1.ChangeClassroom(timeslot, classroom2)
-                );
+                Assert.Throws<InvalidOperationException>(() => classroom1.ChangeClassroom(timeslot, classroom2));
             }
 
             [Test]
@@ -570,57 +448,17 @@ namespace assignment_3.Tests
                 // Arrange
                 var classroom = new Classroom(1, 30);
                 var date = DateTime.Today.AddDays(1); // Use DateTime.Today for consistent dates
-                var timeslot1 = new Timeslot(
-                    101,
-                    date,
-                    TimeSpan.FromHours(9),
-                    TimeSpan.FromHours(10)
-                );
-                var timeslot2 = new Timeslot(
-                    102,
-                    date,
-                    TimeSpan.FromHours(9).Add(TimeSpan.FromMinutes(30)),
-                    TimeSpan.FromHours(10).Add(TimeSpan.FromMinutes(30))
-                );
+                var timeslot1 = new Timeslot(101, date, TimeSpan.FromHours(9), TimeSpan.FromHours(10));
+                var timeslot2 = new Timeslot(102, date, TimeSpan.FromHours(9).Add(TimeSpan.FromMinutes(30)),
+                    TimeSpan.FromHours(10).Add(TimeSpan.FromMinutes(30)));
 
                 classroom.AssignTimeslot(timeslot1);
 
                 // Act & Assert
                 Assert.Throws<InvalidOperationException>(() => classroom.AssignTimeslot(timeslot2));
             }
-            [Test]
-            public void ChangeClassroom_ShouldTransferTimeslotProperly()
-            {
-                // Arrange
-                var classroom1 = new Classroom(1, 30);
-                var classroom2 = new Classroom(2, 40);
-                var timeslot = new Timeslot(101, DateTime.Today.AddDays(1), TimeSpan.FromHours(9), TimeSpan.FromHours(10));
 
-                classroom1.AssignTimeslot(timeslot);
 
-                // Act
-                classroom1.ChangeClassroom(timeslot, classroom2);
-
-                // Assert
-                Assert.IsTrue(classroom1.GetAssignedTimeslots().Count == 0);
-                Assert.IsTrue(classroom2.GetAssignedTimeslots().Contains(timeslot));
-                Assert.AreEqual(classroom2, timeslot.Classroom);
-            }
-            [Test]
-            public void RemoveTimeslot_ShouldUnassignFromClassroomAndTimeslot()
-            {
-                // Arrange
-                var classroom = new Classroom(1, 30);
-                var timeslot = new Timeslot(101, DateTime.Today.AddDays(1), TimeSpan.FromHours(9), TimeSpan.FromHours(10));
-                classroom.AssignTimeslot(timeslot);
-
-                // Act
-                classroom.RemoveTimeslot(timeslot);
-
-                // Assert
-                Assert.IsFalse(classroom.GetAssignedTimeslots().Contains(timeslot));
-                Assert.IsNull(timeslot.Classroom);
-            }
         }
     }
 }

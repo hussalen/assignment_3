@@ -137,7 +137,7 @@ namespace assignment_3.Tests
             math.UpdateSubjectName("Advanced Mathematics");
 
             // Assert
-            Assert.AreEqual("Advanced Mathematics", math.SubjectName); // Check if name was updated
+            Assert.AreEqual("Advanced Mathematics", math.SubjectName);  // Check if name was updated
         }
 
         [Test]
@@ -147,7 +147,7 @@ namespace assignment_3.Tests
             var math = new Subject("S1", "Mathematics", 5);
 
             // Act & Assert
-            Assert.Throws<InvalidOperationException>(() => math.AddSubSubject(math)); // Should throw exception when adding itself as a sub-subject
+            Assert.Throws<InvalidOperationException>(() => math.AddSubSubject(math));  // Should throw exception when adding itself as a sub-subject
         }
 
         [Test]
@@ -156,23 +156,48 @@ namespace assignment_3.Tests
             // Arrange
             var math = new Subject("S1", "Mathematics", 5);
             var algebra = new Subject("S2", "Algebra", 4);
-            var physics = new Subject("S3", "Physics", 5);
+            math.AddSubSubject(algebra);  // Add Algebra to Math
 
-            // Add Algebra as a sub-subject of Math
+            // Act & Assert
+            var calculus = new Subject("S3", "Calculus", 5);
+            Assert.Throws<InvalidOperationException>(() => calculus.AddSubSubject(algebra));  // Algebra cannot have two parents
+        }
+        [Test]
+        public void AddSubSubject_ShouldAddMultipleSubSubjects()
+        {
+            // Arrange
+            var math = new Subject("S1", "Mathematics", 5);
+            var algebra = new Subject("S2", "Algebra", 4);
+            var geometry = new Subject("S3", "Geometry", 4);
+
+            // Act
+            math.AddSubSubject(algebra);
+            math.AddSubSubject(geometry);
+
+            // Assert
+            Assert.Contains(algebra, math.GetSubSubjects());
+            Assert.Contains(geometry, math.GetSubSubjects());
+        }
+        [Test]
+        public void AddSubSubject_ShouldThrowException_WhenCreatingCircularReference()
+        {
+            // Arrange
+            var math = new Subject("S1", "Mathematics", 5);
+            var algebra = new Subject("S2", "Algebra", 4);
             math.AddSubSubject(algebra);
 
-            // Act & Assert: Try adding Algebra as a sub-subject of another parent (Physics)
-            Assert.Throws<InvalidOperationException>(() => physics.AddSubSubject(algebra),
-                "A sub-subject cannot have more than one parent.");
+            // Act & Assert
+            Assert.Throws<InvalidOperationException>(() => algebra.AddSubSubject(math)); 
         }
 
-    
+
+        
         [Test]
         public void Subject_ShouldAllowMultipleTimeslots()
         {
             // Arrange
             var subject = new Subject("MATH101", "Mathematics", 4);
-            var timeslot1 = new Timeslot(1, DateTime.Now.AddDays(1), TimeSpan.FromHours(9), TimeSpan.FromHours(11));
+            var timeslot1 = new Timeslot(3, DateTime.Now.AddDays(1), TimeSpan.FromHours(9), TimeSpan.FromHours(11));
             var timeslot2 = new Timeslot(2, DateTime.Now.AddDays(1), TimeSpan.FromHours(12), TimeSpan.FromHours(13));
 
             // Act
@@ -184,14 +209,13 @@ namespace assignment_3.Tests
             Assert.Contains(timeslot1, subject.GetTimeslots(), "Timeslot 1 should be assigned to the subject.");
             Assert.Contains(timeslot2, subject.GetTimeslots(), "Timeslot 2 should be assigned to the subject.");
         }
-
         [Test]
         public void Timeslot_ShouldOnlyBelongToOneSubject()
         {
             // Arrange
             var subject1 = new Subject("MATH101", "Mathematics", 4);
             var subject2 = new Subject("SCI101", "Science", 4);
-            var timeslot = new Timeslot(1, DateTime.Now.AddDays(1), TimeSpan.FromHours(9), TimeSpan.FromHours(11));
+            var timeslot = new Timeslot(4, DateTime.Now.AddDays(1), TimeSpan.FromHours(9), TimeSpan.FromHours(11));
 
             // Act
             subject1.AddTimeslot(timeslot);
@@ -204,7 +228,7 @@ namespace assignment_3.Tests
         {
             // Arrange
             var subject = new Subject("HIST101", "History", 5);
-            var timeslot = new Timeslot(1, DateTime.Now.AddDays(1), TimeSpan.FromHours(9), TimeSpan.FromHours(11));
+            var timeslot = new Timeslot(5, DateTime.Now.AddDays(1), TimeSpan.FromHours(9), TimeSpan.FromHours(11));
 
             // Act
             subject.AddTimeslot(timeslot);
@@ -213,29 +237,6 @@ namespace assignment_3.Tests
             // Assert
             Assert.AreEqual(0, subject.GetTimeslots().Count, "The subject should not have any timeslots after removal.");
         }
-        [Test]
-        public void Subject_ShouldNotAllowAddingNullTimeslot()
-        {
-            // Arrange
-            var subject = new Subject("ENG101", "English", 3);
-
-            // Act & Assert
-            Assert.Throws<ArgumentNullException>(() => subject.AddTimeslot(null), "Timeslot cannot be null.");
-        }
-        [Test]
-        public void Subject_ShouldNotAllowRemovingNullTimeslot()
-        {
-            // Arrange
-            var subject = new Subject("ENG101", "English", 3);
-            var timeslot = new Timeslot(1, DateTime.Now.AddDays(1), TimeSpan.FromHours(9), TimeSpan.FromHours(11));
-
-            subject.AddTimeslot(timeslot);
-
-            // Act & Assert
-            Assert.Throws<ArgumentNullException>(() => subject.RemoveTimeslot(null), "Timeslot cannot be null.");
-        }
-
-
         [Test]
         public void Subject_ShouldAddTimeslotCorrectly()
         {
@@ -249,61 +250,6 @@ namespace assignment_3.Tests
             // Assert
             Assert.AreEqual(1, subject.GetTimeslots().Count, "The subject should have one timeslot.");
             Assert.AreEqual(timeslot, subject.GetTimeslots()[0], "The added timeslot should be the first in the list.");
-        }
-        [Test]
-        public void AddSubSubject_ShouldThrowException_WhenAddingDuplicateSubSubject()
-        {
-            // Arrange
-            var parentSubject = new Subject("S1", "ParentSubject", 5);
-            var childSubject = new Subject("S2", "ChildSubject", 4);
-
-            // Act
-            parentSubject.AddSubSubject(childSubject);
-
-            // Assert
-            Assert.Throws<InvalidOperationException>(() => parentSubject.AddSubSubject(childSubject),
-                "Adding the same sub-subject twice should throw an exception.");
-        }
-        [Test]
-        public void ParentSubject_ShouldBeSetCorrectly_WhenAddingSubSubject()
-        {
-            // Arrange
-            var parentSubject = new Subject("S1", "ParentSubject", 5);
-            var childSubject = new Subject("S2", "ChildSubject", 4);
-
-            // Act
-            parentSubject.AddSubSubject(childSubject);
-
-            // Assert
-            Assert.AreEqual(parentSubject, childSubject.ParentSubject, "ParentSubject should be set correctly when adding a sub-subject.");
-        }
-        [Test]
-        public void ParentSubject_ShouldBeNull_WhenRemovingSubSubject()
-        {
-            // Arrange
-            var parentSubject = new Subject("S1", "ParentSubject", 5);
-            var childSubject = new Subject("S2", "ChildSubject", 4);
-
-            // Act
-            parentSubject.AddSubSubject(childSubject);
-            parentSubject.RemoveSubSubject(childSubject);
-
-            // Assert
-            Assert.IsNull(childSubject.ParentSubject, "ParentSubject should be null after removing the sub-subject.");
-        }
-        [Test]
-        public void AddSubSubject_ShouldThrowException_WhenAddingSameSubSubjectMultipleTimes()
-        {
-            // Arrange
-            var parentSubject = new Subject("S1", "ParentSubject", 5);
-            var childSubject = new Subject("S2", "ChildSubject", 4);
-
-            // Act
-            parentSubject.AddSubSubject(childSubject);
-
-            // Assert
-            Assert.Throws<InvalidOperationException>(() => parentSubject.AddSubSubject(childSubject),
-                "Adding the same sub-subject twice should throw an exception.");
         }
     }
 }

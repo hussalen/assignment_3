@@ -17,13 +17,11 @@ public class Exam
         }
     }
 
-    public Exam(DateTime examDate, Timeslot timeslot)
+    public Exam(DateTime examDate, Timeslot timeslot=null)
     {
         ExamId = Interlocked.Increment(ref nextId);
         ExamDate = examDate;
-        Timeslot = 
-        AddTimeslot(timeslot);
-        AddExam(this);
+        Timeslot = timeslot ?? Defaults.DEFAULT_TIMESLOT;
         //SaveManager.SaveToJson(_examList, nameof(_examList));
     }
 
@@ -31,13 +29,22 @@ public class Exam
     {
         if (newDate < DateTime.Now)
             throw new ArgumentException("Exam date cannot be in the past.");
-        ExamDate = newDate;
-        if (!_examList.Contains(this))
+        if (timeslot == null)
+            throw new ArgumentNullException(nameof(timeslot), "Timeslot cannot be null.");
+        if (timeslot.Exam != null && timeslot.Exam != this)
+            throw new InvalidOperationException("This timeslot is already occupied by another exam.");
+        
+        if (_timeslot != Defaults.DEFAULT_TIMESLOT)
         {
-            AddExam(this);
+            throw new InvalidOperationException(
+                "Exam already has a valid timeslot. Use EditTimeslot to make changes."
+            );
         }
-        AddTimeslot(timeslot);
+        ExamDate = newDate;
+        Timeslot = timeslot;
+        timeslot.Exam = this; // Set reverse relationship
     }
+
 
     private static void AddExam(Exam exam)
     {
@@ -52,13 +59,17 @@ public class Exam
 
     public void AddTimeslot(Timeslot timeslot)
     {   
-        if (timeslot == null)
+        if (timeslot == null) throw new ArgumentNullException(nameof(timeslot), "Timeslot cannot be null.");
+        
+        if (_timeslot != null && _timeslot != Defaults.DEFAULT_TIMESLOT && _timeslot != timeslot)
         {
-            throw new ArgumentNullException(nameof(timeslot), "Timeslot cannot be null.");
-        }
-        if (_timeslot != null)
             throw new InvalidOperationException("This exam already has an associated timeslot.");
-
+        }
+        _timeslot = timeslot;
+        if (timeslot.Exam != null && timeslot.Exam != this)
+        {
+            timeslot.Exam = this; 
+        }
         Timeslot = timeslot;
     }
 
@@ -86,13 +97,13 @@ public class Exam
         get => _timeslot;
         set
         {
-            if (value != null && value.Exam != null && value.Exam != this)
-                throw new InvalidOperationException(
-                    "The timeslot is already assigned to another exam."
-                );
+            if (_timeslot == value) return;
+            _timeslot?.RemoveExam();
             _timeslot = value;
             if (value != null && value.Exam != this)
+            {
                 value.Exam = this;
+            }
         }
     }
 

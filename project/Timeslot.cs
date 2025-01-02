@@ -108,19 +108,21 @@ public class Timeslot
         get => _exam;
         set
         {
-            if (value != null && value.Timeslot != null && value.Timeslot != this)
-                throw new InvalidOperationException(
-                    "The exam is already assigned to another timeslot."
-                );
+            if (_exam == value) return; // Avoid redundant operations
+            if (_exam != null && value != null && _exam != Defaults.DEFAULT_EXAM && _exam != value)
+                throw new InvalidOperationException("Cannot overwrite an existing valid exam.");
+            
             _exam = value;
             if (value != null && value.Timeslot != this)
+            {
                 value.Timeslot = this;
+            }
         }
     }
 
     public void AddExam(Exam exam)
     {
-        if (_exam != null)
+        if (_exam != null && _exam != exam)
             throw new InvalidOperationException("This timeslot already has an associated exam.");
 
         Exam = exam;
@@ -128,8 +130,11 @@ public class Timeslot
 
     public void EditExam(Exam newExam)
     {
+        ArgumentNullException.ThrowIfNull(newExam);
+        if (newExam == _exam) return;
         RemoveExam();
-        AddExam(newExam);
+        newExam.Timeslot = this;
+        Exam = newExam;
     }
 
     public void RemoveExam()
@@ -139,6 +144,15 @@ public class Timeslot
             var temp = _exam;
             _exam = null;
             temp.Timeslot = null;
+        }
+    }
+    public void ClearExam()
+    {
+        if (_exam != null)
+        {
+            var temp = _exam;
+            _exam = null;
+            temp.Timeslot = null; // Clear reverse link
         }
     }
 

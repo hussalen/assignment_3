@@ -94,6 +94,15 @@ namespace assignment_3
                 throw new InvalidOperationException("A sub-subject cannot have more than one parent.");
             if (_subSubjects.Contains(subSubject))
                 throw new InvalidOperationException("This sub-subject is already added to the parent subject.");
+            Subject currentParent = this;
+            while (currentParent.ParentSubject != null)
+            {
+                if (currentParent.ParentSubject == subSubject)
+                {
+                    throw new InvalidOperationException("A circular reference cannot be created.");
+                }
+                currentParent = currentParent.ParentSubject;
+            }
             _subSubjects.Add(subSubject);
             subSubject.SetParentSubject(this);
         }
@@ -141,6 +150,11 @@ namespace assignment_3
                 _timeslots.Remove(timeslot);
                 timeslot.ClearSubject();
             }
+        }
+
+        public List<Subject> GetSubSubjects() 
+        {
+            return new List<Subject>(_subSubjects);
         }
 
         public List<Timeslot> GetTimeslots() => new List<Timeslot>(_timeslots);
