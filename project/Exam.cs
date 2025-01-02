@@ -17,7 +17,7 @@ public class Exam
         }
     }
 
-    public Exam(DateTime examDate, Timeslot timeslot=null)
+    public Exam(DateTime examDate, Timeslot timeslot)
     {
         ExamId = Interlocked.Increment(ref nextId);
         ExamDate = examDate;

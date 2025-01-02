@@ -104,28 +104,39 @@ public class Timeslot
 
     private Exam _exam;
     public Exam Exam
-    {
-        get => _exam;
+    { //regarding the Timeslot_AddExam_ShouldAssignExamCorrectly() test I guess it cannot pass bc it has timeslot already assigned 
+        // and if I change it in AddExam then the _exam is set is not default no more? and it cannot be set?? but if I dont change
+        get => _exam; //the relationship wont be bidirectional??
         set
         {
-            if (_exam == value) return; // Avoid redundant operations
-            if (_exam != null && value != null && _exam != Defaults.DEFAULT_EXAM && _exam != value)
-                throw new InvalidOperationException("Cannot overwrite an existing valid exam.");
-            
-            _exam = value;
-            if (value != null && value.Timeslot != this)
+            if (_exam == value) return;
+            if (_exam == Defaults.DEFAULT_EXAM && value != Defaults.DEFAULT_EXAM)
             {
+                _exam = value;
                 value.Timeslot = this;
+                return;
+            }
+            if (_exam != Defaults.DEFAULT_EXAM && value != Defaults.DEFAULT_EXAM)
+            {
+                throw new InvalidOperationException("Cannot overwrite an existing valid exam.");
+            }
+            
+            if (value == Defaults.DEFAULT_EXAM)
+            {
+                _exam = Defaults.DEFAULT_EXAM;
             }
         }
     }
-
     public void AddExam(Exam exam)
     {
-        if (_exam != null && _exam != exam)
+        if (exam.Timeslot == Defaults.DEFAULT_TIMESLOT)
+        {
+            exam.Timeslot = this;
+        }
+        if (_exam != Defaults.DEFAULT_EXAM && _exam != exam)
             throw new InvalidOperationException("This timeslot already has an associated exam.");
-
         Exam = exam;
+        exam.Timeslot = this;
     }
 
     public void EditExam(Exam newExam)
@@ -133,27 +144,12 @@ public class Timeslot
         ArgumentNullException.ThrowIfNull(newExam);
         if (newExam == _exam) return;
         RemoveExam();
-        newExam.Timeslot = this;
+        newExam.Timeslot = this; 
         Exam = newExam;
     }
 
-    public void RemoveExam()
-    {
-        if (_exam != null)
-        {
-            var temp = _exam;
-            _exam = null;
-            temp.Timeslot = null;
-        }
-    }
-    public void ClearExam()
-    {
-        if (_exam != null)
-        {
-            var temp = _exam;
-            _exam = null;
-            temp.Timeslot = null; // Clear reverse link
-        }
+    public void RemoveExam() {
+        _exam = Defaults.DEFAULT_EXAM;
     }
 
     public void SetSubject(Subject subject)
