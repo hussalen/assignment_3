@@ -15,8 +15,7 @@ namespace assignment_3
             1,                                       
             new DateTime(2026, 01, 01),                  
             TimeSpan.FromHours(9),                       
-            TimeSpan.FromHours(10),                      
-            isDummy: false                              
+            TimeSpan.FromHours(10)                  
         );
         public static readonly Exam DEFAULT_EXAM = new(new DateTime(2026, 01, 01), DEFAULT_TIMESLOT);
     }

@@ -81,12 +81,9 @@ public class Exam
 
     public void RemoveTimeslot()
     {
-        if (_timeslot != null)
-        {
             var temp = _timeslot;
-            _timeslot = null;
-            temp.Exam = null; // Clear reverse connection
-        }
+            _timeslot = Defaults.DEFAULT_TIMESLOT;
+            temp.Exam = Defaults.DEFAULT_EXAM; // Clear reverse connection
     }
 
     public static List<Exam> GetExamExtent() => new(_examList);
@@ -108,4 +105,5 @@ public class Exam
     }
 
     private static readonly List<Exam> _examList = new();
+    
 }

@@ -37,7 +37,7 @@ public class Classroom
         Capacity = capacity;
         _assignedTimeslots = new List<Timeslot>
         {
-            new Timeslot(1, DateTime.Today, TimeSpan.Zero, TimeSpan.FromHours(1), isDummy : true) // Dummy or placeholder Timeslot
+            new Timeslot(1, DateTime.Today, TimeSpan.Zero, TimeSpan.FromHours(1)) // Dummy or placeholder Timeslot
         };
 
         addClassroom(this);

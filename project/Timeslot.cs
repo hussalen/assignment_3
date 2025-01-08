@@ -43,7 +43,7 @@ public class Timeslot
         }
     }
 
-    public Timeslot(int scheduleId, DateTime date, TimeSpan startTime, TimeSpan endTime, bool isDummy = false)
+    public Timeslot(int scheduleId, DateTime date, TimeSpan startTime, TimeSpan endTime)
     {
         if (scheduleId <= 0)
             throw new ArgumentException("Schedule ID must be a positive number.");
@@ -54,9 +54,8 @@ public class Timeslot
         Date = date;
         StartTime = startTime;
         EndTime = endTime;
-        if(!isDummy){
-            AddTimeslot(this);
-        }
+        AddTimeslot(this);
+        
         //SaveManager.SaveToJson(_timeslotList, nameof(_timeslotList));
     }
 
@@ -69,7 +68,7 @@ public class Timeslot
             throw new ArgumentNullException($"{nameof(timeslot)} cannot be null.");
         }
 
-        if (_timeslotList.Any(t => t.ScheduleId == timeslot.ScheduleId))
+        if (_timeslotList.Any(t => t.ScheduleId == timeslot.ScheduleId) && timeslot.ScheduleId != Defaults.DEFAULT_TIMESLOT.ScheduleId)
         {
             throw new ArgumentException(
                 $"A timeslot with Schedule ID {timeslot.ScheduleId} already exists."
@@ -104,9 +103,8 @@ public class Timeslot
 
     private Exam _exam;
     public Exam Exam
-    { //regarding the Timeslot_AddExam_ShouldAssignExamCorrectly() test I guess it cannot pass bc it has timeslot already assigned 
-        // and if I change it in AddExam then the _exam is set is not default no more? and it cannot be set?? but if I dont change
-        get => _exam; //the relationship wont be bidirectional??
+    {
+        get => _exam; 
         set
         {
             if (_exam == value) return;
@@ -135,6 +133,10 @@ public class Timeslot
         }
         if (_exam != Defaults.DEFAULT_EXAM && _exam != exam)
             throw new InvalidOperationException("This timeslot already has an associated exam.");
+        if (exam.Timeslot != Defaults.DEFAULT_TIMESLOT)
+        {
+           exam.RemoveTimeslot();
+        }
         Exam = exam;
         exam.Timeslot = this;
     }
@@ -168,4 +170,6 @@ public class Timeslot
     }
 
     public Subject GetSubject() => _subject;
+    
+    
 }
