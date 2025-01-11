@@ -14,22 +14,34 @@ namespace assignment_3
 
     public class Teacher
     {
-        public string Name { get; set; }
         private static int nextId = 1;
+        private readonly List<Subject> _subjects;
+        private readonly List<Timeslot> _assignedTimeslots;
+        private readonly List<Grade> _grades;
+
+        public string Name { get; set; }
         public int TeacherID { get; private set; }
-        private List<Subject> _subjects = new();
+        public Availability AvailabilityStatus { get; set; }
+
         public List<Subject> Subjects
         {
             get => new(_subjects);
             private set => _subjects = value;
         }
 
-        public Availability AvailabilityStatus { get; set; }
+        public List<Timeslot> AssignedTimeslots => new List<Timeslot>(_assignedTimeslots);
+
+        public List<Grade> Grades => new List<Grade>(_grades);
 
         public Teacher(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Name cannot be null or empty.");
+
+            
+            _subjects = new List<Subject>();
+            _assignedTimeslots = new List<Timeslot>();
+            _grades = new List<Grade>();
 
             Name = name;
             TeacherID = Interlocked.Increment(ref nextId);
@@ -38,33 +50,42 @@ namespace assignment_3
 
         public void AssignSubject(Subject subject)
         {
-            ArgumentNullException.ThrowIfNull(subject);
+            if (subject == null)
+                throw new ArgumentNullException(nameof(subject));
+
+            
             if (_subjects.Contains(subject))
                 throw new ArgumentException("Subject is already assigned to this teacher.");
 
-            if (subject.Teacher != null && subject.Teacher != this)
-                throw new InvalidOperationException(
-                    "Subject is already assigned to another teacher."
-                );
+            
+            if (subject.Teacher != this && subject.Teacher != null)
+                throw new InvalidOperationException("Subject is already assigned to another teacher.");
 
             _subjects.Add(subject);
+
+            
             if (subject.Teacher != this)
             {
-                subject.Teacher = this; 
+                subject.Teacher = this;
             }
         }
 
         public void RemoveSubject(Subject subject)
         {
-            ArgumentNullException.ThrowIfNull(subject);
+            if (subject == null)
+                throw new ArgumentNullException(nameof(subject));
+
             if (!_subjects.Contains(subject))
                 throw new ArgumentException("Subject is not assigned to this teacher.");
 
             _subjects.Remove(subject);
-            if (subject.Teacher == this)
-            {
-                subject.Teacher = null; 
-            }
+
+                        if (subject.Teacher != this)
+                throw new InvalidOperationException(
+                    "Subject's teacher does not match this teacher—cannot unassign."
+                );
+
+            subject.Teacher = default;
         }
 
         public void ViewSchedule()
@@ -75,10 +96,6 @@ namespace assignment_3
                 Console.WriteLine($"- {subject.SubjectName} (ID: {subject.SubjectId})");
             }
         }
-
-        private readonly List<Timeslot> _assignedTimeslots = new();
-
-        public List<Timeslot> AssignedTimeslots => new List<Timeslot>(_assignedTimeslots);
 
         public void AssignTimeslot(Timeslot timeslot)
         {
@@ -99,9 +116,6 @@ namespace assignment_3
             if (!_assignedTimeslots.Remove(timeslot))
                 throw new InvalidOperationException("This timeslot is not assigned to the teacher.");
         }
-        private readonly List<Grade> _grades = new();
-
-        public List<Grade> Grades => new List<Grade>(_grades);
 
         public void AssignGrade(Grade grade)
         {
@@ -112,9 +126,10 @@ namespace assignment_3
                 throw new InvalidOperationException("This grade is already assigned to this teacher.");
 
             _grades.Add(grade);
+
             if (grade.Teacher != this)
             {
-                grade.Teacher = this; 
+                grade.Teacher = this;
             }
         }
 
@@ -128,7 +143,7 @@ namespace assignment_3
 
             if (grade.Teacher == this)
             {
-                grade.Teacher = null; 
+                grade.Teacher = default;
             }
         }
     }
