@@ -51,13 +51,11 @@ namespace assignment_3
             get => new(_grades);
             private set => _grades = value;
         }
+        private static int DF_TTABLE_KEY = 9999;
 
-        private Dictionary<int, TimeTable> _timeTables;
-        public Dictionary<int, TimeTable> TimeTables
-        {
-            get => new(_timeTables);
-            private set => _timeTables = value;
-        }
+        private static Dictionary<int, TimeTable> TimeTables =
+            new() { [DF_TTABLE_KEY] = Defaults.DEFAULT_TIMETABLE, };
+
         private static List<Student> _studentList = new();
         private int? TimeTableKey { get; set; }
 
@@ -66,7 +64,6 @@ namespace assignment_3
             StudentID = Interlocked.Increment(ref nextId);
             ClassLevel = classLevel;
             GPA = 0.0f;
-            TimeTables = new();
             AddStudent(this);
             //SaveManager.SaveToJson(_studentList, nameof(_studentList));
         }
@@ -268,6 +265,7 @@ namespace assignment_3
             TimeTableKey = timeTable.Id;
             TimeTables[timeTable.Id] = timeTable;
             timeTable.AssignStudent(this);
+            TimeTables.Remove(DF_TTABLE_KEY);
         }
 
         public void RemoveTimeTable()
@@ -279,6 +277,7 @@ namespace assignment_3
             timeTable.RemoveStudent();
             TimeTables.Remove(TimeTableKey.Value);
             TimeTableKey = null;
+            TimeTables[DF_TTABLE_KEY] = Defaults.DEFAULT_TIMETABLE;
         }
     }
 }
