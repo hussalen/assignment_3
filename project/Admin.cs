@@ -3,39 +3,37 @@ using System.Text.Json.Nodes;
 
 namespace assignment_3
 {
-    public class Admin
+    public class Admin : Person
     {
         private static int nextId = 1;
 
         public int AdminID { get; private set; }
 
-        private string _name;
-        public string Name
-        {
-            get => _name;
-            set
-            {
-                if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentException("Name cannot be null or empty.");
-                _name = value;
-            }
-        }
-
         private List<Report> _reports;
-        public List<Report> Reports
+        private List<Report> Reports
         {
             get => _reports = _reports = new(_reports);
-            private set => _reports = value;
+            set => _reports = value;
         }
 
-        public Admin(string name)
+        public Admin(string name, string email, string[] addressLines, string password)
+            : base(name, email, addressLines, password)
         {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("Admin name cannot be null or empty.");
-
             AdminID = Interlocked.Increment(ref nextId);
             Reports = new();
-            Name = name;
+        }
+
+        public Admin(Person person)
+            : base(
+                person.Name,
+                person.Email.Address.ToString(),
+                person.AddressLines,
+                person.Password
+            )
+        {
+            // TODO: Implement association with Timeslots and implement removeadmins in Timeslot + removetimeslots in here.
+            AdminID = Interlocked.Increment(ref nextId);
+            Reports = new();
         }
 
         public void CreateSchedule(DateTime date, TimeSpan startTime, TimeSpan endTime)
@@ -77,7 +75,7 @@ namespace assignment_3
             Console.WriteLine($"Schedule ID {scheduleId} deleted by Admin {Name}");
         }
 
-        public Report GenerateReport(string title, JsonArray content)
+        private Report GenerateReport(string title, JsonArray content)
         {
             if (string.IsNullOrWhiteSpace(title))
                 throw new ArgumentException("Report title cannot be null or empty.");
@@ -90,13 +88,19 @@ namespace assignment_3
             return report;
         }
 
-        public void RemoveReport(Report report)
+        private void RemoveReport(Report report)
         {
             if (!Reports.Remove(report))
                 throw new ArgumentException("Report not found");
         }
 
-        public class Report
+        public void ResetAdmin()
+        {
+            //TODO: to be implemented
+            //RemoveAdmin(this);
+        }
+
+        private class Report
         {
             public int ReportId { get; private set; }
             private static int nextId = 1;
