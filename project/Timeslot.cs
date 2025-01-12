@@ -47,12 +47,15 @@ public class Timeslot
     {
         if (scheduleId <= 0)
             throw new ArgumentException("Schedule ID must be a positive number.");
-
+        if (date.Date < DateTime.Today)
+            throw new ArgumentException("Date cannot be in the past.");
+        
         ScheduleId = scheduleId;
         Date = date;
         StartTime = startTime;
         EndTime = endTime;
         AddTimeslot(this);
+        
         //SaveManager.SaveToJson(_timeslotList, nameof(_timeslotList));
     }
 
@@ -60,12 +63,12 @@ public class Timeslot
 
     private static void AddTimeslot(Timeslot timeslot)
     {
-        if (timeslot is null)
+        if (timeslot == null)
         {
-            throw new ArgumentException($"{nameof(timeslot)} cannot be null.");
+            throw new ArgumentNullException($"{nameof(timeslot)} cannot be null.");
         }
 
-        if (_timeslotList.Any(t => t.ScheduleId == timeslot.ScheduleId))
+        if (_timeslotList.Any(t => t.ScheduleId == timeslot.ScheduleId) && timeslot.ScheduleId != Defaults.DEFAULT_TIMESLOT.ScheduleId)
         {
             throw new ArgumentException(
                 $"A timeslot with Schedule ID {timeslot.ScheduleId} already exists."
@@ -79,7 +82,7 @@ public class Timeslot
 
     public void UpdateTime(TimeSpan newStartTime, TimeSpan newEndTime)
     {
-        if (newStartTime >= newEndTime)
+        if (newEndTime <= newStartTime)
             throw new ArgumentException("New start time must be earlier than the new end time.");
         if (newStartTime < TimeSpan.Zero || newEndTime > TimeSpan.FromHours(24))
             throw new ArgumentException("Time must be within a valid range (00:00 to 24:00).");
@@ -101,46 +104,59 @@ public class Timeslot
     private Exam _exam;
     public Exam Exam
     {
-        get => _exam;
+        get => _exam; 
         set
         {
-            if (value != null && value.Timeslot != null && value.Timeslot != this)
-                throw new InvalidOperationException(
-                    "The exam is already assigned to another timeslot."
-                );
-            _exam = value;
-            if (value != null && value.Timeslot != this)
+            if (_exam == value) return;
+            if (_exam == Defaults.DEFAULT_EXAM && value != Defaults.DEFAULT_EXAM)
+            {
+                _exam = value;
                 value.Timeslot = this;
+                return;
+            }
+            if (_exam != Defaults.DEFAULT_EXAM && value != Defaults.DEFAULT_EXAM)
+            {
+                throw new InvalidOperationException("Cannot overwrite an existing valid exam.");
+            }
+            
+            if (value == Defaults.DEFAULT_EXAM)
+            {
+                _exam = Defaults.DEFAULT_EXAM;
+            }
         }
     }
-
     public void AddExam(Exam exam)
     {
-        if (_exam != null)
+        if (exam.Timeslot == Defaults.DEFAULT_TIMESLOT)
+        {
+            exam.Timeslot = this;
+        }
+        if (_exam != Defaults.DEFAULT_EXAM && _exam != exam)
             throw new InvalidOperationException("This timeslot already has an associated exam.");
-
+        if (exam.Timeslot != Defaults.DEFAULT_TIMESLOT)
+        {
+           exam.RemoveTimeslot();
+        }
         Exam = exam;
+        exam.Timeslot = this;
     }
 
     public void EditExam(Exam newExam)
     {
+        ArgumentNullException.ThrowIfNull(newExam);
+        if (newExam == _exam) return;
         RemoveExam();
-        AddExam(newExam);
+        newExam.Timeslot = this; 
+        Exam = newExam;
     }
 
-    public void RemoveExam()
-    {
-        if (_exam != null)
-        {
-            var temp = _exam;
-            _exam = null;
-            temp.Timeslot = null;
-        }
+    public void RemoveExam() {
+        _exam = Defaults.DEFAULT_EXAM;
     }
 
     public void SetSubject(Subject subject)
     {
-        if (_subject != null)
+        if (_subject != null && _subject != subject)
             throw new InvalidOperationException(
                 "This timeslot is already assigned to another subject."
             );
@@ -154,4 +170,6 @@ public class Timeslot
     }
 
     public Subject GetSubject() => _subject;
+    
+    
 }
