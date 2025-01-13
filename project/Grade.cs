@@ -36,7 +36,7 @@ namespace assignment_3
         public Teacher Teacher
         {
             get => _teacher;
-            set
+            private set
             {
                 if (value == null)
                     throw new ArgumentNullException(nameof(value), "Teacher cannot be null.");

@@ -85,7 +85,7 @@ namespace assignment_3
                     "Subject's teacher does not match this teacher—cannot unassign."
                 );
 
-            subject.Teacher = default;
+            subject.Teacher = Defaults.DEFAULT_TEACHER;
         }
 
         public void ViewSchedule()
@@ -143,7 +143,7 @@ namespace assignment_3
 
             if (grade.Teacher == this)
             {
-                grade.Teacher = default;
+                grade.Teacher = Defaults.DEFAULT_TEACHER;
             }
         }
     }
