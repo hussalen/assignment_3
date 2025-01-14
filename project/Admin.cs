@@ -16,11 +16,24 @@ namespace assignment_3
             set => _reports = value;
         }
 
+        private List<Timeslot> _timeSlots;
+
+        public List<Timeslot> Timeslots
+        {
+            get => new(_timeSlots);
+            private set => _timeSlots = value;
+        }
+
+        private static List<Admin> _adminsList = new();
+
+        public static List<Admin> GetAdminsExtent() => new List<Admin>(_adminsList);
+
         public Admin(string name, string email, string[] addressLines, string password)
             : base(name, email, addressLines, password)
         {
             AdminID = Interlocked.Increment(ref nextId);
             Reports = new();
+            AddAdmin(this);
         }
 
         public Admin(Person person)
@@ -31,9 +44,9 @@ namespace assignment_3
                 person.Password
             )
         {
-            // TODO: Implement association with Timeslots and implement removeadmins in Timeslot + removetimeslots in here.
             AdminID = Interlocked.Increment(ref nextId);
-            Reports = new();
+            _reports = new();
+            AddAdmin(this);
         }
 
         public void CreateSchedule(DateTime date, TimeSpan startTime, TimeSpan endTime)
@@ -96,8 +109,70 @@ namespace assignment_3
 
         public void ResetAdmin()
         {
-            //TODO: to be implemented
-            //RemoveAdmin(this);
+            RemoveAdmin(this);
+
+            ArgumentNullException.ThrowIfNull(_reports);
+            _reports.Clear();
+            _timeSlots.Clear();
+        }
+
+        private void AddAdmin(Admin admin)
+        {
+            if (admin == null)
+            {
+                throw new ArgumentException($"{nameof(admin)} cannot be null.");
+            }
+
+            _adminsList ??= new();
+
+            if (_adminsList.Contains(admin))
+            {
+                throw new ArgumentException($"A admin with ID {admin.AdminID} already exists.");
+            }
+
+            _adminsList.Add(admin);
+        }
+
+        private void RemoveAdmin(Admin admin)
+        {
+            ArgumentNullException.ThrowIfNull(_adminsList);
+
+            if (!_adminsList.Contains(admin))
+            {
+                throw new ArgumentException($"An admin with ID {admin.AdminID} does not exist.");
+            }
+            _adminsList.Remove(admin);
+        }
+
+        public void AddTimeslot(Timeslot timeslot)
+        {
+            if (timeslot == null)
+                throw new ArgumentNullException(nameof(timeslot));
+
+            if (timeslot.Admins.Contains(this) || _timeSlots.Contains(timeslot))
+            {
+                return;
+            }
+
+            _timeSlots.Add(timeslot);
+            timeslot.AddAdmin(this);
+        }
+
+        public void RemoveTimeslot(Timeslot timeslot)
+        {
+            if (timeslot == null)
+                throw new ArgumentNullException(nameof(timeslot));
+
+            if (!timeslot.Admins.Contains(this) || !_timeSlots.Contains(timeslot))
+            {
+                return;
+            }
+
+            if (_timeSlots.Contains(timeslot))
+            {
+                _timeSlots.Remove(timeslot);
+                timeslot.RemoveAdmin(this);
+            }
         }
 
         private class Report

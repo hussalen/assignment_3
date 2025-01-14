@@ -1,14 +1,23 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Reflection.Emit;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
 
 namespace assignment_3
 {
     public static class Defaults
     {
-        public static readonly Student DEFAULT_STUDENT = new(ClassLevel.Freshman);
+        public static readonly Student DEFAULT_STUDENT =
+            new(
+                ClassLevel.Freshman,
+                "Jeremy Willis",
+                "jeremy@gmail.com",
+                ["4095 Patterson Lake Rd", "Pinckney", "MI 48169"],
+                "test123"
+            );
         public static readonly Coding DEFAULT_CODING =
             new("DEFAULT", new DateTime(2026, 01, 01), "Python", "http://def.com");
         public static readonly Grade DEFAULT_GRADE = new(3);
@@ -28,9 +37,16 @@ namespace assignment_3
             new(
                 "Jeremy Willis",
                 "jeremy@gmail.com",
-                new string[] { "4095 Patterson Lake Rd", "Pinckney", "MI 48169" },
+                ["4095 Patterson Lake Rd", "Pinckney", "MI 48169"],
                 "test123"
             );
         public static readonly Subject DEFAULT_SUBJECT = new("default subject", 4);
+        public static readonly Admin DEFAULT_ADMIN =
+            new(
+                "Jeremy Willis",
+                "jeremy@gmail.com",
+                ["4095 Patterson Lake Rd", "Pinckney", "MI 48169"],
+                "test123"
+            );
     }
 }

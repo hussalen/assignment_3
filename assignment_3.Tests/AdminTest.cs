@@ -8,7 +8,12 @@ namespace assignment_3.Tests
     [TestFixture]
     public class AdminTests
     {
-        private Admin _admin = new Admin("Test Admin");
+        private Admin _admin = new Admin(
+            "Jeremy Willis",
+            "jeremy@gmail.com",
+            ["4095 Patterson Lake Rd", "Pinckney", "MI 48169"],
+            "test123"
+        );
         private JsonArray jsonArrayExample = new JsonArray
         {
             new
@@ -22,11 +27,13 @@ namespace assignment_3.Tests
         [Test]
         public void Admin_Creation_ShouldInitializeCorrectly()
         {
-            // Arrange
-            string name = "John Doe";
-
             // Act
-            var admin = new Admin(name);
+            var admin = new Admin(
+                "Jeremy Willis",
+                "jeremy@gmail.com",
+                ["4095 Patterson Lake Rd", "Pinckney", "MI 48169"],
+                "test123"
+            );
 
             // Assert
             Assert.IsNotNull(admin);
@@ -38,9 +45,15 @@ namespace assignment_3.Tests
         public void Admin_GenerateReport_ShouldReturnNewReport()
         {
             // Arrange
-            var admin = new Admin("Jane Doe");
+            var admin = new Admin(
+                "Jeremy Willis",
+                "jeremy@gmail.com",
+                ["4095 Patterson Lake Rd", "Pinckney", "MI 48169"],
+                "test123"
+            );
 
             // Act
+            // 'Admin.GenerateReport(string, JsonArray)' is inaccessible due to its protection level
             var report = admin.GenerateReport("test", ["testestsetes"]);
 
             // Assert

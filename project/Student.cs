@@ -300,7 +300,10 @@ namespace assignment_3
 
         public void ResetStudent()
         {
-            //TODO: to be implemented
+            _assignments.Clear();
+            _grades.Clear();
+            RemoveTimeTable();
+            _studentList.Remove(this);
         }
     }
 }
