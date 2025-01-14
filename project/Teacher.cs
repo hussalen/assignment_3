@@ -18,6 +18,7 @@ namespace assignment_3
         private static int nextId = 1;
         public int TeacherID { get; private set; }
         private List<Subject> _subjects = new();
+
         public List<Subject> Subjects
         {
             get => new(_subjects);
@@ -69,5 +70,51 @@ namespace assignment_3
                 Console.WriteLine($"- {subject.SubjectName} (ID: {subject.SubjectId})");
             }
         }
+
+        private List<Student> _students = Student.GetStudentExtent();
+
+        public void AddAssignmentToClass(IAssignment assignment, List<Student> students)
+        {
+            ArgumentNullException.ThrowIfNull(assignment);
+            if (students == null || students.Count == 0)
+                throw new ArgumentException("Student list cannot be empty.");
+            
+            if (_subjects.Any(subject => subject.Assignments.Contains(assignment)))
+                throw new ArgumentException("Assignment already exists in the class.");
+            
+            foreach (var student in students)
+            {
+                if (!student.Assignments.Contains(assignment))
+                {
+                    student.Assignments.Add(assignment);
+                }
+            }
+
+            Console.WriteLine($"Assignment '{assignment.Topic}' added to all students.");
+            //TO DO: merge this with AddAssignment
+        }
+
+        public void EditAssignment(IAssignment assignment, string newTopic, DateTime? newDueDate)
+        {
+            ArgumentNullException.ThrowIfNull(assignment);
+            
+            assignment.Topic = newTopic ?? assignment.Topic;
+            assignment.DueDate = newDueDate ?? assignment.DueDate;
+
+            Console.WriteLine($"Assignment '{assignment.Topic}' edited.");
+        }
+        public void RemoveAssignment(IAssignment assignment, List<Student> students)
+        {
+            ArgumentNullException.ThrowIfNull(assignment);
+            if (students == null || students.Count == 0)
+                throw new ArgumentException("Student list cannot be empty.");
+
+            foreach (var student in students)
+            {
+                student.Assignments.Remove(assignment);
+            }
+            Console.WriteLine($"Assignment '{assignment.Topic}' removed from all students.");
+        }
     }
 }
+

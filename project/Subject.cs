@@ -158,5 +158,31 @@ namespace assignment_3
         }
 
         public List<Timeslot> GetTimeslots() => new List<Timeslot>(_timeslots);
+        private List<IAssignment> _assignments = new List<IAssignment>();
+        public List<IAssignment> Assignments => new List<IAssignment>(_assignments);
+        public void AddAssignment(IAssignment assignment)
+        {
+            if (assignment == null)
+                throw new ArgumentNullException(nameof(assignment));
+            if (_assignments.Any(a => a.AssignmentID == assignment.AssignmentID))
+                throw new InvalidOperationException("Assignment with the same ID already exists.");
+            _assignments.Add(assignment);
+        }
+
+        public void RemoveAssignment(int assignmentID)
+        {
+            var assignment = _assignments.FirstOrDefault(a => a.AssignmentID == assignmentID);
+            if (assignment == null)
+                throw new InvalidOperationException("Assignment not found.");
+            _assignments.Remove(assignment);
+        }
+
+        public void EditAssignment(int assignmentID, IAssignment updatedAssignment)
+        {
+            var existingAssignment = _assignments.FirstOrDefault(a => a.AssignmentID == assignmentID);
+            if (existingAssignment == null)
+                throw new InvalidOperationException("Assignment not found.");
+            _assignments[_assignments.IndexOf(existingAssignment)] = updatedAssignment;
+        }
     }
 }

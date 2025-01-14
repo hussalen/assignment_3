@@ -41,14 +41,14 @@ namespace assignment_3
         public uint MinWordCount
         {
             get => _minWordCount;
-            init => _minWordCount = value;
+            set => _minWordCount = value;
         }
 
         private uint _maxWordCount;
         public uint MaxWordCount
         {
             get => _maxWordCount;
-            init =>
+            set =>
                 _maxWordCount =
                     value > _minWordCount
                         ? value
@@ -82,11 +82,11 @@ namespace assignment_3
             DueDate = dueDate;
             MinWordCount = minWordCount;
             MaxWordCount = maxWordCount;
-            AddEssay(this);
+            AddAssignment(this);
             //SaveManager.SaveToJson(_essayList, nameof(_essayList));
         }
 
-        private static void AddEssay(Essay essay)
+        private static void AddAssignment(Essay essay)
         {
             if (essay == null)
             {
@@ -94,11 +94,32 @@ namespace assignment_3
             }
             _essayList.Add(essay);
         }
+        public static void EditAssignment(int assignmentId, string newTopic, DateTime newDueDate, uint newMinWordCount, uint newMaxWordCount)
+        {
+            Essay essay = _essayList.FirstOrDefault(e => e.AssignmentID == assignmentId);
+    
+            if (ReferenceEquals(essay, Defaults.DEFAULT_ESSAY))
+            {
+                throw new ArgumentException("Default Assignment is only modifiable by Admin");
+            }
+            essay.Topic = newTopic;
+            essay.DueDate = newDueDate;
+            essay.MinWordCount = newMinWordCount;
+            essay.MaxWordCount = newMaxWordCount;
+        }
+        public static void RemoveAssignment(int assignmentId)
+        {
+            Essay essay = _essayList.FirstOrDefault(e => e.AssignmentID == assignmentId);
+            if (ReferenceEquals(essay, Defaults.DEFAULT_ESSAY))
+            {
+                throw new ArgumentException("Essay assignment is default assignment, nothing to remove");
+            }
+            _essayList.Remove(essay);
+        }
 
         public static List<Essay> GetEssayExtent() => new(_essayList);
-
-        //from IAssignment
-        public void Submit()
+        
+        public void Submit(Student student)
         {
             if (WordCount < MinWordCount || WordCount > MaxWordCount)
             {
@@ -106,8 +127,8 @@ namespace assignment_3
                     $"Word count must be between {MinWordCount} and {MaxWordCount}."
                 );
             }
-
             SubmissionDate = DateTime.Now;
+            SubmittingStudent = student;
             Console.WriteLine("Essay submitted successfully!");
         }
     }

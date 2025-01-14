@@ -68,11 +68,11 @@ namespace assignment_3
             Language = language;
             RepositoryUrl = repositoryUrl;
             SubmissionDate = null;
-            AddCoding(this);
+            AddAssignment(this);
             //SaveManager.SaveToJson(_codingList, nameof(_codingList));
         }
 
-        private static void AddCoding(Coding coding)
+        private static void AddAssignment(Coding coding)
         {
             if (coding is null)
             {
@@ -80,7 +80,47 @@ namespace assignment_3
             }
             _codingList.Add(coding);
         }
+        public static void EditAssignment(int assignmentId, string newTopic, DateTime newDueDate, string newLanguage, string newRepositoryUrl)
+        {
+            Coding coding = _codingList.FirstOrDefault(c => c.AssignmentID == assignmentId);
+            if (ReferenceEquals(coding, Defaults.DEFAULT_CODING))
+            {
+                throw new ArgumentException("Default Assignment is only modifiable by Admin");
+            }
+            ArgumentNullException.ThrowIfNull(coding);
+            if (coding.SubmissionDate.HasValue)
+            {
+                throw new InvalidOperationException("Cannot modify a submitted assignment.");
+            }
+            coding.Topic = newTopic;
+            coding.DueDate = newDueDate;
+            coding.Language = newLanguage;
+            coding.RepositoryUrl = newRepositoryUrl;
+        }
+        
+        public static void RemoveAssignment(int assignmentId)
+        {
+            Coding coding = _codingList.FirstOrDefault(c => c.AssignmentID == assignmentId);
+            ArgumentNullException.ThrowIfNull(coding);
+            if (coding == Defaults.DEFAULT_CODING)
+            {
+                throw new ArgumentException("Coding assignment is default assignment, nothing to remove");
+            }
+            _codingList.Remove(coding);
+        }
 
         public static List<Coding> GetCodingExtent() => new(_codingList);
+
+        public void Submit(Student student)
+        {
+            if (string.IsNullOrWhiteSpace(RepositoryUrl))
+            {
+                throw new ArgumentException("Repository URL must be provided before submission.");
+            }
+            SubmissionDate = DateTime.UtcNow;
+            SubmittingStudent = student;
+            Console.WriteLine("Coding assignment submitted successfully!");
+        }
+
     }
 }

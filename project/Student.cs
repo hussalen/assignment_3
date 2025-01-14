@@ -200,15 +200,13 @@ namespace assignment_3
 
             classSchedules[studentId].Add(course);
         }
-
-        public void SubmitAssignment(IAssignment assignment, int wordCount)
+        private static Dictionary<int, Dictionary<int, DateTime?>> studentAssignmentsSubmission = new();
+        public void SubmitAssignment(IAssignment assignment)
         {
             ArgumentNullException.ThrowIfNull(assignment);
-            if (_assignments.Contains(assignment))
-                throw new ArgumentException("Assignment already exists.");
-            if (assignment.SubmissionDate != null)
+            if (assignment.SubmissionDate.HasValue)
             {
-                throw new InvalidOperationException("Assignment already submitted, edit to modify");
+                throw new InvalidOperationException("This assignment has already been submitted.");
             }
             if (DateTime.Now > assignment.DueDate)
             {
@@ -216,7 +214,13 @@ namespace assignment_3
                     "Cannot submit the assignment after the due date"
                 );
             }
+            assignment.Submit(this); 
             _assignments.Add(assignment);
+            if (!studentAssignmentsSubmission.ContainsKey(StudentID))
+            {
+                studentAssignmentsSubmission[StudentID] = new Dictionary<int, DateTime?>();
+            }
+            studentAssignmentsSubmission[StudentID][assignment.AssignmentID] = DateTime.Now;
         }
 
         public void RemoveAssignmentSubmission(IAssignment assignment)
@@ -225,7 +229,7 @@ namespace assignment_3
             ArgumentNullException.ThrowIfNull(assignment.SubmissionDate);
             if (!_assignments.Contains(assignment))
                 throw new ArgumentException(
-                    $"The student does not have the assignment {nameof(assignment)} submitted"
+                    $"The assignment {nameof(assignment)} is not submitted"
                 );
             if (assignment.SubmittingStudent != this)
                 throw new InvalidOperationException(
@@ -242,7 +246,7 @@ namespace assignment_3
 
             if (!_assignments.Contains(assignment))
                 throw new ArgumentException(
-                    $"The student does not have the assignment {nameof(assignment)} submitted"
+                    $"The assignment {nameof(assignment)} is not submitted"
                 );
 
             if (assignment.SubmittingStudent != this)

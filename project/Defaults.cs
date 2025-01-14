@@ -10,6 +10,8 @@ namespace assignment_3
         public static readonly Student DEFAULT_STUDENT = new(ClassLevel.Freshman);
         public static readonly Coding DEFAULT_CODING =
             new("DEFAULT", new DateTime(2026, 01, 01), "Python", "http://def.com");
+        public static readonly Essay DEFAULT_ESSAY =
+            new("DEFAULT_ESSAY", new DateTime(2026, 01, 01), 500, 1000);
         public static readonly Grade DEFAULT_GRADE = new(3);
         public static readonly Timeslot DEFAULT_TIMESLOT = new Timeslot(
             1,                                       
