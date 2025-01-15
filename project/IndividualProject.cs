@@ -87,5 +87,10 @@ namespace assignment_3
             new(_individualProject_List);
 
         public Student SubmittingStudent { get; set; }
+        
+        public void Submit(Student student)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

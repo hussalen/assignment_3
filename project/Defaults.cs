@@ -48,5 +48,7 @@ namespace assignment_3
                 ["4095 Patterson Lake Rd", "Pinckney", "MI 48169"],
                 "test123"
             );
+        public static readonly Classroom DEFAULT_CLASSROOM = new Classroom(1, 0); 
+        public static readonly Essay DEFAULT_ESSAY = new("Default", new DateTime(2027, 06, 06),20,200);
     }
 }
