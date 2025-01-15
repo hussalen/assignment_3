@@ -20,7 +20,8 @@ namespace assignment_3
             TimeSpan.FromHours(10)                  
         );
         public static readonly Exam DEFAULT_EXAM = new(new DateTime(2026, 01, 01), DEFAULT_TIMESLOT);
-        public static readonly Classroom DEFAULT_CLASSROOM = new Classroom(0, 0); 
+        public static readonly Classroom DEFAULT_CLASSROOM = new Classroom(1, 0); 
+        
     }
     }
 

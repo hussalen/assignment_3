@@ -95,5 +95,11 @@ namespace assignment_3
         }
 
         public static List<GroupProject> GetGroupProjectExtent() => new(_groupProjectList);
+
+        public void Submit(Student student)
+        {
+            throw new NotImplementedException();
+        }
     }
+    
 }

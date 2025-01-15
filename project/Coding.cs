@@ -80,7 +80,7 @@ namespace assignment_3
             }
             _codingList.Add(coding);
         }
-        public static void EditAssignment(int assignmentId, string newTopic, DateTime newDueDate, string newLanguage, string newRepositoryUrl)
+        public void EditAssignment(int assignmentId, string newTopic, DateTime newDueDate, string newLanguage, string newRepositoryUrl)
         {
             Coding coding = _codingList.FirstOrDefault(c => c.AssignmentID == assignmentId);
             if (ReferenceEquals(coding, Defaults.DEFAULT_CODING))
