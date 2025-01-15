@@ -15,8 +15,17 @@ namespace assignment_3
     public class Teacher : Person
     {
         private static int nextId = 1;
+        private readonly List<Subject> _subjects;
+        private readonly List<Timeslot> _assignedTimeslots;
+        private readonly List<Grade> _grades;
+
+        public string Name { get; set; }
         public int TeacherID { get; private set; }
+
+        public Availability AvailabilityStatus { get; set; }
+
         private List<Subject> _subjects = new();
+
 
         public List<Subject> Subjects
         {
@@ -24,7 +33,9 @@ namespace assignment_3
             private set => _subjects = value;
         }
 
-        public Availability AvailabilityStatus { get; set; }
+        public List<Timeslot> AssignedTimeslots => new List<Timeslot>(_assignedTimeslots);
+
+        public List<Grade> Grades => new List<Grade>(_grades);
 
         private static List<Teacher> _teachersList = new();
 
@@ -38,6 +49,14 @@ namespace assignment_3
             AddTeacher(this);
         }
 
+
+            
+            _subjects = new List<Subject>();
+            _assignedTimeslots = new List<Timeslot>();
+            _grades = new List<Grade>();
+
+            Name = name;
+
         // INITIATE_COPY
         // TODO: remove association(s) here.
         public Teacher(Person person)
@@ -48,6 +67,7 @@ namespace assignment_3
                 person.Password
             )
         {
+
             TeacherID = Interlocked.Increment(ref nextId);
             AvailabilityStatus = Availability.Available;
             AddTeacher(this);
@@ -93,26 +113,45 @@ namespace assignment_3
 
         public void AssignSubject(Subject subject)
         {
-            ArgumentNullException.ThrowIfNull(subject);
+            if (subject == null)
+                throw new ArgumentNullException(nameof(subject));
+
+            
             if (_subjects.Contains(subject))
                 throw new ArgumentException("Subject is already assigned to this teacher.");
 
-            if (subject.Teacher != null && subject.Teacher != this)
-                throw new InvalidOperationException(
-                    "Subject is already assigned to another teacher."
-                );
+            
+            if (subject.Teacher != this && subject.Teacher != null)
+                throw new InvalidOperationException("Subject is already assigned to another teacher.");
 
             _subjects.Add(subject);
-            //FIX: subject.Teacher = this;
+
+            
+            if (subject.Teacher != this)
+            {
+                subject.Teacher = this;
+            }
         }
 
         public void RemoveSubject(Subject subject)
         {
-            ArgumentNullException.ThrowIfNull(subject);
+            if (subject == null)
+                throw new ArgumentNullException(nameof(subject));
+
             if (!_subjects.Contains(subject))
                 return;
             _subjects.Remove(subject);
+
+
+                        if (subject.Teacher != this)
+                throw new InvalidOperationException(
+                    "Subject's teacher does not match this teacher�cannot unassign."
+                );
+
+            subject.Teacher = Defaults.DEFAULT_TEACHER;
+
             subject.RemoveTeacher(this);
+
         }
 
         public void ViewSchedule()
@@ -123,6 +162,56 @@ namespace assignment_3
                 Console.WriteLine($"- {subject.SubjectName} (ID: {subject.SubjectId})");
             }
         }
+
+
+        public void AssignTimeslot(Timeslot timeslot)
+        {
+            if (timeslot == null)
+                throw new ArgumentNullException(nameof(timeslot), "Timeslot cannot be null.");
+
+            if (_assignedTimeslots.Contains(timeslot))
+                throw new InvalidOperationException("This timeslot is already assigned to the teacher.");
+
+            _assignedTimeslots.Add(timeslot);
+        }
+
+        public void RemoveTimeslot(Timeslot timeslot)
+        {
+            if (timeslot == null)
+                throw new ArgumentNullException(nameof(timeslot), "Timeslot cannot be null.");
+
+            if (!_assignedTimeslots.Remove(timeslot))
+                throw new InvalidOperationException("This timeslot is not assigned to the teacher.");
+        }
+
+        public void AssignGrade(Grade grade)
+        {
+            if (grade == null)
+                throw new ArgumentNullException(nameof(grade), "Grade cannot be null.");
+
+            if (_grades.Contains(grade))
+                throw new InvalidOperationException("This grade is already assigned to this teacher.");
+
+            _grades.Add(grade);
+
+            if (grade.Teacher != this)
+            {
+                grade.Teacher = this;
+            }
+        }
+
+        public void RemoveGrade(Grade grade)
+        {
+            if (grade == null)
+                throw new ArgumentNullException(nameof(grade), "Grade cannot be null.");
+
+            if (!_grades.Remove(grade))
+                throw new InvalidOperationException("This grade is not assigned to this teacher.");
+
+            if (grade.Teacher == this)
+            {
+                grade.Teacher = Defaults.DEFAULT_TEACHER;
+            }
 
         public void ResetTeacher()
         {
@@ -137,7 +226,6 @@ namespace assignment_3
             _subjects.Clear();
             _subjects.Add(Defaults.DEFAULT_SUBJECT);
 
-            //We need to clear timessots, assignments and students, but there's no reverse connection established for any of them.
         }
 
         private List<Student> _students = Student.GetStudentExtent();

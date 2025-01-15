@@ -38,15 +38,14 @@ namespace assignment_3
         public List<Teacher> Teachers
         {
             get => new(_teachers);
-            set
+            private set
             {
                 if (value == null || value.Count == 0)
-                    throw new InvalidOperationException(
-                        "A subject must be assigned to at least one teacher."
-                    );
+                    throw new InvalidOperationException("A subject must be assigned to at least one teacher.");
                 _teachers = value;
             }
         }
+
 
         private Subject _subSubject;
         private List<Subject> _subSubjects = new List<Subject>();
@@ -64,7 +63,7 @@ namespace assignment_3
         public List<Student> Students
         {
             get => new(_students);
-            set
+            private set
             {
                 if (value == null)
                     throw new ArgumentException("Student list cannot be null.");
@@ -72,21 +71,42 @@ namespace assignment_3
             }
         }
 
+
+        private List<Subject> _subSubjects = new();
+        private List<Timeslot> _timeslots = new();
+
+        private Teacher _teacher;
+        public Teacher Teacher
+        {
+            get => _teacher;
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException(nameof(value), "Teacher cannot be null.");
+
+                if (_teacher != null && _teacher != value)
+                    throw new InvalidOperationException("This subject is already assigned to a different teacher.");
+
+                _teacher = value;
+
+                if (!_teacher.Subjects.Contains(this))
+                {
+                    _teacher.AssignSubject(this);
+                }
+            }
+        }
+
+        public Subject SubSubject { get; private set; }
+
         public Teacher Teacher => throw new NotImplementedException();
         private static int nextId = 1;
+
 
         public Subject(string subjectName, int gradingScale)
         {
             SubjectId = Interlocked.Increment(ref nextId);
             SubjectName = subjectName;
             GradingScale = gradingScale;
-        }
-
-        public void UpdateSubjectName(string newSubjectName)
-        {
-            if (string.IsNullOrWhiteSpace(newSubjectName))
-                throw new ArgumentException("Subject name cannot be null or empty.");
-            SubjectName = newSubjectName;
         }
 
         public void AddSubSubject(Subject subSubject)
@@ -118,10 +138,12 @@ namespace assignment_3
             subSubject.SetParentSubject(this);
         }
 
+
         private void SetParentSubject(Subject parentSubject)
         {
             ParentSubject = parentSubject;
         }
+
 
         public void RemoveSubSubject(Subject subSubject)
         {
@@ -135,10 +157,13 @@ namespace assignment_3
             }
         }
 
+
+
         private void RemoveParentSubject()
         {
             ParentSubject = null;
         }
+
 
         public void AddTimeslot(Timeslot timeslot)
         {
@@ -170,11 +195,22 @@ namespace assignment_3
 
         public List<Timeslot> GetTimeslots() => new List<Timeslot>(_timeslots);
 
+
+        private void SetParentSubject(Subject parentSubject)
+        {
+            SubSubject = parentSubject;
+        }
+
+        private void RemoveParentSubject()
+        {
+            SubSubject = null;
+
         public void RemoveTeacher(Teacher teacher)
         {
             if (!_teachers.Contains(teacher) || teacher == Defaults.DEFAULT_TEACHER)
                 return;
             teacher.RemoveSubject(this);
+
         }
 
         private List<IAssignment> _assignments = new List<IAssignment>();

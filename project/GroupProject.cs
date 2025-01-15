@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace assignment_3
@@ -61,6 +62,7 @@ namespace assignment_3
                             $"Roles array must have exactly {NoOfPeople} entries."
                         );
         }
+
         public Student SubmittingStudent { get; set; }
 
         private static List<GroupProject> _groupProjectList = new();
@@ -77,12 +79,10 @@ namespace assignment_3
             Topic = topic;
             DueDate = dueDate;
             NoOfPeople = noOfPeople;
-            Documentation =
-                documentation ?? throw new ArgumentException("Documentation cannot be null.");
+            Documentation = documentation ?? throw new ArgumentException("Documentation cannot be null.");
             Roles = roles;
             SubmissionDate = null;
             AddGroupProject(this);
-            //SaveManager.SaveToJson(_groupProjectList, nameof(_groupProjectList));
         }
 
         private static void AddGroupProject(GroupProject groupProject)
@@ -96,9 +96,22 @@ namespace assignment_3
 
         public static List<GroupProject> GetGroupProjectExtent() => new(_groupProjectList);
 
+
+        public void Submit(DateTime submissionDate, Student student)
+        {
+            SubmissionDate = submissionDate;
+            SubmittingStudent = student;
+            Console.WriteLine($"GroupProject '{Topic}' submitted by {student.Name}");
+        }
+
+        public string GetDetails()
+        {
+            return $"GroupProject: {Topic}, NoOfPeople: {NoOfPeople}, Documentation: {Documentation}";
+
         public void Submit(Student student)
         {
             throw new NotImplementedException();
+
         }
     }
     

@@ -22,6 +22,9 @@ namespace assignment_3
             new("DEFAULT", new DateTime(2026, 01, 01), "Python", "http://def.com");
         public static readonly Grade DEFAULT_GRADE = new(3);
 
+        public static readonly Teacher DEFAULT_TEACHER = new Teacher("Abdullah");
+
+
         public static readonly TimeTable DEFAULT_TIMETABLE = new(Day.WEDNESDAY);
 
         public static readonly Timeslot DEFAULT_TIMESLOT = new Timeslot(
@@ -48,7 +51,9 @@ namespace assignment_3
                 ["4095 Patterson Lake Rd", "Pinckney", "MI 48169"],
                 "test123"
             );
+
         public static readonly Classroom DEFAULT_CLASSROOM = new Classroom(1, 0); 
         public static readonly Essay DEFAULT_ESSAY = new("Default", new DateTime(2027, 06, 06),20,200);
+
     }
 }
