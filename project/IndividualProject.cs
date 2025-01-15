@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace assignment_3
@@ -47,7 +48,7 @@ namespace assignment_3
                         );
         }
 
-        public string description;
+        public string Description { get; set; }
 
         private List<string> _notes;
         public List<string> Notes
@@ -62,15 +63,15 @@ namespace assignment_3
                         );
         }
 
-        public IndividualProject(string topic, DateTime dueDate, List<string> notes)
+        public IndividualProject(string topic, DateTime dueDate, List<string> notes, string description)
         {
             AssignmentID = Interlocked.Increment(ref nextId);
             Topic = topic;
             DueDate = dueDate;
             SubmissionDate = null;
             Notes = notes;
+            Description = description;
             AddIndividualProject(this);
-            //SaveManager.SaveToJson(_individualProject_List, nameof(_individualProject_List));
         }
 
         private static List<IndividualProject> _individualProject_List = new();
@@ -87,5 +88,17 @@ namespace assignment_3
             new(_individualProject_List);
 
         public Student SubmittingStudent { get; set; }
+
+        public void Submit(DateTime submissionDate, Student student)
+        {
+            SubmissionDate = submissionDate;
+            SubmittingStudent = student;
+            Console.WriteLine($"IndividualProject '{Topic}' submitted by {student.Name}");
+        }
+
+        public string GetDetails()
+        {
+            return $"IndividualProject: {Topic}, Description: {Description}, Notes: {string.Join(", ", Notes)}";
+        }
     }
 }
