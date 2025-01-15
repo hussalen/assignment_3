@@ -43,19 +43,26 @@ public class Timeslot
         }
     }
 
+    private List<Admin> _admins = [Defaults.DEFAULT_ADMIN];
+    public List<Admin> Admins
+    {
+        get => new(_admins);
+        private set => _admins = value;
+    }
+
     public Timeslot(int scheduleId, DateTime date, TimeSpan startTime, TimeSpan endTime)
     {
         if (scheduleId <= 0)
             throw new ArgumentException("Schedule ID must be a positive number.");
         if (date.Date < DateTime.Today)
             throw new ArgumentException("Date cannot be in the past.");
-        
+
         ScheduleId = scheduleId;
         Date = date;
         StartTime = startTime;
         EndTime = endTime;
         AddTimeslot(this);
-        
+
         //SaveManager.SaveToJson(_timeslotList, nameof(_timeslotList));
     }
 
@@ -68,7 +75,10 @@ public class Timeslot
             throw new ArgumentNullException($"{nameof(timeslot)} cannot be null.");
         }
 
-        if (_timeslotList.Any(t => t.ScheduleId == timeslot.ScheduleId) && timeslot.ScheduleId != Defaults.DEFAULT_TIMESLOT.ScheduleId)
+        if (
+            _timeslotList.Any(t => t.ScheduleId == timeslot.ScheduleId)
+            && timeslot.ScheduleId != Defaults.DEFAULT_TIMESLOT.ScheduleId
+        )
         {
             throw new ArgumentException(
                 $"A timeslot with Schedule ID {timeslot.ScheduleId} already exists."
@@ -104,10 +114,11 @@ public class Timeslot
     private Exam _exam;
     public Exam Exam
     {
-        get => _exam; 
+        get => _exam;
         set
         {
-            if (_exam == value) return;
+            if (_exam == value)
+                return;
             if (_exam == Defaults.DEFAULT_EXAM && value != Defaults.DEFAULT_EXAM)
             {
                 _exam = value;
@@ -118,13 +129,14 @@ public class Timeslot
             {
                 throw new InvalidOperationException("Cannot overwrite an existing valid exam.");
             }
-            
+
             if (value == Defaults.DEFAULT_EXAM)
             {
                 _exam = Defaults.DEFAULT_EXAM;
             }
         }
     }
+
     public void AddExam(Exam exam)
     {
         if (exam.Timeslot == Defaults.DEFAULT_TIMESLOT)
@@ -135,7 +147,7 @@ public class Timeslot
             throw new InvalidOperationException("This timeslot already has an associated exam.");
         if (exam.Timeslot != Defaults.DEFAULT_TIMESLOT)
         {
-           exam.RemoveTimeslot();
+            exam.RemoveTimeslot();
         }
         Exam = exam;
         exam.Timeslot = this;
@@ -144,13 +156,15 @@ public class Timeslot
     public void EditExam(Exam newExam)
     {
         ArgumentNullException.ThrowIfNull(newExam);
-        if (newExam == _exam) return;
+        if (newExam == _exam)
+            return;
         RemoveExam();
-        newExam.Timeslot = this; 
+        newExam.Timeslot = this;
         Exam = newExam;
     }
 
-    public void RemoveExam() {
+    public void RemoveExam()
+    {
         _exam = Defaults.DEFAULT_EXAM;
     }
 
@@ -170,6 +184,31 @@ public class Timeslot
     }
 
     public Subject GetSubject() => _subject;
-    
-    
+
+    public void AddAdmin(Admin admin)
+    {
+        ArgumentNullException.ThrowIfNull(admin);
+        ArgumentNullException.ThrowIfNull(admin.Timeslots);
+
+        if (admin.Timeslots.Contains(this) || _admins.Contains(admin))
+        {
+            return;
+        }
+
+        _admins.Add(admin);
+        admin.AddTimeslot(this);
+    }
+
+    public void RemoveAdmin(Admin admin)
+    {
+        ArgumentNullException.ThrowIfNull(admin);
+        ArgumentNullException.ThrowIfNull(admin.Timeslots);
+
+        if (!_admins.Contains(admin) || !admin.Timeslots.Contains(this))
+        {
+            return;
+        }
+        _admins.Remove(admin);
+        admin.RemoveTimeslot(this);
+    }
 }
