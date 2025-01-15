@@ -12,9 +12,8 @@ namespace assignment_3
         OnLeave
     }
 
-    public class Teacher
+    public class Teacher : Person
     {
-        public string Name { get; set; }
         private static int nextId = 1;
         public int TeacherID { get; private set; }
         private List<Subject> _subjects = new();
@@ -27,14 +26,69 @@ namespace assignment_3
 
         public Availability AvailabilityStatus { get; set; }
 
-        public Teacher(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("Name cannot be null or empty.");
+        private static List<Teacher> _teachersList = new();
 
-            Name = name;
+        public static List<Teacher> GetTeachersExtent() => new List<Teacher>(_teachersList);
+
+        public Teacher(string name, string email, string[] addressLines, string password)
+            : base(name, email, addressLines, password)
+        {
             TeacherID = Interlocked.Increment(ref nextId);
             AvailabilityStatus = Availability.Available;
+            AddTeacher(this);
+        }
+
+        // INITIATE_COPY
+        // TODO: remove association(s) here.
+        public Teacher(Person person)
+            : base(
+                person.Name,
+                person.Email.Address.ToString(),
+                person.AddressLines,
+                person.Password
+            )
+        {
+            TeacherID = Interlocked.Increment(ref nextId);
+            AvailabilityStatus = Availability.Available;
+            AddTeacher(this);
+        }
+
+        private void AddTeacher(Teacher teacher)
+        {
+            if (teacher == null)
+            {
+                throw new ArgumentException($"{nameof(teacher)} cannot be null.");
+            }
+
+            _teachersList ??= new();
+
+            if (_teachersList.Contains(teacher))
+            {
+                throw new ArgumentException(
+                    $"A teacher with ID {teacher.TeacherID} already exists."
+                );
+            }
+
+            _teachersList.Add(teacher);
+        }
+
+        private void RemoveTeacher(Teacher teacher)
+        {
+            if (teacher == null)
+            {
+                throw new ArgumentException($"{nameof(teacher)} cannot be null.");
+            }
+
+            ArgumentNullException.ThrowIfNull(_teachersList);
+
+            if (!_teachersList.Contains(teacher))
+            {
+                throw new ArgumentException(
+                    $"A teacher with ID {teacher.TeacherID} does not exist."
+                );
+            }
+
+            _teachersList.Remove(teacher);
         }
 
         public void AssignSubject(Subject subject)
@@ -56,10 +110,9 @@ namespace assignment_3
         {
             ArgumentNullException.ThrowIfNull(subject);
             if (!_subjects.Contains(subject))
-                throw new ArgumentException("Subject is not assigned to this teacher.");
-
+                return;
             _subjects.Remove(subject);
-            //FIX: subject.Teacher = null;
+            subject.RemoveTeacher(this);
         }
 
         public void ViewSchedule()
@@ -71,6 +124,22 @@ namespace assignment_3
             }
         }
 
+        public void ResetTeacher()
+        {
+            RemoveTeacher(this);
+
+            ArgumentNullException.ThrowIfNull(_subjects);
+            foreach (var subject in _subjects)
+            {
+                subject.RemoveTeacher(this);
+            }
+
+            _subjects.Clear();
+            _subjects.Add(Defaults.DEFAULT_SUBJECT);
+
+            //We need to clear timessots, assignments and students, but there's no reverse connection established for any of them.
+        }
+
         private List<Student> _students = Student.GetStudentExtent();
 
         public void AddAssignmentToClass(IAssignment assignment, List<Student> students)
@@ -78,10 +147,10 @@ namespace assignment_3
             ArgumentNullException.ThrowIfNull(assignment);
             if (students == null || students.Count == 0)
                 throw new ArgumentException("Student list cannot be empty.");
-            
+
             if (_subjects.Any(subject => subject.Assignments.Contains(assignment)))
                 throw new ArgumentException("Assignment already exists in the class.");
-            
+
             foreach (var student in students)
             {
                 if (!student.Assignments.Contains(assignment))
@@ -97,12 +166,13 @@ namespace assignment_3
         public void EditAssignment(IAssignment assignment, string newTopic, DateTime? newDueDate)
         {
             ArgumentNullException.ThrowIfNull(assignment);
-            
+
             assignment.Topic = newTopic ?? assignment.Topic;
             assignment.DueDate = newDueDate ?? assignment.DueDate;
 
             Console.WriteLine($"Assignment '{assignment.Topic}' edited.");
         }
+
         public void RemoveAssignment(IAssignment assignment, List<Student> students)
         {
             ArgumentNullException.ThrowIfNull(assignment);
@@ -113,8 +183,8 @@ namespace assignment_3
             {
                 student.Assignments.Remove(assignment);
             }
+
             Console.WriteLine($"Assignment '{assignment.Topic}' removed from all students.");
         }
     }
 }
-

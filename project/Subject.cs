@@ -1,11 +1,14 @@
+using System.ComponentModel;
+
 namespace assignment_3
 {
     public class Subject
     {
-        public string SubjectId { get; private set; }
+        public int SubjectId { get; private set; }
 
         private string _subjectName;
         public Subject ParentSubject { get; private set; }
+
         public string SubjectName
         {
             get => _subjectName;
@@ -18,6 +21,7 @@ namespace assignment_3
         }
 
         private int _gradingScale;
+
         public int GradingScale
         {
             get => _gradingScale;
@@ -30,6 +34,7 @@ namespace assignment_3
         }
 
         private List<Teacher> _teachers = new();
+
         public List<Teacher> Teachers
         {
             get => new(_teachers);
@@ -42,7 +47,7 @@ namespace assignment_3
                 _teachers = value;
             }
         }
-        
+
         private Subject _subSubject;
         private List<Subject> _subSubjects = new List<Subject>();
 
@@ -53,7 +58,9 @@ namespace assignment_3
             get => _subSubject;
             private set { _subSubject = value; }
         }
+
         private List<Student> _students = new();
+
         public List<Student> Students
         {
             get => new(_students);
@@ -66,13 +73,11 @@ namespace assignment_3
         }
 
         public Teacher Teacher => throw new NotImplementedException();
+        private static int nextId = 1;
 
-        public Subject(string subjectId, string subjectName, int gradingScale)
+        public Subject(string subjectName, int gradingScale)
         {
-            if (string.IsNullOrWhiteSpace(subjectId))
-                throw new ArgumentException("Subject ID cannot be null or empty.");
-
-            SubjectId = subjectId;
+            SubjectId = Interlocked.Increment(ref nextId);
             SubjectName = subjectName;
             GradingScale = gradingScale;
         }
@@ -91,9 +96,13 @@ namespace assignment_3
             if (subSubject == this)
                 throw new InvalidOperationException("A subject cannot be a sub-subject of itself.");
             if (subSubject.ParentSubject != null && subSubject.ParentSubject != this)
-                throw new InvalidOperationException("A sub-subject cannot have more than one parent.");
+                throw new InvalidOperationException(
+                    "A sub-subject cannot have more than one parent."
+                );
             if (_subSubjects.Contains(subSubject))
-                throw new InvalidOperationException("This sub-subject is already added to the parent subject.");
+                throw new InvalidOperationException(
+                    "This sub-subject is already added to the parent subject."
+                );
             Subject currentParent = this;
             while (currentParent.ParentSubject != null)
             {
@@ -101,8 +110,10 @@ namespace assignment_3
                 {
                     throw new InvalidOperationException("A circular reference cannot be created.");
                 }
+
                 currentParent = currentParent.ParentSubject;
             }
+
             _subSubjects.Add(subSubject);
             subSubject.SetParentSubject(this);
         }
@@ -152,14 +163,23 @@ namespace assignment_3
             }
         }
 
-        public List<Subject> GetSubSubjects() 
+        public List<Subject> GetSubSubjects()
         {
             return new List<Subject>(_subSubjects);
         }
 
         public List<Timeslot> GetTimeslots() => new List<Timeslot>(_timeslots);
+
+        public void RemoveTeacher(Teacher teacher)
+        {
+            if (!_teachers.Contains(teacher) || teacher == Defaults.DEFAULT_TEACHER)
+                return;
+            teacher.RemoveSubject(this);
+        }
+
         private List<IAssignment> _assignments = new List<IAssignment>();
         public List<IAssignment> Assignments => new List<IAssignment>(_assignments);
+
         public void AddAssignment(IAssignment assignment)
         {
             if (assignment == null)

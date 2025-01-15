@@ -11,8 +11,8 @@ namespace assignment_3.Tests
 {
     public class AssignmentSubmission
     {
-        private readonly Student student = new(ClassLevel.Freshman);
-        private readonly Student student2 = new(ClassLevel.Freshman);
+        private readonly Student student = new(ClassLevel.Freshman, "John Doe", "john.doe@example.com", new string[] { "123 Street", "City" }, "password123");
+        private readonly Student student2 = new(ClassLevel.Freshman, "John Doe", "john.doe@example.com", new string[] { "123 Street", "City" }, "password123");
 
         private readonly IAssignment coding = new Coding(
             "test",

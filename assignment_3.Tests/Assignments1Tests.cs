@@ -86,7 +86,7 @@ public class Assignments1Tests
         var repositoryUrl = "http://example.com/repo";
 
         var coding = new Coding(topic, dueDate, language, repositoryUrl);
-        coding.Submit(new Student(ClassLevel.Freshman));
+        coding.Submit(new Student(ClassLevel.Freshman, "John Doe", "john.doe@example.com", new string[] { "123 Street", "City" }, "password123"));
 
         Assert.Throws<InvalidOperationException>(() => coding.EditAssignment(coding.AssignmentID, "New Topic", DateTime.UtcNow, "Java", "http://example.com/newrepo"));
     }
@@ -115,7 +115,7 @@ public class Assignments1Tests
         var repositoryUrl = "http://example.com/repo";
 
         var coding = new Coding(topic, dueDate, language, repositoryUrl);
-        var student = new Student(ClassLevel.Freshman);
+        var student = new Student(ClassLevel.Freshman, "John Doe", "john.doe@example.com", new string[] { "123 Street", "City" }, "password123");
 
         coding.Submit(student);
 
@@ -160,7 +160,7 @@ public class Assignments1Tests
     {
         // Arrange
         var essay = new Essay("Test Topic", DateTime.UtcNow.AddDays(1), 500, 1500);
-        var student = new Student(ClassLevel.Sophomore);
+        var student = new Student(ClassLevel.Freshman, "John Doe", "john.doe@example.com", new string[] { "123 Street", "City" }, "password123");
         essay.WordCount = 1000;
 
         // Act
