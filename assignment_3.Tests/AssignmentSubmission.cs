@@ -11,8 +11,8 @@ namespace assignment_3.Tests
 {
     public class AssignmentSubmission
     {
-        private readonly Student student = new(ClassLevel.Freshman);
-        private readonly Student student2 = new(ClassLevel.Freshman);
+        private readonly Student student = new(ClassLevel.Freshman, "John Doe", "john.doe@example.com", new string[] { "123 Street", "City" }, "password123");
+        private readonly Student student2 = new(ClassLevel.Freshman, "John Doe", "john.doe@example.com", new string[] { "123 Street", "City" }, "password123");
 
         private readonly IAssignment coding = new Coding(
             "test",
@@ -119,9 +119,9 @@ namespace assignment_3.Tests
         [Test]
         public void WhenAssignmentAlreadyExists()
         {
-            student.SubmitAssignment(coding, 100);
+            student.SubmitAssignment(coding);
 
-            Assert.Throws<ArgumentException>(() => student.SubmitAssignment(coding, 100));
+            Assert.Throws<ArgumentException>(() => student.SubmitAssignment(coding));
         }
 
         [Test]
@@ -136,7 +136,7 @@ namespace assignment_3.Tests
             coding.SubmissionDate = DateTime.UtcNow;
 
             var ex = Assert.Throws<InvalidOperationException>(
-                () => student.SubmitAssignment(coding, 100)
+                () => student.SubmitAssignment(coding)
             );
             Assert.That(ex.Message, Is.EqualTo("Assignment already submitted, edit to modify"));
         }
@@ -153,7 +153,7 @@ namespace assignment_3.Tests
             var ex = Assert.Throws<InvalidOperationException>(() =>
             {
                 Thread.Sleep(101);
-                student.SubmitAssignment(coding, 100);
+                student.SubmitAssignment(coding);
             });
             Assert.That(ex.Message, Is.EqualTo("Cannot submit the assignment after the due date"));
         }

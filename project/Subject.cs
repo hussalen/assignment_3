@@ -8,6 +8,7 @@ namespace assignment_3
 
         private string _subjectName;
         public Subject ParentSubject { get; private set; }
+
         public string SubjectName
         {
             get => _subjectName;
@@ -20,6 +21,7 @@ namespace assignment_3
         }
 
         private int _gradingScale;
+
         public int GradingScale
         {
             get => _gradingScale;
@@ -32,6 +34,7 @@ namespace assignment_3
         }
 
         private List<Teacher> _teachers = new();
+
         public List<Teacher> Teachers
         {
             get => new(_teachers);
@@ -56,6 +59,7 @@ namespace assignment_3
         }
 
         private List<Student> _students = new();
+
         public List<Student> Students
         {
             get => new(_students);
@@ -126,8 +130,10 @@ namespace assignment_3
                 {
                     throw new InvalidOperationException("A circular reference cannot be created.");
                 }
+
                 currentParent = currentParent.ParentSubject;
             }
+
             _subSubjects.Add(subSubject);
             subSubject.SetParentSubject(this);
         }
@@ -205,6 +211,34 @@ namespace assignment_3
                 return;
             teacher.RemoveSubject(this);
 
+        }
+
+        private List<IAssignment> _assignments = new List<IAssignment>();
+        public List<IAssignment> Assignments => new List<IAssignment>(_assignments);
+
+        public void AddAssignment(IAssignment assignment)
+        {
+            if (assignment == null)
+                throw new ArgumentNullException(nameof(assignment));
+            if (_assignments.Any(a => a.AssignmentID == assignment.AssignmentID))
+                throw new InvalidOperationException("Assignment with the same ID already exists.");
+            _assignments.Add(assignment);
+        }
+
+        public void RemoveAssignment(int assignmentID)
+        {
+            var assignment = _assignments.FirstOrDefault(a => a.AssignmentID == assignmentID);
+            if (assignment == null)
+                throw new InvalidOperationException("Assignment not found.");
+            _assignments.Remove(assignment);
+        }
+
+        public void EditAssignment(int assignmentID, IAssignment updatedAssignment)
+        {
+            var existingAssignment = _assignments.FirstOrDefault(a => a.AssignmentID == assignmentID);
+            if (existingAssignment == null)
+                throw new InvalidOperationException("Assignment not found.");
+            _assignments[_assignments.IndexOf(existingAssignment)] = updatedAssignment;
         }
     }
 }

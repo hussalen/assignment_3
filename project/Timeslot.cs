@@ -109,7 +109,7 @@ public class Timeslot
 
     internal void ClearClassroom()
     {
-        Classroom = null;
+        Classroom = Defaults.DEFAULT_CLASSROOM;
     }
 
     private Exam _exam;

@@ -96,6 +96,7 @@ namespace assignment_3
 
         public static List<GroupProject> GetGroupProjectExtent() => new(_groupProjectList);
 
+
         public void Submit(DateTime submissionDate, Student student)
         {
             SubmissionDate = submissionDate;
@@ -106,6 +107,12 @@ namespace assignment_3
         public string GetDetails()
         {
             return $"GroupProject: {Topic}, NoOfPeople: {NoOfPeople}, Documentation: {Documentation}";
+
+        public void Submit(Student student)
+        {
+            throw new NotImplementedException();
+
         }
     }
+    
 }

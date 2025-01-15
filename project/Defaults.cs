@@ -52,5 +52,8 @@ namespace assignment_3
                 "test123"
             );
 
+        public static readonly Classroom DEFAULT_CLASSROOM = new Classroom(1, 0); 
+        public static readonly Essay DEFAULT_ESSAY = new("Default", new DateTime(2027, 06, 06),20,200);
+
     }
 }

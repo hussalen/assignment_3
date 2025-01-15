@@ -89,6 +89,7 @@ namespace assignment_3
 
         public Student SubmittingStudent { get; set; }
 
+
         public void Submit(DateTime submissionDate, Student student)
         {
             SubmissionDate = submissionDate;
@@ -99,6 +100,12 @@ namespace assignment_3
         public string GetDetails()
         {
             return $"IndividualProject: {Topic}, Description: {Description}, Notes: {string.Join(", ", Notes)}";
+
+        
+        public void Submit(Student student)
+        {
+            throw new NotImplementedException();
+
         }
     }
 }

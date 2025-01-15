@@ -81,11 +81,12 @@ public class Classroom
         }
         if (_assignedTimeslots.Count == 1 && _assignedTimeslots[0].ScheduleId == 1)
         {
-            _assignedTimeslots.Clear();// Remove the dummy
+            _assignedTimeslots.Clear();
         }
 
         _assignedTimeslots.Add(timeslot);
         timeslot.SetClassroom(this);
+        Notify($"Timeslot {timeslot.ScheduleId} has been assigned.", true); 
     }
 
     public void RemoveTimeslot(Timeslot timeslot)
@@ -114,18 +115,16 @@ public class Classroom
     {
         return _assignedTimeslots.Count == 1 && _assignedTimeslots[0].ScheduleId == 0;
     }
+    
+    private void Notify(string message, bool availability)
+    {
+        Console.WriteLine($"Notification for Room {RoomId}: {message} - Availability: {(availability ? "Available" : "Unavailable")}");
+    }
 
     public void CheckAndSendEmptyClassroomNotification()
     {
         if (IsEmpty())
-        {
-            var notification = new ClassroomNotification(this, null)
-            {
-                NotifMessage = "This classroom is empty and not scheduled for any timeslot.",
-                Availability = false
-            };
-            notification.SendNotification();
-        }
+        { Notify("Room is empty", true);}
     }
 
     public List<Timeslot> GetAssignedTimeslots() => new List<Timeslot>(_assignedTimeslots);
