@@ -15,7 +15,7 @@ namespace assignment_3
         Senior
     }
 
-    public class Student
+    public class Student : Person
     {
         public int StudentID { get; private set; }
 
@@ -51,24 +51,42 @@ namespace assignment_3
             get => new(_grades);
             private set => _grades = value;
         }
+        private static int DF_TTABLE_KEY = 9999;
 
-        private Dictionary<int, TimeTable> _timeTables;
-        public Dictionary<int, TimeTable> TimeTables
-        {
-            get => new(_timeTables);
-            private set => _timeTables = value;
-        }
+        private static Dictionary<int, TimeTable> TimeTables =
+            new() { [DF_TTABLE_KEY] = Defaults.DEFAULT_TIMETABLE, };
+
         private static List<Student> _studentList = new();
         private int? TimeTableKey { get; set; }
 
-        public Student(ClassLevel classLevel)
+        public Student(
+            ClassLevel classLevel,
+            string name,
+            string email,
+            string[] addressLines,
+            string password
+        )
+            : base(name, email, addressLines, password)
         {
             StudentID = Interlocked.Increment(ref nextId);
             ClassLevel = classLevel;
             GPA = 0.0f;
-            TimeTables = new();
             AddStudent(this);
             //SaveManager.SaveToJson(_studentList, nameof(_studentList));
+        }
+
+        public Student(Person person, ClassLevel classLevel)
+            : base(
+                person.Name,
+                person.Email.Address.ToString(),
+                person.AddressLines,
+                person.Password
+            )
+        {
+            StudentID = Interlocked.Increment(ref nextId);
+            ClassLevel = classLevel;
+            GPA = 0.0f;
+            AddStudent(this);
         }
 
         private void AddStudent(Student student)
@@ -78,10 +96,7 @@ namespace assignment_3
                 throw new ArgumentException($"{nameof(student)} cannot be null.");
             }
 
-            if (_studentList == null)
-            {
-                _studentList = new();
-            }
+            _studentList ??= new();
 
             if (_studentList.Contains(student))
             {
@@ -268,6 +283,7 @@ namespace assignment_3
             TimeTableKey = timeTable.Id;
             TimeTables[timeTable.Id] = timeTable;
             timeTable.AssignStudent(this);
+            TimeTables.Remove(DF_TTABLE_KEY);
         }
 
         public void RemoveTimeTable()
@@ -279,6 +295,15 @@ namespace assignment_3
             timeTable.RemoveStudent();
             TimeTables.Remove(TimeTableKey.Value);
             TimeTableKey = null;
+            TimeTables[DF_TTABLE_KEY] = Defaults.DEFAULT_TIMETABLE;
+        }
+
+        public void ResetStudent()
+        {
+            _assignments.Clear();
+            _grades.Clear();
+            RemoveTimeTable();
+            _studentList.Remove(this);
         }
     }
 }

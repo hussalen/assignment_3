@@ -12,7 +12,7 @@ namespace assignment_3
         OnLeave
     }
 
-    public class Teacher
+    public class Teacher : Person
     {
         private static int nextId = 1;
         private readonly List<Subject> _subjects;
@@ -33,10 +33,18 @@ namespace assignment_3
 
         public List<Grade> Grades => new List<Grade>(_grades);
 
-        public Teacher(string name)
+        private static List<Teacher> _teachersList = new();
+
+        public static List<Teacher> GetTeachersExtent() => new List<Teacher>(_teachersList);
+
+        public Teacher(string name, string email, string[] addressLines, string password)
+            : base(name, email, addressLines, password)
         {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("Name cannot be null or empty.");
+            TeacherID = Interlocked.Increment(ref nextId);
+            AvailabilityStatus = Availability.Available;
+            AddTeacher(this);
+        }
+
 
             
             _subjects = new List<Subject>();
@@ -44,8 +52,59 @@ namespace assignment_3
             _grades = new List<Grade>();
 
             Name = name;
+
+        // INITIATE_COPY
+        // TODO: remove association(s) here.
+        public Teacher(Person person)
+            : base(
+                person.Name,
+                person.Email.Address.ToString(),
+                person.AddressLines,
+                person.Password
+            )
+        {
+
             TeacherID = Interlocked.Increment(ref nextId);
             AvailabilityStatus = Availability.Available;
+            AddTeacher(this);
+        }
+
+        private void AddTeacher(Teacher teacher)
+        {
+            if (teacher == null)
+            {
+                throw new ArgumentException($"{nameof(teacher)} cannot be null.");
+            }
+
+            _teachersList ??= new();
+
+            if (_teachersList.Contains(teacher))
+            {
+                throw new ArgumentException(
+                    $"A teacher with ID {teacher.TeacherID} already exists."
+                );
+            }
+
+            _teachersList.Add(teacher);
+        }
+
+        private void RemoveTeacher(Teacher teacher)
+        {
+            if (teacher == null)
+            {
+                throw new ArgumentException($"{nameof(teacher)} cannot be null.");
+            }
+
+            ArgumentNullException.ThrowIfNull(_teachersList);
+
+            if (!_teachersList.Contains(teacher))
+            {
+                throw new ArgumentException(
+                    $"A teacher with ID {teacher.TeacherID} does not exist."
+                );
+            }
+
+            _teachersList.Remove(teacher);
         }
 
         public void AssignSubject(Subject subject)
@@ -76,16 +135,19 @@ namespace assignment_3
                 throw new ArgumentNullException(nameof(subject));
 
             if (!_subjects.Contains(subject))
-                throw new ArgumentException("Subject is not assigned to this teacher.");
-
+                return;
             _subjects.Remove(subject);
+
 
                         if (subject.Teacher != this)
                 throw new InvalidOperationException(
-                    "Subject's teacher does not match this teacher—cannot unassign."
+                    "Subject's teacher does not match this teacherï¿½cannot unassign."
                 );
 
             subject.Teacher = Defaults.DEFAULT_TEACHER;
+
+            subject.RemoveTeacher(this);
+
         }
 
         public void ViewSchedule()
@@ -96,6 +158,7 @@ namespace assignment_3
                 Console.WriteLine($"- {subject.SubjectName} (ID: {subject.SubjectId})");
             }
         }
+
 
         public void AssignTimeslot(Timeslot timeslot)
         {
@@ -145,6 +208,19 @@ namespace assignment_3
             {
                 grade.Teacher = Defaults.DEFAULT_TEACHER;
             }
+
+        public void ResetTeacher()
+        {
+            RemoveTeacher(this);
+
+            ArgumentNullException.ThrowIfNull(_subjects);
+            foreach (var subject in _subjects)
+            {
+                subject.RemoveTeacher(this);
+            }
+            _subjects.Clear();
+            _subjects.Add(Defaults.DEFAULT_SUBJECT);
+
         }
     }
 }

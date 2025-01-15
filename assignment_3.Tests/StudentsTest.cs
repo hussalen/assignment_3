@@ -15,7 +15,13 @@ namespace assignment_3.Tests
         [SetUp]
         public void Setup()
         {
-            currentStudent = new Student(ClassLevel.Freshman);
+            currentStudent = new Student(
+                ClassLevel.Freshman,
+                "Jeremy Willis",
+                "jeremy@gmail.com",
+                ["4095 Patterson Lake Rd", "Pinckney", "MI 48169"],
+                "test123"
+            );
             students.Add(currentStudent);
             _timeTable = new TimeTable(Day.MONDAY);
         }
@@ -25,7 +31,15 @@ namespace assignment_3.Tests
         {
             for (int i = 0; i < 5; i++)
             {
-                students.Add(new Student(ClassLevel.Freshman));
+                students.Add(
+                    new Student(
+                        ClassLevel.Freshman,
+                        "Jeremy Willis",
+                        "jeremy@gmail.com",
+                        ["4095 Patterson Lake Rd", "Pinckney", "MI 48169"],
+                        "test123"
+                    )
+                );
             }
 
             var distinctStudentIds = new HashSet<int>();
@@ -38,7 +52,13 @@ namespace assignment_3.Tests
         [Test]
         public void GPAIsValidWhenInRange()
         {
-            var validGpa = new Student(ClassLevel.Freshman);
+            var validGpa = new Student(
+                ClassLevel.Freshman,
+                "Jeremy Willis",
+                "jeremy@gmail.com",
+                ["4095 Patterson Lake Rd", "Pinckney", "MI 48169"],
+                "test123"
+            );
             validGpa.AddGrade(new Grade(4));
             Assert.That(validGpa.GPA, Is.EqualTo(4.0f), "Valid GPA should be accepted.");
         }
@@ -48,7 +68,13 @@ namespace assignment_3.Tests
         [Test]
         public void GradeIsNotAssignedToStudent()
         {
-            var student1 = new Student(ClassLevel.Freshman);
+            var student1 = new Student(
+                ClassLevel.Freshman,
+                "Jeremy Willis",
+                "jeremy@gmail.com",
+                ["4095 Patterson Lake Rd", "Pinckney", "MI 48169"],
+                "test123"
+            );
         }
 
         // test not working for some reason since we create copies of students in grade...

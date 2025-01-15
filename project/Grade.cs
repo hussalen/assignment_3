@@ -29,7 +29,14 @@ namespace assignment_3
         private Student _student;
         public Student Student
         {
-            get => new(_student.ClassLevel);
+            get =>
+                new(
+                    _student.ClassLevel,
+                    _student.Name,
+                    _student.Email.ToString(),
+                    _student.AddressLines,
+                    _student.Password
+                );
             set => _student = value;
         }
         private Teacher _teacher;

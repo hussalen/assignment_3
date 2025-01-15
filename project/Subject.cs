@@ -1,10 +1,13 @@
+using System.ComponentModel;
+
 namespace assignment_3
 {
     public class Subject
     {
-        public string SubjectId { get; private set; }
+        public int SubjectId { get; private set; }
 
         private string _subjectName;
+        public Subject ParentSubject { get; private set; }
         public string SubjectName
         {
             get => _subjectName;
@@ -40,6 +43,18 @@ namespace assignment_3
             }
         }
 
+
+        private Subject _subSubject;
+        private List<Subject> _subSubjects = new List<Subject>();
+
+        private List<Timeslot> _timeslots = new List<Timeslot>();
+
+        public Subject SubSubject
+        {
+            get => _subSubject;
+            private set { _subSubject = value; }
+        }
+
         private List<Student> _students = new();
         public List<Student> Students
         {
@@ -51,6 +66,7 @@ namespace assignment_3
                 _students = value;
             }
         }
+
 
         private List<Subject> _subSubjects = new();
         private List<Timeslot> _timeslots = new();
@@ -78,12 +94,13 @@ namespace assignment_3
 
         public Subject SubSubject { get; private set; }
 
-        public Subject(string subjectId, string subjectName, int gradingScale)
-        {
-            if (string.IsNullOrWhiteSpace(subjectId))
-                throw new ArgumentException("Subject ID cannot be null or empty.");
+        public Teacher Teacher => throw new NotImplementedException();
+        private static int nextId = 1;
 
-            SubjectId = subjectId;
+
+        public Subject(string subjectName, int gradingScale)
+        {
+            SubjectId = Interlocked.Increment(ref nextId);
             SubjectName = subjectName;
             GradingScale = gradingScale;
         }
@@ -92,19 +109,35 @@ namespace assignment_3
         {
             if (subSubject == null)
                 throw new ArgumentNullException(nameof(subSubject));
-
             if (subSubject == this)
                 throw new InvalidOperationException("A subject cannot be a sub-subject of itself.");
-
-            if (subSubject.SubSubject != null)
-                throw new InvalidOperationException("A subject cannot have two parents.");
-
-            if (!_subSubjects.Contains(subSubject))
+            if (subSubject.ParentSubject != null && subSubject.ParentSubject != this)
+                throw new InvalidOperationException(
+                    "A sub-subject cannot have more than one parent."
+                );
+            if (_subSubjects.Contains(subSubject))
+                throw new InvalidOperationException(
+                    "This sub-subject is already added to the parent subject."
+                );
+            Subject currentParent = this;
+            while (currentParent.ParentSubject != null)
             {
-                _subSubjects.Add(subSubject);
-                subSubject.SetParentSubject(this);
+                if (currentParent.ParentSubject == subSubject)
+                {
+                    throw new InvalidOperationException("A circular reference cannot be created.");
+                }
+                currentParent = currentParent.ParentSubject;
             }
+            _subSubjects.Add(subSubject);
+            subSubject.SetParentSubject(this);
         }
+
+
+        private void SetParentSubject(Subject parentSubject)
+        {
+            ParentSubject = parentSubject;
+        }
+
 
         public void RemoveSubSubject(Subject subSubject)
         {
@@ -117,6 +150,14 @@ namespace assignment_3
                 subSubject.RemoveParentSubject();
             }
         }
+
+
+
+        private void RemoveParentSubject()
+        {
+            ParentSubject = null;
+        }
+
 
         public void AddTimeslot(Timeslot timeslot)
         {
@@ -141,7 +182,13 @@ namespace assignment_3
             }
         }
 
+        public List<Subject> GetSubSubjects()
+        {
+            return new List<Subject>(_subSubjects);
+        }
+
         public List<Timeslot> GetTimeslots() => new List<Timeslot>(_timeslots);
+
 
         private void SetParentSubject(Subject parentSubject)
         {
@@ -151,6 +198,13 @@ namespace assignment_3
         private void RemoveParentSubject()
         {
             SubSubject = null;
+
+        public void RemoveTeacher(Teacher teacher)
+        {
+            if (!_teachers.Contains(teacher) || teacher == Defaults.DEFAULT_TEACHER)
+                return;
+            teacher.RemoveSubject(this);
+
         }
     }
 }

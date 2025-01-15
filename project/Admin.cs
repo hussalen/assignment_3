@@ -3,39 +3,50 @@ using System.Text.Json.Nodes;
 
 namespace assignment_3
 {
-    public class Admin
+    public class Admin : Person
     {
         private static int nextId = 1;
 
         public int AdminID { get; private set; }
 
-        private string _name;
-        public string Name
-        {
-            get => _name;
-            set
-            {
-                if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentException("Name cannot be null or empty.");
-                _name = value;
-            }
-        }
-
         private List<Report> _reports;
-        public List<Report> Reports
+        private List<Report> Reports
         {
             get => _reports = _reports = new(_reports);
-            private set => _reports = value;
+            set => _reports = value;
         }
 
-        public Admin(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("Admin name cannot be null or empty.");
+        private List<Timeslot> _timeSlots;
 
+        public List<Timeslot> Timeslots
+        {
+            get => new(_timeSlots);
+            private set => _timeSlots = value;
+        }
+
+        private static List<Admin> _adminsList = new();
+
+        public static List<Admin> GetAdminsExtent() => new List<Admin>(_adminsList);
+
+        public Admin(string name, string email, string[] addressLines, string password)
+            : base(name, email, addressLines, password)
+        {
             AdminID = Interlocked.Increment(ref nextId);
             Reports = new();
-            Name = name;
+            AddAdmin(this);
+        }
+
+        public Admin(Person person)
+            : base(
+                person.Name,
+                person.Email.Address.ToString(),
+                person.AddressLines,
+                person.Password
+            )
+        {
+            AdminID = Interlocked.Increment(ref nextId);
+            _reports = new();
+            AddAdmin(this);
         }
 
         public void CreateSchedule(DateTime date, TimeSpan startTime, TimeSpan endTime)
@@ -77,7 +88,7 @@ namespace assignment_3
             Console.WriteLine($"Schedule ID {scheduleId} deleted by Admin {Name}");
         }
 
-        public Report GenerateReport(string title, JsonArray content)
+        private Report GenerateReport(string title, JsonArray content)
         {
             if (string.IsNullOrWhiteSpace(title))
                 throw new ArgumentException("Report title cannot be null or empty.");
@@ -90,13 +101,81 @@ namespace assignment_3
             return report;
         }
 
-        public void RemoveReport(Report report)
+        private void RemoveReport(Report report)
         {
             if (!Reports.Remove(report))
                 throw new ArgumentException("Report not found");
         }
 
-        public class Report
+        public void ResetAdmin()
+        {
+            RemoveAdmin(this);
+
+            ArgumentNullException.ThrowIfNull(_reports);
+            _reports.Clear();
+            _timeSlots.Clear();
+        }
+
+        private void AddAdmin(Admin admin)
+        {
+            if (admin == null)
+            {
+                throw new ArgumentException($"{nameof(admin)} cannot be null.");
+            }
+
+            _adminsList ??= new();
+
+            if (_adminsList.Contains(admin))
+            {
+                throw new ArgumentException($"A admin with ID {admin.AdminID} already exists.");
+            }
+
+            _adminsList.Add(admin);
+        }
+
+        private void RemoveAdmin(Admin admin)
+        {
+            ArgumentNullException.ThrowIfNull(_adminsList);
+
+            if (!_adminsList.Contains(admin))
+            {
+                throw new ArgumentException($"An admin with ID {admin.AdminID} does not exist.");
+            }
+            _adminsList.Remove(admin);
+        }
+
+        public void AddTimeslot(Timeslot timeslot)
+        {
+            if (timeslot == null)
+                throw new ArgumentNullException(nameof(timeslot));
+
+            if (timeslot.Admins.Contains(this) || _timeSlots.Contains(timeslot))
+            {
+                return;
+            }
+
+            _timeSlots.Add(timeslot);
+            timeslot.AddAdmin(this);
+        }
+
+        public void RemoveTimeslot(Timeslot timeslot)
+        {
+            if (timeslot == null)
+                throw new ArgumentNullException(nameof(timeslot));
+
+            if (!timeslot.Admins.Contains(this) || !_timeSlots.Contains(timeslot))
+            {
+                return;
+            }
+
+            if (_timeSlots.Contains(timeslot))
+            {
+                _timeSlots.Remove(timeslot);
+                timeslot.RemoveAdmin(this);
+            }
+        }
+
+        private class Report
         {
             public int ReportId { get; private set; }
             private static int nextId = 1;

@@ -31,18 +31,13 @@ public class Classroom
         }
     }
 
-    public bool CheckAvailability()
-    {
-        return Capacity > 0;
-    }
-
     public Classroom(int roomId, int capacity)
     {
         RoomId = roomId;
         Capacity = capacity;
         _assignedTimeslots = new List<Timeslot>
         {
-            new Timeslot(0, DateTime.MinValue, TimeSpan.Zero, TimeSpan.Zero) // Dummy or placeholder Timeslot
+            new Timeslot(1, DateTime.Today, TimeSpan.Zero, TimeSpan.FromHours(1)) // Dummy or placeholder Timeslot
         };
 
         addClassroom(this);
@@ -56,6 +51,10 @@ public class Classroom
             throw new ArgumentException($"{nameof(classroom)} cannot be null.");
         }
         _classrooms_List.Add(classroom);
+    }
+    public bool CheckAvailability()
+    {
+        return Capacity > 0;
     }
 
     public void AssignTimeslot(Timeslot timeslot)
@@ -80,9 +79,9 @@ public class Classroom
                 "Overlapping timeslots, cannot assign new timeslot to this classroom"
             );
         }
-        if (_assignedTimeslots.Count == 1 && _assignedTimeslots[0].ScheduleId == 0)
+        if (_assignedTimeslots.Count == 1 && _assignedTimeslots[0].ScheduleId == 1)
         {
-            _assignedTimeslots.RemoveAt(0); // Remove the dummy
+            _assignedTimeslots.Clear();// Remove the dummy
         }
 
         _assignedTimeslots.Add(timeslot);
