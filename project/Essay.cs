@@ -84,6 +84,7 @@ namespace assignment_3
             MaxWordCount = maxWordCount;
             AddAssignment(this);
             //SaveManager.SaveToJson(_essayList, nameof(_essayList));
+            // testing
         }
 
         private static void AddAssignment(Essay essay)
